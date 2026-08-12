@@ -1,5 +1,5 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { BlogList } from './blog-list';
 import type { MediumPost } from '@/lib/medium.types';
 
@@ -7,8 +7,6 @@ const posts: MediumPost[] = [
   { title: 'Data Post', link: 'https://a', pubDate: '', categories: ['Data'], contentSnippet: 'about data' },
   { title: 'ML Post', link: 'https://b', pubDate: '', categories: ['ML'], contentSnippet: 'about ml' },
 ];
-
-afterEach(cleanup);
 
 describe('BlogList', () => {
   it('shows every post by default', () => {

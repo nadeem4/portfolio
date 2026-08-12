@@ -1,8 +1,6 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { SkillsVisual } from './skills-visual';
-
-afterEach(cleanup);
 
 describe('SkillsVisual', () => {
   it('shows every category by default', () => {

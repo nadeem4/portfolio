@@ -1,13 +1,9 @@
-import { describe, it, expect, afterEach } from 'vitest';
-import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CommandPalette } from './command-palette';
 
 describe('CommandPalette', () => {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('opens when Ctrl+K is pressed and lists all commands', async () => {
     render(<CommandPalette />);
     fireEvent.keyDown(document, { key: 'k', ctrlKey: true });
