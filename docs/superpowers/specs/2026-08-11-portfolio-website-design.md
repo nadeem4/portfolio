@@ -8,7 +8,7 @@
 A personal portfolio website whose primary goal is landing job interviews (recruiters/hiring managers as primary audience), for a backend/data/ML engineer. It aggregates:
 
 - Blog posts written on Medium, grouped by category
-- A curated selection of GitHub repos
+- GitHub repos, pulled automatically from the owner's account
 - A "live projects" section (currently empty — placeholder for future deployed projects)
 - A downloadable resume
 - Contact links
@@ -22,8 +22,8 @@ Considered and rejected:
 - **Plain Vite + React SPA** — simplest, but Medium's RSS feed doesn't support CORS, so client-side fetching would still need a proxy/serverless function anyway, while losing SSG's SEO and performance benefits.
 
 **No traditional database.** All content resolves to one of:
-- Static config (TypeScript/JSON) committed to the repo — skills, featured-project blurbs, resume file reference, live-project placeholders, contact links
-- Server-side fetch at ISR revalidation — Medium RSS (blog posts), GitHub REST API (pinned repo stats)
+- Static config (TypeScript/JSON) committed to the repo — skills, optional per-repo pipeline-diagram overrides, resume file reference, live-project placeholders, contact links
+- Server-side fetch at ISR revalidation — Medium RSS (blog posts), GitHub REST API (all public repos for the configured username, live)
 - Vercel Edge Config — a free, first-party key-value config store (not a general-purpose database) holding an optional per-post blog category override map, editable from the Vercel dashboard with no redeploy
 
 ## Architecture
@@ -34,8 +34,8 @@ flowchart TD
     B --> C["Static Pages (SSG)<br/>About / Skills / Resume / Contact"]
     B --> D["ISR Pages (revalidate every 6 hours)<br/>Blog listing / Projects"]
     D --> E["Route Handler: /api/medium<br/>fetches + parses Medium RSS at revalidate"]
-    D --> F["Route Handler: /api/github<br/>fetches pinned repo data via GitHub API"]
-    C --> G["Static config (JSON/TS)<br/>featured projects, skills, resume PDF, live-project placeholders"]
+    D --> F["Route Handler: /api/github<br/>fetches all public repos for the configured username, excludes forks"]
+    C --> G["Static config (JSON/TS)<br/>pipeline-diagram overrides, skills, resume PDF, live-project placeholders"]
     E --> H[("Medium RSS feed")]
     F --> I[("GitHub REST API")]
     E --> J[("Vercel Edge Config<br/>blogCategoryOverrides map")]
@@ -63,7 +63,7 @@ flowchart TD
 | Hero / About | Name, role, one-line pitch, links (GitHub/LinkedIn/Medium/email) | Static config |
 | Skills | Interactive tech-stack visual, grouped (Languages, Data, ML, Infra) | Static config |
 | Blog | Medium posts, categorized by Medium tags with optional per-post overrides, filterable | Medium RSS (ISR) + Edge Config overrides |
-| Projects (GitHub) | Pinned repos with custom write-up + live stats (stars, last updated, language) | Curated repo-slug list + GitHub API (ISR) |
+| Projects (GitHub) | All public repos (forks excluded, sorted by stars) with GitHub's own description + live stats (stars, last updated, language); a few repos may have a hand-authored pipeline diagram override | GitHub API (ISR) + optional static pipeline-override config |
 | Live Projects | "Coming soon" placeholder cards now; real project cards added as shipped | Static config |
 | Resume | Download button (PDF) | Static file in `/public` |
 | Contact | mailto: link + social icons, no form | Static config |
@@ -71,8 +71,12 @@ flowchart TD
 ### Cool features (in scope for v1)
 
 1. **Interactive skills visual** — categorized grid/graph (Languages → Data → ML → Infra) with hover states, not a generic progress-bar list.
-2. **Animated architecture/pipeline diagrams** — for 2-3 featured projects, a small SVG diagram (e.g. `Kafka → Spark → S3 → Redshift`) that animates on scroll/hover within that project's card/detail view — shows real system-design work rather than telling.
+2. **Animated architecture/pipeline diagrams** — for a small, hand-picked set of repos (via an optional static override config keyed by repo slug — most auto-pulled repos have none and simply don't show a diagram), a small SVG diagram (e.g. `Kafka → Spark → S3 → Redshift`) that animates on scroll/hover within that project's card — shows real system-design work rather than telling.
 3. **Command palette (Cmd+K)** — jump to any section, open resume, or go to a project via keyboard (`cmdk` library).
+
+### GitHub project sourcing
+
+Repos are pulled live from the GitHub REST API for a single configured username (`config/site.ts`'s `githubUsername`), not curated by hand — forks are excluded (they aren't original work), remaining repos are sorted by star count, and each project's write-up is GitHub's own repo `description` field rather than a hand-authored blurb. This was chosen over a curated allow-list so new repos appear automatically with no code change. The one piece of hand-authored content that survives is the pipeline-diagram visual (see "Cool features" above): a small static config maps a handful of repo slugs to a diagram, and every other repo simply renders without one.
 
 ### Blog categorization
 
@@ -87,7 +91,7 @@ Categories default to whatever tags a post already has on Medium (up to 5 tags/p
 ## Error Handling
 
 - Medium RSS fetch failure/empty feed → blog section shows a graceful "posts temporarily unavailable" state; last successfully cached ISR result is served if one exists, rather than breaking the page.
-- A pinned repo that's renamed/deleted on GitHub → that card is skipped rather than showing broken data.
+- GitHub repo list fetch failure (rate limit, network error) → the projects page shows a graceful "projects temporarily unavailable" state, mirroring the blog page's fallback, rather than a broken page.
 - Edge Config read failure or missing `blogCategoryOverrides` key → treated as an empty override map; posts fall back to their Medium tags, never a broken page.
 - All external fetches (RSS parse, GitHub API, Edge Config) have a timeout, try/catch, and typed fallback (empty array/object) — never an unhandled crash.
 
