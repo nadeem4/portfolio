@@ -20,3 +20,14 @@ class IntersectionObserverStub {
 }
 // @ts-expect-error jsdom has no IntersectionObserver
 window.IntersectionObserver = IntersectionObserverStub;
+
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+window.ResizeObserver = ResizeObserverStub;
+
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = () => {};
+}
