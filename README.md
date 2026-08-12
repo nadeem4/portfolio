@@ -9,6 +9,7 @@ Personal portfolio built with Next.js (App Router). Aggregates Medium blog posts
 3. Replace `public/resume.pdf` with your real resume.
 4. Update `config/live-projects.ts` as you ship real live projects.
 5. Provision a Vercel Edge Config store (Storage tab in the dashboard) and run `vercel env pull --yes` so `EDGE_CONFIG` is set locally.
+6. Optionally set `GITHUB_TOKEN` to a fine-grained PAT scoped to "Public Repositories (read-only)" — this raises the GitHub API rate limit and enables the commit-count filter on `/projects`. Without it, the site still works, just at GitHub's unauthenticated 60 req/hour limit.
 
 ## Categorizing blog posts
 
