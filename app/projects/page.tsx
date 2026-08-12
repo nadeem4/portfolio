@@ -1,11 +1,11 @@
 import { ProjectCard } from '@/components/projects/project-card';
-import { fetchPinnedRepos } from '@/lib/github';
+import { getFeaturedRepos } from '@/lib/projects';
 import { featuredProjects } from '@/config/featured-projects';
 
 export const revalidate = 21600;
 
 export default async function ProjectsPage() {
-  const repos = await fetchPinnedRepos(featuredProjects.map((project) => project.repoSlug));
+  const repos = await getFeaturedRepos();
 
   return (
     <main className="px-6 py-12">

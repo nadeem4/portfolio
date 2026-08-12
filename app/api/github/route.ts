@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { fetchPinnedRepos } from '@/lib/github';
-import { featuredProjects } from '@/config/featured-projects';
+import { getFeaturedRepos } from '@/lib/projects';
 
 export const revalidate = 21600;
 
 export async function GET() {
-  const repos = await fetchPinnedRepos(featuredProjects.map((project) => project.repoSlug));
+  const repos = await getFeaturedRepos();
   return NextResponse.json(repos);
 }
