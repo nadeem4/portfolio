@@ -7,7 +7,9 @@ const config: Config = {
     extend: {
       colors: {
         background: 'var(--background)',
+        'background-raised': 'var(--background-raised)',
         foreground: 'var(--foreground)',
+        'foreground-dim': 'var(--foreground-dim)',
         accent: 'var(--accent)',
         border: 'var(--border)',
       },
