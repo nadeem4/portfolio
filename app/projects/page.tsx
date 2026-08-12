@@ -9,14 +9,16 @@ export default async function ProjectsPage() {
 
   return (
     <main className="px-6 py-12">
-      <h1>Projects</h1>
-      <ul>
-        {featuredProjects.map((project) => {
-          const repo = repos.find((r) => r.slug === project.repoSlug);
-          if (!repo) return null;
-          return <ProjectCard key={project.repoSlug} repo={repo} project={project} />;
-        })}
-      </ul>
+      <div className="max-w-3xl mx-auto space-y-12">
+        <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
+        <ul className="space-y-6">
+          {featuredProjects.map((project) => {
+            const repo = repos.find((r) => r.slug === project.repoSlug);
+            if (!repo) return null;
+            return <ProjectCard key={project.repoSlug} repo={repo} project={project} />;
+          })}
+        </ul>
+      </div>
     </main>
   );
 }

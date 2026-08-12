@@ -6,10 +6,18 @@ import { ContactSection } from '@/components/contact/contact-section';
 export default function HomePage() {
   return (
     <main className="px-6 py-12">
-      <Hero />
-      <SkillsVisual />
-      <ResumeSection />
-      <ContactSection />
+      <div className="max-w-2xl mx-auto space-y-12">
+        <Hero />
+        <div className="border-t border-border pt-12">
+          <SkillsVisual />
+        </div>
+        <div className="border-t border-border pt-12">
+          <ResumeSection />
+        </div>
+        <div className="border-t border-border pt-12">
+          <ContactSection />
+        </div>
+      </div>
     </main>
   );
 }
