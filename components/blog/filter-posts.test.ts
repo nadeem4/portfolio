@@ -3,8 +3,8 @@ import { filterPostsByCategory, getCategories } from './filter-posts';
 import type { MediumPost } from '@/lib/medium.types';
 
 const posts: MediumPost[] = [
-  { title: 'A', link: 'https://a', pubDate: '', categories: ['Data'], contentSnippet: '' },
-  { title: 'B', link: 'https://b', pubDate: '', categories: ['ML'], contentSnippet: '' },
+  { title: 'A', link: 'https://a', pubDate: '', categories: ['Data'], contentSnippet: '', imageUrl: null },
+  { title: 'B', link: 'https://b', pubDate: '', categories: ['ML'], contentSnippet: '', imageUrl: null },
 ];
 
 describe('filterPostsByCategory', () => {

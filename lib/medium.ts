@@ -3,6 +3,18 @@ import type { MediumPost } from './medium.types';
 
 const parser = new Parser();
 
+const IMG_SRC_REGEX = /<img[^>]+src="([^"]+)"/i;
+
+/**
+ * Extracts the `src` of the first `<img>` tag found in a blob of HTML.
+ * Returns null when there is no content, or no img tag with a src attribute.
+ */
+export function extractFirstImageUrl(html: string | null | undefined): string | null {
+  if (!html) return null;
+  const match = html.match(IMG_SRC_REGEX);
+  return match ? match[1] : null;
+}
+
 export async function parseMediumFeed(xml: string): Promise<MediumPost[]> {
   const feed = await parser.parseString(xml);
   return (feed.items ?? []).map((item) => ({
@@ -11,6 +23,7 @@ export async function parseMediumFeed(xml: string): Promise<MediumPost[]> {
     pubDate: item.pubDate ?? '',
     categories: item.categories ?? [],
     contentSnippet: item.contentSnippet ?? '',
+    imageUrl: extractFirstImageUrl(item['content:encoded']),
   }));
 }
 

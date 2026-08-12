@@ -7,8 +7,8 @@ vi.mock('@vercel/edge-config', () => ({ get: vi.fn() }));
 import { get } from '@vercel/edge-config';
 
 const posts: MediumPost[] = [
-  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Tag From Medium'], contentSnippet: '' },
-  { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '' },
+  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Tag From Medium'], contentSnippet: '', imageUrl: null },
+  { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '', imageUrl: null },
 ];
 
 describe('applyCategoryOverrides', () => {
