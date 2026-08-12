@@ -7,6 +7,10 @@ interface ProjectCardProps {
   pipeline?: PipelineStep[];
 }
 
+function lastWorkedOn(updatedAt: string): string {
+  return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short' }).format(new Date(updatedAt));
+}
+
 export function ProjectCard({ repo, pipeline }: ProjectCardProps) {
   return (
     <li className="border border-border rounded-lg bg-background-raised p-6 space-y-3">
@@ -22,7 +26,7 @@ export function ProjectCard({ repo, pipeline }: ProjectCardProps) {
       </h2>
       {repo.description && <p className="text-foreground-dim leading-relaxed">{repo.description}</p>}
       <p className="text-xs uppercase tracking-widest font-medium text-foreground-dim">
-        {repo.language ?? 'N/A'} · {repo.stars} stars
+        {repo.language ?? 'N/A'} · {repo.stars} stars · {lastWorkedOn(repo.updatedAt)}
       </p>
       {pipeline && <PipelineDiagram steps={pipeline} />}
     </li>

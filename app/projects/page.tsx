@@ -1,4 +1,4 @@
-import { ProjectCard } from '@/components/projects/project-card';
+import { ProjectList } from '@/components/projects/project-list';
 import { getGithubRepos } from '@/lib/projects';
 import { projectPipelines } from '@/config/project-pipelines';
 
@@ -16,11 +16,7 @@ export default async function ProjectsPage() {
             Projects temporarily unavailable — check back soon.
           </p>
         ) : (
-          <ul className="space-y-6">
-            {repos.map((repo) => (
-              <ProjectCard key={repo.slug} repo={repo} pipeline={projectPipelines[repo.slug]} />
-            ))}
-          </ul>
+          <ProjectList repos={repos} pipelines={projectPipelines} />
         )}
       </div>
     </main>
