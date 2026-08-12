@@ -1,13 +1,13 @@
 import type { GithubRepo } from '@/lib/github.types';
-import type { FeaturedProject } from '@/config/featured-projects';
+import type { PipelineStep } from '@/config/project-pipelines';
 import { PipelineDiagram } from './pipeline-diagram';
 
 interface ProjectCardProps {
   repo: GithubRepo;
-  project: FeaturedProject;
+  pipeline?: PipelineStep[];
 }
 
-export function ProjectCard({ repo, project }: ProjectCardProps) {
+export function ProjectCard({ repo, pipeline }: ProjectCardProps) {
   return (
     <li className="border border-border rounded-lg bg-background-raised p-6 space-y-3">
       <h2>
@@ -20,11 +20,11 @@ export function ProjectCard({ repo, project }: ProjectCardProps) {
           {repo.name}
         </a>
       </h2>
-      <p className="text-foreground-dim leading-relaxed">{project.blurb}</p>
+      {repo.description && <p className="text-foreground-dim leading-relaxed">{repo.description}</p>}
       <p className="text-xs uppercase tracking-widest font-medium text-foreground-dim">
         {repo.language ?? 'N/A'} · {repo.stars} stars
       </p>
-      {project.pipeline && <PipelineDiagram steps={project.pipeline} />}
+      {pipeline && <PipelineDiagram steps={pipeline} />}
     </li>
   );
 }
