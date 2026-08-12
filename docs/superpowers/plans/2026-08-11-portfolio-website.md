@@ -43,10 +43,12 @@
 
 - [ ] **Step 1: Initialize package.json and install dependencies**
 
+`tailwindcss`, `postcss`, and `autoprefixer` are pinned to major versions compatible with the v3-style `tailwind.config.ts`/`postcss.config.js`/`@tailwind` directives used later in this task and in Task 3 — an unpinned install pulls Tailwind v4, which needs a different PostCSS plugin and config shape. `eslint` is pinned to v8 because it's the last major that supports the legacy `.eslintrc.json` format this task writes in Step 3 — ESLint 9 requires a flat `eslint.config.js` instead.
+
 ```bash
 npm init -y
 npm install next react react-dom next-themes rss-parser cmdk motion clsx tailwind-merge
-npm install -D typescript @types/react @types/react-dom @types/node tailwindcss postcss autoprefixer eslint eslint-config-next vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+npm install -D typescript @types/react @types/react-dom @types/node "tailwindcss@^3.4.0" "postcss@^8.4.0" "autoprefixer@^10.4.0" "eslint@^8.57.0" eslint-config-next vitest @vitejs/plugin-react @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
 ```
 
 - [ ] **Step 2: Add scripts to package.json**
