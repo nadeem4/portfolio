@@ -25,8 +25,9 @@ npm install
 npm run dev      # start the dev server
 npm test         # run the Vitest suite
 npm run build    # production build
+npm run lint     # run ESLint
 ```
 
 ## Deployment
 
-Connected to Vercel: push to `main` for production, open a PR for a preview deployment. The only environment variable required is `EDGE_CONFIG`, auto-provisioned when the Edge Config store is connected to the project.
+Connected to Vercel: push to `main` for production, open a PR for a preview deployment. No environment variables are required to run the site; optionally, connecting a Vercel Edge Config store and setting `EDGE_CONFIG` enables per-post blog category overrides (see "Categorizing blog posts" above).

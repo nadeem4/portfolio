@@ -1,9 +1,10 @@
 'use client';
 
 import { motion } from 'motion/react';
+import type { PipelineStep } from '@/config/featured-projects';
 
 interface PipelineDiagramProps {
-  steps: { label: string }[];
+  steps: PipelineStep[];
 }
 
 export function PipelineDiagram({ steps }: PipelineDiagramProps) {
