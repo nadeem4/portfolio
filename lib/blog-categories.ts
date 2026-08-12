@@ -5,7 +5,10 @@ const OVERRIDES_KEY = 'blogCategoryOverrides';
 
 export async function getCategoryOverrides(): Promise<Record<string, string>> {
   try {
-    const overrides = await get<Record<string, string>>(OVERRIDES_KEY);
+    const overrides = await Promise.race([
+      get<Record<string, string>>(OVERRIDES_KEY),
+      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Edge Config timeout')), 5000)),
+    ]);
     return overrides ?? {};
   } catch {
     return {};

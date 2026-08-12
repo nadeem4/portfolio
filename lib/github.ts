@@ -7,6 +7,7 @@ export async function fetchPinnedRepos(slugs: string[]): Promise<GithubRepo[]> {
         const res = await fetch(`https://api.github.com/repos/${slug}`, {
           next: { revalidate: 21600 },
           headers: { Accept: 'application/vnd.github+json' },
+          signal: AbortSignal.timeout(5000),
         });
         if (!res.ok) return null;
         const data = await res.json();

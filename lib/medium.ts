@@ -16,7 +16,7 @@ export async function parseMediumFeed(xml: string): Promise<MediumPost[]> {
 
 export async function fetchMediumPosts(feedUrl: string): Promise<MediumPost[]> {
   try {
-    const res = await fetch(feedUrl, { next: { revalidate: 21600 } });
+    const res = await fetch(feedUrl, { next: { revalidate: 21600 }, signal: AbortSignal.timeout(5000) });
     if (!res.ok) return [];
     const xml = await res.text();
     return await parseMediumFeed(xml);
