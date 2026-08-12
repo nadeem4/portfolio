@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { siteConfig } from './site';
 import { skillGroups } from './skills';
-import { featuredProjects } from './featured-projects';
+import { projectPipelines } from './project-pipelines';
 import { liveProjects } from './live-projects';
 
 describe('site config', () => {
@@ -10,6 +10,8 @@ describe('site config', () => {
     expect(siteConfig.email).toContain('@');
     expect(siteConfig.mediumFeedUrl).toMatch(/^https:\/\/medium\.com\/feed\//);
     expect(siteConfig.socials.github).toContain('github.com');
+    expect(siteConfig.githubUsername).toBeTruthy();
+    expect(typeof siteConfig.githubUsername).toBe('string');
   });
 
   it('groups skills under the four expected categories', () => {
@@ -18,11 +20,9 @@ describe('site config', () => {
     skillGroups.forEach((group) => expect(group.items.length).toBeGreaterThan(0));
   });
 
-  it('gives every featured project a repo slug and a blurb', () => {
-    expect(featuredProjects.length).toBeGreaterThan(0);
-    featuredProjects.forEach((project) => {
-      expect(project.repoSlug).toMatch(/^[\w-]+\/[\w.-]+$/);
-      expect(project.blurb).toBeTruthy();
+  it('keys every pipeline override by a valid owner/repo slug', () => {
+    Object.keys(projectPipelines).forEach((slug) => {
+      expect(slug).toMatch(/^[\w-]+\/[\w.-]+$/);
     });
   });
 
