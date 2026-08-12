@@ -1,49 +1,37 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { applyCategoryOverrides, getCategoryOverrides } from './blog-categories';
+import { describe, it, expect } from 'vitest';
+import { applyBlogCategories, getBlogCategories } from './blog-categories';
 import type { MediumPost } from './medium.types';
 
-vi.mock('@vercel/edge-config', () => ({ get: vi.fn() }));
-
-import { get } from '@vercel/edge-config';
-
 const posts: MediumPost[] = [
-  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Tag From Medium'], contentSnippet: '' },
+  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Some Medium Tag'], contentSnippet: '' },
   { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '' },
 ];
 
-describe('applyCategoryOverrides', () => {
-  it("replaces a post's categories with the override when one exists", () => {
-    const result = applyCategoryOverrides(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
-    expect(result[0].categories).toEqual(['Data Engineering']);
-  });
-
-  it("leaves a post's Medium tags untouched when no override exists for it", () => {
-    const result = applyCategoryOverrides(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
-    expect(result[1].categories).toEqual(['Another Tag']);
-  });
-
-  it('returns posts unchanged when there are no overrides at all', () => {
-    expect(applyCategoryOverrides(posts, {})).toEqual(posts);
+describe('getBlogCategories', () => {
+  it('returns the parsed JSON category map synchronously, not a Promise', () => {
+    const categories = getBlogCategories();
+    expect(categories).not.toBeInstanceOf(Promise);
+    expect(typeof categories).toBe('object');
+    expect(categories).not.toBeNull();
   });
 });
 
-describe('getCategoryOverrides', () => {
-  beforeEach(() => {
-    vi.mocked(get).mockReset();
+describe('applyBlogCategories', () => {
+  it("assigns a post's category from the map when a matching entry exists", () => {
+    const result = applyBlogCategories(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
+    expect(result[0].categories).toEqual(['Data Engineering']);
   });
 
-  it('returns the override map stored in Edge Config', async () => {
-    vi.mocked(get).mockResolvedValue({ 'https://medium.com/@you/post-one': 'Data Engineering' });
-    expect(await getCategoryOverrides()).toEqual({ 'https://medium.com/@you/post-one': 'Data Engineering' });
+  it('assigns "Uncategorized" when no matching entry exists for that post', () => {
+    const result = applyBlogCategories(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
+    expect(result[1].categories).toEqual(['Uncategorized']);
   });
 
-  it('returns an empty object when no override map is configured yet', async () => {
-    vi.mocked(get).mockResolvedValue(undefined);
-    expect(await getCategoryOverrides()).toEqual({});
-  });
-
-  it('returns an empty object when the Edge Config read fails', async () => {
-    vi.mocked(get).mockRejectedValue(new Error('edge config unavailable'));
-    expect(await getCategoryOverrides()).toEqual({});
+  it("discards the post's original Medium tags entirely, even when there is no map match", () => {
+    const result = applyBlogCategories(posts, {});
+    expect(result[0].categories).toEqual(['Uncategorized']);
+    expect(result[0].categories).not.toContain('Some Medium Tag');
+    expect(result[1].categories).toEqual(['Uncategorized']);
+    expect(result[1].categories).not.toContain('Another Tag');
   });
 });

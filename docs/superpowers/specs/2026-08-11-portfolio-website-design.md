@@ -22,9 +22,8 @@ Considered and rejected:
 - **Plain Vite + React SPA** — simplest, but Medium's RSS feed doesn't support CORS, so client-side fetching would still need a proxy/serverless function anyway, while losing SSG's SEO and performance benefits.
 
 **No traditional database.** All content resolves to one of:
-- Static config (TypeScript/JSON) committed to the repo — skills, optional per-repo pipeline-diagram overrides, resume file reference, live-project placeholders, contact links
+- Static config (TypeScript/JSON) committed to the repo — skills, optional per-repo pipeline-diagram overrides, resume file reference, live-project placeholders, contact links, blog category assignments
 - Server-side fetch at ISR revalidation — Medium RSS (blog posts), GitHub REST API (all public repos for the configured username, live)
-- Vercel Edge Config — a free, first-party key-value config store (not a general-purpose database) holding an optional per-post blog category override map, editable from the Vercel dashboard with no redeploy
 
 ## Architecture
 
@@ -35,19 +34,18 @@ flowchart TD
     B --> D["ISR Pages (revalidate every 6 hours)<br/>Blog listing / Projects"]
     D --> E["Route Handler: /api/medium<br/>fetches + parses Medium RSS at revalidate"]
     D --> F["Route Handler: /api/github<br/>fetches all public repos for the configured username, excludes forks"]
-    C --> G["Static config (JSON/TS)<br/>pipeline-diagram overrides, skills, resume PDF, live-project placeholders"]
+    C --> G["Static config (JSON/TS)<br/>pipeline-diagram overrides, skills, resume PDF, live-project placeholders, blog categories"]
     E --> H[("Medium RSS feed")]
     F --> I[("GitHub REST API")]
-    E --> J[("Vercel Edge Config<br/>blogCategoryOverrides map")]
 
     classDef node fill:#fff,stroke:#000,color:#000;
-    class A,B,C,D,E,F,G,H,I,J node;
+    class A,B,C,D,E,F,G,H,I node;
 ```
 
 - Pages are pre-rendered (SSG) and cached; ISR pages quietly re-fetch in the background every 6 hours, so visitors always get a fast static response, never a live fetch waterfall.
 - Route handlers are serverless functions included free on Vercel — not a persistent backend, not a database.
-- The Medium route handler additionally reads an optional `blogCategoryOverrides` map from Vercel Edge Config; when a post's URL has an entry, it replaces that post's Medium tags for filtering purposes. This is the only piece of dynamic, editable-outside-of-code state in the whole site.
-- Hosting cost: $0 on Vercel's free (Hobby) tier at personal-portfolio traffic scale, including Edge Config's free tier.
+- The Medium route handler reads `config/blog-categories.json`, a committed JSON map of Medium post URL → category, at build/request time via a plain TypeScript JSON import; when a post's URL has an entry, that value becomes its category, otherwise it shows "Uncategorized". No network call, no external service.
+- Hosting cost: $0 on Vercel's free (Hobby) tier at personal-portfolio traffic scale.
 
 ## Visual Direction
 
@@ -62,7 +60,7 @@ flowchart TD
 |---|---|---|
 | Hero / About | Name, role, one-line pitch, links (GitHub/LinkedIn/Medium/email) | Static config |
 | Skills | Interactive tech-stack visual, grouped (Languages, Data, ML, Infra) | Static config |
-| Blog | Medium posts, categorized by Medium tags with optional per-post overrides, filterable | Medium RSS (ISR) + Edge Config overrides |
+| Blog | Medium posts, categorized via a committed JSON config file (uncategorized if absent), filterable | Medium RSS (ISR) + `config/blog-categories.json` |
 | Projects (GitHub) | All public repos (forks excluded, sorted by stars) with GitHub's own description + live stats (stars, last updated, language); a few repos may have a hand-authored pipeline diagram override | GitHub API (ISR) + optional static pipeline-override config |
 | Live Projects | "Coming soon" placeholder cards now; real project cards added as shipped | Static config |
 | Resume | Download button (PDF) | Static file in `/public` |
@@ -80,24 +78,26 @@ Repos are pulled live from the GitHub REST API for a single configured username 
 
 ### Blog categorization
 
-Categories default to whatever tags a post already has on Medium (up to 5 tags/post, pulled from the RSS feed's `<category>` fields). An optional `blogCategoryOverrides` map in Vercel Edge Config — `{ "<medium-post-url>": "<category>" }` — lets a specific post's category be corrected or set explicitly, editable from the Vercel dashboard at any time with no code change or redeploy. This was chosen over a full database (Neon/Supabase) because the actual need is a small, infrequently-written, read-heavy map — exactly what Edge Config is built for — and over a committed config file because it avoids a redeploy per category change while staying free and effectively zero-maintenance.
+Categories come entirely from a committed `config/blog-categories.json` file — a plain JSON map of `{ "<medium-post-url>": "<category>" }`. Medium's own RSS `<category>` tags are not used for site categorization at all: a post whose URL has no entry in the file shows as "Uncategorized". The file is read synchronously via a normal TypeScript JSON import at build/request time — zero network calls, zero external services, zero env vars.
+
+The file is updated one of two ways, both outside the application code: a human edits it directly, or a separately-configured scheduled automation proposes updates via a GitHub pull request that a human reviews and merges. This was chosen over Edge Config (an earlier design) and over a full database (Neon/Supabase) because a git-committed file is version-controlled, diffable, and reviewable like any other code change, and needs no external account, dashboard, or service setup — the tradeoff (a redeploy per category change) is acceptable for a low-frequency, personal-portfolio update cadence.
 
 ### Explicitly out of scope for v1
 
 - Contact form (mailto + social links only — avoids needing a form-handling service)
-- Any relational/document database or persistent backend (Edge Config is a key-value config store, not a general-purpose database)
+- Any relational/document database, persistent backend, or external config service for blog categories (a committed JSON file is sufficient)
 - E2E test framework (Playwright can be added later if the site grows)
 
 ## Error Handling
 
 - Medium RSS fetch failure/empty feed → blog section shows a graceful "posts temporarily unavailable" state; last successfully cached ISR result is served if one exists, rather than breaking the page.
 - GitHub repo list fetch failure (rate limit, network error) → the projects page shows a graceful "projects temporarily unavailable" state, mirroring the blog page's fallback, rather than a broken page.
-- Edge Config read failure or missing `blogCategoryOverrides` key → treated as an empty override map; posts fall back to their Medium tags, never a broken page.
-- All external fetches (RSS parse, GitHub API, Edge Config) have a timeout, try/catch, and typed fallback (empty array/object) — never an unhandled crash.
+- Blog category lookup can't fail at runtime — `config/blog-categories.json` is a committed file read via a static JSON import, not a network call. A malformed file fails the TypeScript build itself, not a live request. A post missing from the map simply shows "Uncategorized".
+- All external fetches (RSS parse, GitHub API) have a timeout, try/catch, and typed fallback (empty array/object) — never an unhandled crash.
 
 ## Testing (TDD)
 
-- Data-layer units are the primary TDD targets: Medium RSS parser (XML → typed post objects, category extraction), GitHub fetch/normalize function, and the Edge Config override reader + apply function are pure-ish functions — tests written first (Vitest), covering happy path, empty feed, malformed XML, API error/rate-limit cases, and missing/failed Edge Config reads.
+- Data-layer units are the primary TDD targets: Medium RSS parser (XML → typed post objects), GitHub fetch/normalize function, and `applyBlogCategories`'s pure category-assignment logic — tests written first (Vitest), covering happy path, empty feed, malformed XML, and API error/rate-limit cases. `applyBlogCategories` just needs matching-URL, no-match ("Uncategorized"), and original-tags-discarded cases — there's no failure mode to test since the read is a static import, not I/O.
 - UI components with real logic get React Testing Library coverage: command palette filtering/keyboard nav, skills-visual grouping, blog category filtering.
 - Purely presentational components (hero, footer) don't need dedicated tests.
 - No E2E framework for v1.
