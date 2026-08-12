@@ -1,24 +1,17 @@
-import { get } from '@vercel/edge-config';
+import blogCategoriesData from '@/config/blog-categories.json';
 import type { MediumPost } from './medium.types';
 
-const OVERRIDES_KEY = 'blogCategoryOverrides';
+const UNCATEGORIZED = 'Uncategorized';
 
-export async function getCategoryOverrides(): Promise<Record<string, string>> {
-  try {
-    const overrides = await Promise.race([
-      get<Record<string, string>>(OVERRIDES_KEY),
-      new Promise<never>((_, reject) => setTimeout(() => reject(new Error('Edge Config timeout')), 5000)),
-    ]);
-    return overrides ?? {};
-  } catch {
-    return {};
-  }
+const blogCategories: Record<string, string> = blogCategoriesData;
+
+export function getBlogCategories(): Record<string, string> {
+  return blogCategories;
 }
 
-export function applyCategoryOverrides(posts: MediumPost[], overrides: Record<string, string>): MediumPost[] {
-  return posts.map((post) => {
-    const override = overrides[post.link];
-    if (!override) return post;
-    return { ...post, categories: [override] };
-  });
+export function applyBlogCategories(posts: MediumPost[], categories: Record<string, string>): MediumPost[] {
+  return posts.map((post) => ({
+    ...post,
+    categories: [categories[post.link] ?? UNCATEGORIZED],
+  }));
 }
