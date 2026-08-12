@@ -21,6 +21,7 @@ describe('getGithubRepos', () => {
         stars: 5,
         language: 'TypeScript',
         updatedAt: '2026-01-01T00:00:00Z',
+        license: null,
       },
     ]);
 

@@ -6,4 +6,5 @@ export interface GithubRepo {
   stars: number;
   language: string | null;
   updatedAt: string;
+  license: string | null;
 }

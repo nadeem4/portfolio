@@ -8,7 +8,9 @@ interface GithubApiRepo {
   stargazers_count: number;
   language: string | null;
   updated_at: string;
+  pushed_at: string;
   fork: boolean;
+  license: { name: string } | null;
 }
 
 export async function fetchGithubRepos(username: string): Promise<GithubRepo[]> {
@@ -36,10 +38,10 @@ export async function fetchGithubRepos(username: string): Promise<GithubRepo[]> 
           url: item.html_url,
           stars: item.stargazers_count,
           language: item.language,
-          updatedAt: item.updated_at,
+          updatedAt: item.pushed_at,
+          license: item.license?.name ?? null,
         }),
-      )
-      .sort((a, b) => b.stars - a.stars);
+      );
   } catch {
     return [];
   }
