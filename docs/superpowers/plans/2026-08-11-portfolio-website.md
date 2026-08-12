@@ -2,22 +2,22 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a Next.js portfolio site (blog aggregation from Medium, curated GitHub projects, a "coming soon" live-projects section, resume download, and contact links) deployable to Vercel with zero database.
+**Goal:** Build a Next.js portfolio site (blog aggregation from Medium, curated GitHub projects, a "coming soon" live-projects section, resume download, and contact links) deployable to Vercel with no traditional database.
 
-**Architecture:** Next.js App Router with Server Components fetching data at ISR-revalidate time (6h) directly from `lib/` data functions; the same data functions are also exposed as public JSON route handlers (`/api/medium`, `/api/github`). Dark-by-default theme with a light/dark toggle via `next-themes`. Interactive pieces (skills visual, blog filter, command palette, pipeline diagrams) are Client Components built on small, independently-tested pure functions.
+**Architecture:** Next.js App Router with Server Components fetching data at ISR-revalidate time (6h) directly from `lib/` data functions; the same data functions are also exposed as public JSON route handlers (`/api/medium`, `/api/github`). Blog posts default to their Medium tags, with an optional per-post category override stored in Vercel Edge Config (a free, first-party key-value config store, editable from the Vercel dashboard with no redeploy). Dark-by-default theme with a light/dark toggle via `next-themes`. Interactive pieces (skills visual, blog filter, command palette, pipeline diagrams) are Client Components built on small, independently-tested pure functions.
 
-**Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, next-themes, rss-parser, cmdk, motion, clsx, tailwind-merge, Vitest, React Testing Library.
+**Tech Stack:** Next.js, React, TypeScript, Tailwind CSS, next-themes, rss-parser, cmdk, motion, clsx, tailwind-merge, @vercel/edge-config, Vitest, React Testing Library.
 
 ## Global Constraints
 
-- No database anywhere — all data is static config, or fetched server-side from Medium RSS / GitHub API.
+- No relational/document database anywhere. Data is static config, fetched server-side from Medium RSS / GitHub API, or (for blog category overrides only) stored in Vercel Edge Config — a key-value config store, not a general-purpose database.
 - ISR revalidate window is 6 hours (`21600` seconds) for blog and project data.
 - No contact form — mailto link + social icons only.
 - No E2E framework for v1 (Playwright can be added later).
 - TDD for all `lib/` data-layer functions and all interactive component logic (Vitest + React Testing Library); purely presentational components get a smoke test.
 - Theme: dark-by-default with a light/dark toggle, `next-themes` with `attribute="class"`, `defaultTheme="dark"`, `enableSystem={false}` (explicit toggle only, no system-preference detection).
 - Visual language: monochrome palette + single accent color, monospace-influenced typography.
-- External fetch failures degrade gracefully: Medium/GitHub fetch errors return an empty array/skip the item, never an unhandled crash.
+- External fetch failures degrade gracefully: Medium/GitHub/Edge Config fetch errors return an empty array/object, never an unhandled crash.
 
 ---
 
@@ -419,7 +419,7 @@ git commit -m "feat: add static site, skills, and project config"
 
 **Interfaces:**
 - Consumes: nothing new
-- Produces: `<ThemeProvider>` (wraps `next-themes`' provider) and `<ThemeToggle />` from `components/theme/`, used by the root layout in Task 9.
+- Produces: `<ThemeProvider>` (wraps `next-themes`' provider) and `<ThemeToggle />` from `components/theme/`, used by the root layout in Task 10.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -558,7 +558,7 @@ git commit -m "feat: add dark/light theme tokens and toggle"
 
 **Interfaces:**
 - Consumes: nothing new
-- Produces: `MediumPost { title, link, pubDate, categories: string[], contentSnippet }` type, `parseMediumFeed(xml: string): Promise<MediumPost[]>`, and `fetchMediumPosts(feedUrl: string): Promise<MediumPost[]>` from `lib/medium.ts` — used by the blog page (Task 12) and the Medium route handler (Task 5).
+- Produces: `MediumPost { title, link, pubDate, categories: string[], contentSnippet }` type, `parseMediumFeed(xml: string): Promise<MediumPost[]>`, and `fetchMediumPosts(feedUrl: string): Promise<MediumPost[]>` from `lib/medium.ts` — used by the blog page (Task 13) and the Medium route handler (Task 6).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -704,14 +704,136 @@ git commit -m "feat: add Medium RSS feed parser with graceful fallbacks"
 
 ---
 
-### Task 5: Medium API Route Handler
+### Task 5: Blog Category Overrides (Edge Config)
+
+**Files:**
+- Create: `lib/blog-categories.ts`
+- Test: `lib/blog-categories.test.ts`
+- Modify: `package.json` (add `@vercel/edge-config`)
+
+**Interfaces:**
+- Consumes: `MediumPost` type from `lib/medium.types.ts` (Task 4)
+- Produces: `getCategoryOverrides(): Promise<Record<string, string>>` and `applyCategoryOverrides(posts: MediumPost[], overrides: Record<string, string>): MediumPost[]` from `lib/blog-categories.ts` — used by the Medium route handler (Task 6) and the blog page (Task 13).
+
+Categories default to whatever tags a post already has on Medium. `blogCategoryOverrides` is an optional JSON object stored in Vercel Edge Config, keyed by the post's Medium URL, that — when present for a post — replaces that post's categories entirely. This lets you fix or set a post's category from the Vercel dashboard at any time, without a code change or redeploy.
+
+- [ ] **Step 1: Install the Edge Config client**
+
+```bash
+npm install @vercel/edge-config
+```
+
+- [ ] **Step 2: Write the failing tests**
+
+Create `lib/blog-categories.test.ts`:
+
+```ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { applyCategoryOverrides, getCategoryOverrides } from './blog-categories';
+import type { MediumPost } from './medium.types';
+
+vi.mock('@vercel/edge-config', () => ({ get: vi.fn() }));
+
+import { get } from '@vercel/edge-config';
+
+const posts: MediumPost[] = [
+  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Tag From Medium'], contentSnippet: '' },
+  { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '' },
+];
+
+describe('applyCategoryOverrides', () => {
+  it("replaces a post's categories with the override when one exists", () => {
+    const result = applyCategoryOverrides(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
+    expect(result[0].categories).toEqual(['Data Engineering']);
+  });
+
+  it("leaves a post's Medium tags untouched when no override exists for it", () => {
+    const result = applyCategoryOverrides(posts, { 'https://medium.com/@you/post-one': 'Data Engineering' });
+    expect(result[1].categories).toEqual(['Another Tag']);
+  });
+
+  it('returns posts unchanged when there are no overrides at all', () => {
+    expect(applyCategoryOverrides(posts, {})).toEqual(posts);
+  });
+});
+
+describe('getCategoryOverrides', () => {
+  beforeEach(() => {
+    vi.mocked(get).mockReset();
+  });
+
+  it('returns the override map stored in Edge Config', async () => {
+    vi.mocked(get).mockResolvedValue({ 'https://medium.com/@you/post-one': 'Data Engineering' });
+    expect(await getCategoryOverrides()).toEqual({ 'https://medium.com/@you/post-one': 'Data Engineering' });
+  });
+
+  it('returns an empty object when no override map is configured yet', async () => {
+    vi.mocked(get).mockResolvedValue(undefined);
+    expect(await getCategoryOverrides()).toEqual({});
+  });
+
+  it('returns an empty object when the Edge Config read fails', async () => {
+    vi.mocked(get).mockRejectedValue(new Error('edge config unavailable'));
+    expect(await getCategoryOverrides()).toEqual({});
+  });
+});
+```
+
+- [ ] **Step 3: Run tests to verify they fail**
+
+Run: `npx vitest run lib/blog-categories.test.ts`
+Expected: FAIL — `lib/blog-categories.ts` does not exist yet.
+
+- [ ] **Step 4: Implement**
+
+Create `lib/blog-categories.ts`:
+
+```ts
+import { get } from '@vercel/edge-config';
+import type { MediumPost } from './medium.types';
+
+const OVERRIDES_KEY = 'blogCategoryOverrides';
+
+export async function getCategoryOverrides(): Promise<Record<string, string>> {
+  try {
+    const overrides = await get<Record<string, string>>(OVERRIDES_KEY);
+    return overrides ?? {};
+  } catch {
+    return {};
+  }
+}
+
+export function applyCategoryOverrides(posts: MediumPost[], overrides: Record<string, string>): MediumPost[] {
+  return posts.map((post) => {
+    const override = overrides[post.link];
+    if (!override) return post;
+    return { ...post, categories: [override] };
+  });
+}
+```
+
+- [ ] **Step 5: Run tests to verify they pass**
+
+Run: `npx vitest run lib/blog-categories.test.ts`
+Expected: PASS (6 tests)
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add package.json package-lock.json lib/blog-categories.ts lib/blog-categories.test.ts
+git commit -m "feat: add Edge Config-backed blog category overrides"
+```
+
+---
+
+### Task 6: Medium API Route Handler
 
 **Files:**
 - Create: `app/api/medium/route.ts`
 
 **Interfaces:**
-- Consumes: `fetchMediumPosts` and `MediumPost` from `lib/medium.ts` (Task 4), `siteConfig.mediumFeedUrl` from `config/site.ts` (Task 2)
-- Produces: `GET /api/medium` returning `MediumPost[]` as JSON, revalidated every 6 hours.
+- Consumes: `fetchMediumPosts` and `MediumPost` from `lib/medium.ts` (Task 4), `getCategoryOverrides` and `applyCategoryOverrides` from `lib/blog-categories.ts` (Task 5), `siteConfig.mediumFeedUrl` from `config/site.ts` (Task 2)
+- Produces: `GET /api/medium` returning `MediumPost[]` (with category overrides already applied) as JSON, revalidated every 6 hours.
 
 - [ ] **Step 1: Implement the route handler**
 
@@ -722,19 +844,23 @@ Create `app/api/medium/route.ts`:
 ```ts
 import { NextResponse } from 'next/server';
 import { fetchMediumPosts } from '@/lib/medium';
+import { getCategoryOverrides, applyCategoryOverrides } from '@/lib/blog-categories';
 import { siteConfig } from '@/config/site';
 
 export const revalidate = 21600;
 
 export async function GET() {
-  const posts = await fetchMediumPosts(siteConfig.mediumFeedUrl);
-  return NextResponse.json(posts);
+  const [posts, overrides] = await Promise.all([
+    fetchMediumPosts(siteConfig.mediumFeedUrl),
+    getCategoryOverrides(),
+  ]);
+  return NextResponse.json(applyCategoryOverrides(posts, overrides));
 }
 ```
 
 - [ ] **Step 2: Verify manually**
 
-This route can only be exercised once `app/layout.tsx` exists (Task 9). Note it here and re-verify with `curl http://localhost:3000/api/medium` after Task 9's build check passes.
+This route can only be exercised once `app/layout.tsx` exists (Task 10). Note it here and re-verify with `curl http://localhost:3000/api/medium` after Task 10's build check passes.
 
 - [ ] **Step 3: Commit**
 
@@ -745,7 +871,7 @@ git commit -m "feat: expose Medium posts as a JSON route handler"
 
 ---
 
-### Task 6: GitHub Repo Fetcher
+### Task 7: GitHub Repo Fetcher
 
 **Files:**
 - Create: `lib/github.types.ts`
@@ -754,7 +880,7 @@ git commit -m "feat: expose Medium posts as a JSON route handler"
 
 **Interfaces:**
 - Consumes: nothing new
-- Produces: `GithubRepo { slug, name, description, url, stars, language, updatedAt }` type and `fetchPinnedRepos(slugs: string[]): Promise<GithubRepo[]>` from `lib/github.ts` — used by the projects page (Task 13) and the GitHub route handler (Task 7).
+- Produces: `GithubRepo { slug, name, description, url, stars, language, updatedAt }` type and `fetchPinnedRepos(slugs: string[]): Promise<GithubRepo[]>` from `lib/github.ts` — used by the projects page (Task 14) and the GitHub route handler (Task 8).
 
 - [ ] **Step 1: Write the failing tests**
 
@@ -904,13 +1030,13 @@ git commit -m "feat: add GitHub pinned-repo fetcher with per-repo error isolatio
 
 ---
 
-### Task 7: GitHub API Route Handler
+### Task 8: GitHub API Route Handler
 
 **Files:**
 - Create: `app/api/github/route.ts`
 
 **Interfaces:**
-- Consumes: `fetchPinnedRepos` from `lib/github.ts` (Task 6), `featuredProjects` from `config/featured-projects.ts` (Task 2)
+- Consumes: `fetchPinnedRepos` from `lib/github.ts` (Task 7), `featuredProjects` from `config/featured-projects.ts` (Task 2)
 - Produces: `GET /api/github` returning `GithubRepo[]` as JSON, revalidated every 6 hours.
 
 - [ ] **Step 1: Implement the route handler**
@@ -932,7 +1058,7 @@ export async function GET() {
 
 - [ ] **Step 2: Verify manually**
 
-Same as Task 5 — re-verify with `curl http://localhost:3000/api/github` after Task 9's build check passes.
+Same as Task 6 — re-verify with `curl http://localhost:3000/api/github` after Task 10's build check passes.
 
 - [ ] **Step 3: Commit**
 
@@ -943,7 +1069,7 @@ git commit -m "feat: expose pinned GitHub repos as a JSON route handler"
 
 ---
 
-### Task 8: Command Palette
+### Task 9: Command Palette
 
 **Files:**
 - Create: `components/command-palette/commands.ts`
@@ -954,7 +1080,7 @@ git commit -m "feat: expose pinned GitHub repos as a JSON route handler"
 
 **Interfaces:**
 - Consumes: nothing new
-- Produces: `<CommandPalette />` from `components/command-palette/command-palette.tsx`, used by the root layout in Task 9.
+- Produces: `<CommandPalette />` from `components/command-palette/command-palette.tsx`, used by the root layout in Task 10.
 
 - [ ] **Step 1: Write the failing test for the filter logic**
 
@@ -1139,7 +1265,7 @@ git commit -m "feat: add Cmd+K command palette for site navigation"
 
 ---
 
-### Task 9: Root Layout, Header, Footer
+### Task 10: Root Layout, Header, Footer
 
 **Files:**
 - Create: `components/layout/header.tsx`
@@ -1150,7 +1276,7 @@ git commit -m "feat: add Cmd+K command palette for site navigation"
 - Test: `components/layout/footer.test.tsx`
 
 **Interfaces:**
-- Consumes: `ThemeProvider`, `ThemeToggle` (Task 3), `CommandPalette` (Task 8), `siteConfig` (Task 2)
+- Consumes: `ThemeProvider`, `ThemeToggle` (Task 3), `CommandPalette` (Task 9), `siteConfig` (Task 2)
 - Produces: `<Header />`, `<Footer />` from `components/layout/`; `app/layout.tsx` wraps every page. This task produces the first buildable version of the app — `npm run build` must succeed after this task.
 
 - [ ] **Step 1: Write the failing tests**
@@ -1270,7 +1396,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-Create `app/page.tsx` (placeholder — replaced with the real Hero in Task 10):
+Create `app/page.tsx` (placeholder — replaced with the real Hero in Task 11):
 
 ```tsx
 export default function HomePage() {
@@ -1300,7 +1426,7 @@ git commit -m "feat: wire up root layout with header, footer, and command palett
 
 ---
 
-### Task 10: Hero Section
+### Task 11: Hero Section
 
 **Files:**
 - Create: `components/hero/hero.tsx`
@@ -1384,7 +1510,7 @@ git commit -m "feat: add hero section to home page"
 
 ---
 
-### Task 11: Skills Visual
+### Task 12: Skills Visual
 
 **Files:**
 - Create: `components/skills/filter-by-category.ts`
@@ -1550,7 +1676,7 @@ git commit -m "feat: add interactive skills visual to home page"
 
 ---
 
-### Task 12: Blog Page
+### Task 13: Blog Page
 
 **Files:**
 - Create: `components/blog/filter-posts.ts`
@@ -1560,8 +1686,8 @@ git commit -m "feat: add interactive skills visual to home page"
 - Test: `components/blog/blog-list.test.tsx`
 
 **Interfaces:**
-- Consumes: `MediumPost` type, `fetchMediumPosts` from `lib/medium.ts` (Task 4), `siteConfig.mediumFeedUrl` from `config/site.ts` (Task 2)
-- Produces: `<BlogList posts={MediumPost[]} />` from `components/blog/blog-list.tsx`; `app/blog/page.tsx` route.
+- Consumes: `MediumPost` type, `fetchMediumPosts` from `lib/medium.ts` (Task 4), `getCategoryOverrides` and `applyCategoryOverrides` from `lib/blog-categories.ts` (Task 5), `siteConfig.mediumFeedUrl` from `config/site.ts` (Task 2)
+- Produces: `<BlogList posts={MediumPost[]} />` from `components/blog/blog-list.tsx`; `app/blog/page.tsx` route (posts rendered here already have category overrides applied).
 
 - [ ] **Step 1: Write the failing test for the filter/category logic**
 
@@ -1726,16 +1852,20 @@ Create `app/blog/page.tsx`:
 ```tsx
 import { BlogList } from '@/components/blog/blog-list';
 import { fetchMediumPosts } from '@/lib/medium';
+import { getCategoryOverrides, applyCategoryOverrides } from '@/lib/blog-categories';
 import { siteConfig } from '@/config/site';
 
 export const revalidate = 21600;
 
 export default async function BlogPage() {
-  const posts = await fetchMediumPosts(siteConfig.mediumFeedUrl);
+  const [posts, overrides] = await Promise.all([
+    fetchMediumPosts(siteConfig.mediumFeedUrl),
+    getCategoryOverrides(),
+  ]);
   return (
     <main className="px-6 py-12">
       <h1>Blog</h1>
-      <BlogList posts={posts} />
+      <BlogList posts={applyCategoryOverrides(posts, overrides)} />
     </main>
   );
 }
@@ -1755,7 +1885,7 @@ git commit -m "feat: add blog page with category filtering"
 
 ---
 
-### Task 13: Projects Page
+### Task 14: Projects Page
 
 **Files:**
 - Create: `components/projects/pipeline-diagram.tsx`
@@ -1764,7 +1894,7 @@ git commit -m "feat: add blog page with category filtering"
 - Test: `components/projects/pipeline-diagram.test.tsx`
 
 **Interfaces:**
-- Consumes: `GithubRepo`, `fetchPinnedRepos` from `lib/github.ts` (Task 6); `FeaturedProject`, `featuredProjects` from `config/featured-projects.ts` (Task 2)
+- Consumes: `GithubRepo`, `fetchPinnedRepos` from `lib/github.ts` (Task 7); `FeaturedProject`, `featuredProjects` from `config/featured-projects.ts` (Task 2)
 - Produces: `<PipelineDiagram steps={{label: string}[]} />`, `<ProjectCard repo={GithubRepo} project={FeaturedProject} />` from `components/projects/`
 
 - [ ] **Step 1: Write the failing test for PipelineDiagram**
@@ -1904,7 +2034,7 @@ git commit -m "feat: add projects page with animated pipeline diagrams"
 
 ---
 
-### Task 14: Live Projects Page
+### Task 15: Live Projects Page
 
 **Files:**
 - Create: `app/live-projects/page.tsx`
@@ -1977,7 +2107,7 @@ git commit -m "feat: add live projects page with coming-soon placeholders"
 
 ---
 
-### Task 15: Resume & Contact Sections
+### Task 16: Resume & Contact Sections
 
 **Files:**
 - Create: `components/resume/resume-section.tsx`
@@ -2123,15 +2253,15 @@ git commit -m "feat: add resume download and contact sections to home page"
 
 ---
 
-### Task 16: Final Integration, README, and Deployment Prep
+### Task 17: Final Integration, README, and Deployment Prep
 
 **Files:**
 - Create: `README.md`
 - Modify: `config/site.ts`, `config/featured-projects.ts` (verify no leftover template values break the build)
 
 **Interfaces:**
-- Consumes: the whole app built in Tasks 1–15
-- Produces: a documented, deployable repository
+- Consumes: the whole app built in Tasks 1–16
+- Produces: a documented, deployable repository with Edge Config provisioned
 
 - [ ] **Step 1: Run the full test suite**
 
@@ -2143,24 +2273,46 @@ Expected: all tests across every task pass.
 Run: `npm run build`
 Expected: build succeeds with no errors or type errors.
 
-- [ ] **Step 3: Manually verify all routes with the dev server**
+- [ ] **Step 3: Provision Vercel Edge Config**
+
+This step needs the Vercel dashboard/browser and cannot be fully scripted — stop and complete it manually, then continue.
+
+```bash
+vercel link
+```
+
+Then, from the [Vercel dashboard](https://vercel.com/dashboard) → your project → **Storage** tab → **Create Database** → **Edge Config**, create a store and connect it to this project. Once connected:
+
+```bash
+vercel env pull --yes
+```
+
+Expected: `.env.local` now contains an `EDGE_CONFIG` connection string.
+
+In the Edge Config store's dashboard page, add one key so the app has something to read from day one:
+- Key: `blogCategoryOverrides`
+- Value: `{}`
+
+Add real entries later (e.g. `"https://medium.com/@you/some-post": "Data Engineering"`) whenever you want to override a specific post's category — no redeploy needed.
+
+- [ ] **Step 4: Manually verify all routes with the dev server**
 
 Run: `npm run dev`, then visit and check each renders without errors:
 - `http://localhost:3000/` — Hero, Skills, Resume, Contact
-- `http://localhost:3000/blog` — Blog list (or the "temporarily unavailable" fallback if `config/site.ts` still has placeholder values)
+- `http://localhost:3000/blog` — Blog list (or the "temporarily unavailable" fallback if `config/site.ts` still has placeholder values), with categories reflecting any `blogCategoryOverrides` entries
 - `http://localhost:3000/projects` — Project cards with pipeline diagrams
 - `http://localhost:3000/live-projects` — Coming-soon placeholder
 - Press `Ctrl+K` (or `Cmd+K`) anywhere — command palette opens and navigates
 - Click the theme toggle in the header — page switches between dark and light
 
-- [ ] **Step 4: Write the README**
+- [ ] **Step 5: Write the README**
 
 Create `README.md`:
 
 ```markdown
 # Portfolio Website
 
-Personal portfolio built with Next.js (App Router). Aggregates Medium blog posts and pinned GitHub repos with zero database — see `docs/superpowers/specs/2026-08-11-portfolio-website-design.md` for the full design.
+Personal portfolio built with Next.js (App Router). Aggregates Medium blog posts and pinned GitHub repos with no traditional database — see `docs/superpowers/specs/2026-08-11-portfolio-website-design.md` for the full design.
 
 ## Before deploying
 
@@ -2168,6 +2320,15 @@ Personal portfolio built with Next.js (App Router). Aggregates Medium blog posts
 2. Replace `config/featured-projects.ts` with your real repo slugs and project blurbs.
 3. Replace `public/resume.pdf` with your real resume.
 4. Update `config/live-projects.ts` as you ship real live projects.
+5. Provision a Vercel Edge Config store (Storage tab in the dashboard) and run `vercel env pull --yes` so `EDGE_CONFIG` is set locally.
+
+## Categorizing blog posts
+
+Blog categories default to whatever tags a post already has on Medium. To override a post's category without a code change, edit the `blogCategoryOverrides` key in the Edge Config store (Vercel dashboard → Storage → your store), adding an entry keyed by the post's Medium URL:
+
+\`\`\`json
+{ "https://medium.com/@you/some-post": "Data Engineering" }
+\`\`\`
 
 ## Development
 
@@ -2180,10 +2341,10 @@ npm run build    # production build
 
 ## Deployment
 
-Connected to Vercel: push to `main` for production, open a PR for a preview deployment. No environment variables or database are required.
+Connected to Vercel: push to `main` for production, open a PR for a preview deployment. The only environment variable required is `EDGE_CONFIG`, auto-provisioned when the Edge Config store is connected to the project.
 ```
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
 git add README.md
