@@ -1,7 +1,7 @@
-import { fetchPinnedRepos } from './github';
-import { featuredProjects } from '@/config/featured-projects';
+import { fetchGithubRepos } from './github';
+import { siteConfig } from '@/config/site';
 import type { GithubRepo } from './github.types';
 
-export async function getFeaturedRepos(): Promise<GithubRepo[]> {
-  return fetchPinnedRepos(featuredProjects.map((project) => project.repoSlug));
+export async function getGithubRepos(): Promise<GithubRepo[]> {
+  return fetchGithubRepos(siteConfig.githubUsername);
 }
