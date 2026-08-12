@@ -30,7 +30,7 @@
 - Create: `next-env.d.ts`
 - Create: `tailwind.config.ts`
 - Create: `postcss.config.js`
-- Create: `vitest.config.ts`
+- Create: `vitest.config.mts`
 - Create: `vitest.setup.ts`
 - Create: `.gitignore`
 - Create: `.eslintrc.json`
@@ -148,18 +148,17 @@ module.exports = {
 };
 ```
 
-`vitest.config.ts`:
+`vitest.config.mts` (the `.mts` extension is unambiguously ESM to Node regardless of `package.json`'s `type` field, avoiding a Vite config-loader deprecation warning that a plain `.ts` file triggers):
 
 ```ts
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import path from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, '.'),
+      '@': import.meta.dirname,
     },
   },
   test: {
@@ -261,7 +260,7 @@ Expected: PASS (2 tests)
 - [ ] **Step 8: Commit**
 
 ```bash
-git add package.json package-lock.json tsconfig.json next.config.ts next-env.d.ts tailwind.config.ts postcss.config.js vitest.config.ts vitest.setup.ts .gitignore .eslintrc.json lib/utils.ts lib/utils.test.ts
+git add package.json package-lock.json tsconfig.json next.config.ts next-env.d.ts tailwind.config.ts postcss.config.js vitest.config.mts vitest.setup.ts .gitignore .eslintrc.json lib/utils.ts lib/utils.test.ts
 git commit -m "chore: scaffold Next.js project with Vitest and cn utility"
 ```
 
