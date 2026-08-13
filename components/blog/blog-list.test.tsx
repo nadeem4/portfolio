@@ -19,11 +19,24 @@ describe('BlogList', () => {
     expect(screen.getByText('ML Post')).toBeInTheDocument();
   });
 
-  it('narrows to one category when its filter is clicked', () => {
+  it('narrows to one category when its card is clicked', () => {
     render(<BlogList posts={posts} />);
-    fireEvent.click(screen.getByRole('button', { name: 'ML' }));
+    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
     expect(screen.getByText('ML Post')).toBeInTheDocument();
     expect(screen.queryByText('Data Post')).not.toBeInTheDocument();
+  });
+
+  it('restores every post when the filter is cleared', () => {
+    render(<BlogList posts={posts} />);
+    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Show all/ }));
+    expect(screen.getByText('Data Post')).toBeInTheDocument();
+    expect(screen.getByText('ML Post')).toBeInTheDocument();
+  });
+
+  it('offers no clear control until a filter is active', () => {
+    render(<BlogList posts={posts} />);
+    expect(screen.queryByRole('button', { name: /Show all/ })).not.toBeInTheDocument();
   });
 
   it('shows a fallback message when there are no posts', () => {
@@ -31,7 +44,7 @@ describe('BlogList', () => {
     expect(screen.getByText(/posts temporarily unavailable/i)).toBeInTheDocument();
   });
 
-  it('renders an identicon for every post', () => {
+  it('renders an identicon for every visible post', () => {
     const { container } = render(<BlogList posts={posts} />);
     expect(container.querySelectorAll('svg')).toHaveLength(posts.length);
   });
