@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: 'Nadeem Khan',
-  role: 'Backend / Data / ML Engineer',
-  pitch: 'I build reliable data and ML systems and ship them end to end.',
+  role: 'Senior Software Engineer · Distributed Systems · Applied AI',
+  pitch: 'I build and own high-scale distributed data platforms — processing 10TB+/day with 99%+ production reliability — where correctness and observability matter more than model novelty.',
   email: 'nadeem4.nk13@gmail.com',
   githubUsername: 'nadeem4',
   socials: {
