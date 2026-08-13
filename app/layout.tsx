@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { JetBrains_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CommandPalette } from '@/components/command-palette/command-palette';
 import { siteConfig } from '@/config/site';
+import { getSiteUrl } from '@/lib/site-url';
 import './globals.css';
 
 const jetBrainsMono = JetBrains_Mono({
@@ -15,6 +17,7 @@ const jetBrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getSiteUrl()),
   title: siteConfig.name,
   description: siteConfig.pitch,
 };
@@ -29,6 +32,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Footer />
           <CommandPalette />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
