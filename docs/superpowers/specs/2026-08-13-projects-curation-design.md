@@ -24,7 +24,15 @@ A focused project squashed into one commit scores worse than a folder of contest
 
 ## Gate: A Repo Must Have A Description
 
-Commit count is replaced by a simpler rule: **a repo appears only if it has a GitHub description.** Of 55 non-fork repos, 28 qualify.
+Commit count is replaced by a simpler rule: **a repo appears only if it has a GitHub description.** Of the 46 public non-fork repos, 23 qualify.
+
+### Only public repos are ever candidates
+
+`GET /users/{username}/repos` returns **public repositories only**, even when authenticated. Private repos therefore cannot appear on `/projects` regardless of description, and giving one a description has no effect on the site. Making it public is the only route.
+
+This is worth stating because `gh repo list` shows the authenticated user their private repos, so counting with it overstates what the site can see — an error made in an earlier draft of this spec, which quoted 28 described repos and 16 visible by counting six private ones.
+
+It also means a broadly-scoped `GITHUB_TOKEN` cannot leak private repos onto the site: the endpoint is public-only by construction.
 
 This is a better proxy for three reasons:
 
@@ -36,11 +44,11 @@ It also rescues exactly what the commit filter wrongly hid — `mini-gpt`, `chan
 
 ## Overrides
 
-The description gate leaves 28 repos, of which twelve still read as student or throwaway work. Rather than reverse the auto-pull decision from PRs #2 and #3 and return to a hand-maintained list of *inclusions*, a small `config/project-overrides.ts` carries only the exceptions:
+The description gate leaves 23 public repos, of which ten still read as student or throwaway work. Rather than reverse the auto-pull decision from PRs #2 and #3 and return to a hand-maintained list of *inclusions*, a small `config/project-overrides.ts` carries only the exceptions:
 
 ```ts
 export const featured = [
-  'nl2sql', 'medalflow', 'aurora', 'mini-gpt',
+  'nl2sql', 'medalflow', 'aurora', 'mini-gpt', 'ai_logger',
   'microservice_demo', 'spring_boot_multi_module_framework',
 ];
 
@@ -54,7 +62,9 @@ export const hidden = [
 ];
 ```
 
-Both lists hold repo names, matched exactly. `featured` sorts to the top in the order given; `hidden` is removed entirely. Result: **16 visible repos, 6 pinned.**
+Both lists hold repo names, matched exactly. `featured` sorts to the top in the order given; `hidden` is removed entirely. Result: **13 visible repos, 7 pinned.**
+
+Two `hidden` entries — `MET-CS-671---Data-Science-with-Python` and `MET-CS-566---Analysis-of-Algorithm` — name private repos and so match nothing today. They are kept deliberately: if either is ever made public it should stay hidden, and an inert entry costs nothing.
 
 **Pinning applies to the default view only.** In the explicit `Most Starred` view, repos sort purely by stars with no pinning — a sort control that does not actually sort is worse than no control. `hidden` applies in every view.
 
@@ -130,5 +140,6 @@ Two pull requests, to keep each reviewable:
 ## Out of Scope
 
 - **Visual redesign of the project cards.** The original question was whether to restyle them as the blog was restyled. Curation comes first: restyling would only make the current selection prettier. Worth revisiting afterwards, against a curated list.
-- **Writing descriptions for the remaining 27 undescribed repos.** The gate makes that the mechanism for surfacing one, but it is the author's judgement which deserve it. `ai_logger` and `data_masker` were described on 2026-08-13 and so now qualify; `ai_software_engineer` was deleted the same day.
+- **Writing descriptions for the remaining undescribed public repos.** The gate makes that the mechanism for surfacing one, but it is the author's judgement which deserve it.
+- **Publishing the remaining private repos.** `data_masker`, `career_forge_ai`, and `changelog` were described on 2026-08-13 but stay private, so they remain invisible to the site by design. `ai_logger` was made public the same day after its tree and config were checked for committed secrets; `ai_software_engineer` was deleted.
 - **`nutrient_detector`'s blank description**, which is deliberate — it holds reference PDFs, not code, and the gate now excludes it automatically.

@@ -2,31 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { sortRepos } from './sort-repos';
 import type { GithubRepo } from '@/lib/github.types';
 
-const repos: GithubRepo[] = [
-  {
-    slug: 'nadeem4/low-stars',
-    name: 'low-stars',
-    description: '',
-    url: 'https://github.com/nadeem4/low-stars',
-    stars: 2,
+function repo(name: string, stars: number): GithubRepo {
+  return {
+    slug: `nadeem4/${name}`,
+    name,
+    description: `${name} description`,
+    url: `https://github.com/nadeem4/${name}`,
+    stars,
     language: 'TypeScript',
     updatedAt: '2026-01-01T00:00:00Z',
-    license: 'MIT License',
-  },
-  {
-    slug: 'nadeem4/high-stars',
-    name: 'high-stars',
-    description: '',
-    url: 'https://github.com/nadeem4/high-stars',
-    stars: 42,
-    language: 'Python',
-    updatedAt: '2026-01-02T00:00:00Z',
     license: null,
-  },
-];
+  };
+}
+
+const repos: GithubRepo[] = [repo('low-stars', 2), repo('high-stars', 42)];
 
 describe('sortRepos', () => {
-  it('returns repos unchanged for the recent view (already recency-ordered on input)', () => {
+  it('returns repos unchanged for the recent view, preserving pinned order', () => {
     expect(sortRepos(repos, 'recent')).toEqual(repos);
   });
 
@@ -34,18 +26,13 @@ describe('sortRepos', () => {
     expect(sortRepos(repos, 'stars')).toEqual([repos[1], repos[0]]);
   });
 
-  it('filters to only licensed repos for the open-source view', () => {
-    expect(sortRepos(repos, 'open-source')).toEqual([repos[0]]);
-  });
-
-  it('returns an empty array when no repos are licensed for the open-source view', () => {
-    const unlicensed: GithubRepo[] = [{ ...repos[1], license: null }];
-    expect(sortRepos(unlicensed, 'open-source')).toEqual([]);
+  it('does not mutate the input when sorting by stars', () => {
+    sortRepos(repos, 'stars');
+    expect(repos.map((r) => r.name)).toEqual(['low-stars', 'high-stars']);
   });
 
   it('returns an empty array unchanged for any view', () => {
     expect(sortRepos([], 'recent')).toEqual([]);
     expect(sortRepos([], 'stars')).toEqual([]);
-    expect(sortRepos([], 'open-source')).toEqual([]);
   });
 });

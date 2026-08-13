@@ -6,7 +6,7 @@ import type { GithubRepo } from '@/lib/github.types';
 function makeRepo(overrides: Partial<GithubRepo> & { name: string }): GithubRepo {
   return {
     slug: `nadeem4/${overrides.name}`,
-    description: '',
+    description: `${overrides.name} description`,
     url: `https://github.com/nadeem4/${overrides.name}`,
     stars: 0,
     language: 'TypeScript',
@@ -16,78 +16,78 @@ function makeRepo(overrides: Partial<GithubRepo> & { name: string }): GithubRepo
   };
 }
 
-// Given in recency order (index 0 = most recently pushed).
+// Given in recency order (index 0 = most recently pushed), with featured repos
+// already pinned to the front by applyOverrides upstream. Nine repos, so two
+// sit beyond the seven-repo default and Load more stays exercised.
 const repos: GithubRepo[] = [
-  makeRepo({ name: 'repo-a', stars: 10, license: null }),
-  makeRepo({ name: 'repo-b', stars: 50, license: 'MIT License' }),
-  makeRepo({ name: 'repo-c', stars: 5, license: null }),
-  makeRepo({ name: 'repo-d', stars: 30, license: 'MIT License' }),
-  makeRepo({ name: 'repo-e', stars: 1, license: null }),
-  makeRepo({ name: 'repo-f', stars: 99, license: null }),
-  makeRepo({ name: 'repo-g', stars: 20, license: 'MIT License' }),
+  makeRepo({ name: 'repo-a', stars: 10 }),
+  makeRepo({ name: 'repo-b', stars: 50 }),
+  makeRepo({ name: 'repo-c', stars: 5 }),
+  makeRepo({ name: 'repo-d', stars: 30 }),
+  makeRepo({ name: 'repo-e', stars: 1 }),
+  makeRepo({ name: 'repo-f', stars: 99 }),
+  makeRepo({ name: 'repo-g', stars: 20 }),
+  makeRepo({ name: 'repo-h', stars: 7 }),
+  makeRepo({ name: 'repo-i', stars: 60 }),
 ];
 
 describe('ProjectList', () => {
-  it('shows at most 5 repos in the given recent order by default', () => {
+  it('shows the first seven repos in the given order by default, matching the featured count', () => {
     render(<ProjectList repos={repos} pipelines={{}} />);
 
-    expect(screen.getByText('repo-a')).toBeInTheDocument();
-    expect(screen.getByText('repo-b')).toBeInTheDocument();
-    expect(screen.getByText('repo-c')).toBeInTheDocument();
-    expect(screen.getByText('repo-d')).toBeInTheDocument();
-    expect(screen.getByText('repo-e')).toBeInTheDocument();
-    expect(screen.queryByText('repo-f')).not.toBeInTheDocument();
-    expect(screen.queryByText('repo-g')).not.toBeInTheDocument();
+    for (const name of ['repo-a', 'repo-b', 'repo-c', 'repo-d', 'repo-e', 'repo-f', 'repo-g']) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
+    expect(screen.queryByText('repo-h')).not.toBeInTheDocument();
+    expect(screen.queryByText('repo-i')).not.toBeInTheDocument();
   });
 
-  it('re-sorts by stars and resets to showing 5 when Most Starred is clicked', () => {
+  it('offers only the Recent and Most Starred views', () => {
+    render(<ProjectList repos={repos} pipelines={{}} />);
+
+    expect(screen.getByRole('button', { name: 'Recent' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Most Starred' })).toBeInTheDocument();
+    // The Open Source view filtered by licence presence, which is not what the
+    // term means; it was removed rather than left to collide with contributions.
+    expect(screen.queryByRole('button', { name: /open source/i })).not.toBeInTheDocument();
+  });
+
+  it('re-sorts strictly by stars when Most Starred is clicked, discarding pinned order', () => {
     render(<ProjectList repos={repos} pipelines={{}} />);
 
     fireEvent.click(screen.getByRole('button', { name: 'Most Starred' }));
 
-    // Top 5 by stars: repo-f (99), repo-b (50), repo-d (30), repo-g (20), repo-a (10)
-    expect(screen.getByText('repo-f')).toBeInTheDocument();
-    expect(screen.getByText('repo-b')).toBeInTheDocument();
-    expect(screen.getByText('repo-d')).toBeInTheDocument();
-    expect(screen.getByText('repo-g')).toBeInTheDocument();
-    expect(screen.getByText('repo-a')).toBeInTheDocument();
-    // Lowest two by stars are not in the top 5.
+    // Top seven by stars: f(99) i(60) b(50) d(30) g(20) a(10) h(7)
+    for (const name of ['repo-f', 'repo-i', 'repo-b', 'repo-d', 'repo-g', 'repo-a', 'repo-h']) {
+      expect(screen.getByText(name)).toBeInTheDocument();
+    }
     expect(screen.queryByText('repo-c')).not.toBeInTheDocument();
     expect(screen.queryByText('repo-e')).not.toBeInTheDocument();
   });
 
-  it('filters to only licensed repos when Open Source is clicked', () => {
+  it('resets to the default count when the view changes', () => {
     render(<ProjectList repos={repos} pipelines={{}} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Open Source' }));
+    fireEvent.click(screen.getByRole('button', { name: /load more/i }));
+    fireEvent.click(screen.getByRole('button', { name: 'Most Starred' }));
 
-    expect(screen.getByText('repo-b')).toBeInTheDocument();
-    expect(screen.getByText('repo-d')).toBeInTheDocument();
-    expect(screen.getByText('repo-g')).toBeInTheDocument();
-    expect(screen.queryByText('repo-a')).not.toBeInTheDocument();
-    expect(screen.queryByText('repo-c')).not.toBeInTheDocument();
-    expect(screen.queryByText('repo-e')).not.toBeInTheDocument();
-    expect(screen.queryByText('repo-f')).not.toBeInTheDocument();
-  });
-
-  it('shows a dim empty-state message when no repo is open-source licensed', () => {
-    const unlicensed = repos.map((repo) => ({ ...repo, license: null }));
-    render(<ProjectList repos={unlicensed} pipelines={{}} />);
-
-    fireEvent.click(screen.getByRole('button', { name: 'Open Source' }));
-
-    expect(screen.getByText(/no open-source-licensed repos yet/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /load more/i })).toBeInTheDocument();
   });
 
   it('reveals the rest of the list on Load more and then hides the button', () => {
     render(<ProjectList repos={repos} pipelines={{}} />);
 
-    expect(screen.queryByText('repo-f')).not.toBeInTheDocument();
+    expect(screen.queryByText('repo-h')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /load more/i }));
 
-    expect(screen.getByText('repo-f')).toBeInTheDocument();
-    expect(screen.getByText('repo-g')).toBeInTheDocument();
+    expect(screen.getByText('repo-h')).toBeInTheDocument();
+    expect(screen.getByText('repo-i')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /load more/i })).not.toBeInTheDocument();
+  });
+
+  it('shows no Load more button when everything already fits', () => {
+    render(<ProjectList repos={repos.slice(0, 3)} pipelines={{}} />);
     expect(screen.queryByRole('button', { name: /load more/i })).not.toBeInTheDocument();
   });
 });
