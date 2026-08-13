@@ -28,10 +28,13 @@ describe('the All card', () => {
     expect(screen.getByRole('button', { name: /All/ })).toHaveTextContent('4');
   });
 
-  it('shows the catalog year range', () => {
-    render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
-    expect(screen.getByRole('button', { name: /All/ })).toHaveTextContent('2020');
-    expect(screen.getByRole('button', { name: /All/ })).toHaveTextContent('2026');
+  it('sits outside the category grid, so twelve categories tile evenly', () => {
+    // Thirteen is prime and orphans a card at 2, 3 and 4 columns alike; twelve
+    // divides cleanly by all three. All also is not a category.
+    const { container } = render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
+    const grid = container.querySelector('.grid');
+    expect(grid?.querySelectorAll('button')).toHaveLength(2); // the two categories, not All
+    expect(screen.getByRole('button', { name: /All/ })).not.toBe(grid?.firstElementChild);
   });
 
   it('is pressed when no category is selected, so the default state reads as a choice', () => {
