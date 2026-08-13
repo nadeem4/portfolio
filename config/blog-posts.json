@@ -1,0 +1,738 @@
+[
+  {
+    "id": "3b5bf9705c59",
+    "title": "Scaling Contrastive Training: Batch Size, GPU Gathering, and Gradient Caching",
+    "subtitle": "Why bigger training batches make embedding models better, and how teams build batches too big for any single GPU to hold",
+    "url": "https://medium.com/@nadeem4-nk13/scaling-contrastive-training-batch-size-gpu-gathering-and-gradient-caching-3b5bf9705c59",
+    "date": "2026-08-12",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "5007aa0d6b09",
+    "title": "How Embedding Models Actually Learn: The Math Behind Contrastive Training",
+    "subtitle": "The InfoNCE formula, the pooling code, and the training loop behind every embedding model, worked through with real numbers.",
+    "url": "https://medium.com/@nadeem4-nk13/how-embedding-models-actually-learn-the-math-behind-contrastive-training-5007aa0d6b09",
+    "date": "2026-08-09",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "594f30ae787c",
+    "title": "Embeddings 101: How Text, Images, and Audio Become Vectors",
+    "subtitle": "How embedding models learn to turn text, images, and audio into vectors, explained with everyday analogies and no jargon.",
+    "url": "https://medium.com/@nadeem4-nk13/embeddings-101-how-text-images-and-audio-become-vectors-594f30ae787c",
+    "date": "2026-08-09",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "f2e8c08fef1a",
+    "title": "What Is a Vector Database? Origins, Use Cases, and How It Differs from Relational and NoSQL Systems",
+    "subtitle": "Why nearest-neighbor search needed an entirely new kind of database, not just a new column type.",
+    "url": "https://medium.com/@nadeem4-nk13/what-is-a-vector-database-origins-use-cases-and-how-it-differs-from-relational-and-nosql-systems-f2e8c08fef1a",
+    "date": "2026-08-02",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "074e8f423854",
+    "title": "LLM Serving Architectures: Batching, KV-Cache, Multi-Tenancy",
+    "subtitle": "Inside the batching, caching, and multi-tenancy decisions that determine your cost per token.",
+    "url": "https://medium.com/@nadeem4-nk13/llm-serving-architectures-batching-kv-cache-multi-tenancy-074e8f423854",
+    "date": "2026-07-31",
+    "category": "AI System Design"
+  },
+  {
+    "id": "f1aaab955d2d",
+    "title": "Orchestration & Memory: Context Management for Long-Running Agents",
+    "subtitle": "A system design guide to context windows, memory types, and multi-agent coordination for agents that run for hours or days.",
+    "url": "https://medium.com/@nadeem4-nk13/orchestration-memory-context-management-for-long-running-agents-f1aaab955d2d",
+    "date": "2026-07-30",
+    "category": "AI System Design"
+  },
+  {
+    "id": "b19eecbace9e",
+    "title": "Agentic Systems: Tool Use, Planning, Multi-Step Reasoning",
+    "subtitle": "A system design guide to how agents plan, call tools, and reason across multiple steps in production.",
+    "url": "https://medium.com/@nadeem4-nk13/agentic-systems-tool-use-planning-multi-step-reasoning-b19eecbace9e",
+    "date": "2026-07-29",
+    "category": "AI System Design"
+  },
+  {
+    "id": "82d5f583b31c",
+    "title": "Fine-Tuning vs. RAG vs. Prompting: Choosing the Right Approach",
+    "subtitle": "A practical framework for deciding when to prompt, retrieve, or fine-tune, and how to combine all three.",
+    "url": "https://medium.com/@nadeem4-nk13/fine-tuning-vs-rag-vs-prompting-choosing-the-right-approach-82d5f583b31c",
+    "date": "2026-07-27",
+    "category": "AI System Design"
+  },
+  {
+    "id": "3ea9ce6f3159",
+    "title": "Embeddings & Vector Databases: Architecture and Trade-offs",
+    "subtitle": "Inside the index: how embedding choices and ANN architecture decide your RAG system's speed, cost, and recall.",
+    "url": "https://medium.com/@nadeem4-nk13/embeddings-vector-databases-architecture-and-trade-offs-3ea9ce6f3159",
+    "date": "2026-07-25",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "546f21eded2f",
+    "title": "Designing RAG Systems: Retrieval, Chunking, Re-ranking, Grounding",
+    "subtitle": "Chunking, hybrid retrieval, re-ranking, and grounding checks: designing RAG as a pipeline instead of a single embedding lookup",
+    "url": "https://medium.com/@nadeem4-nk13/designing-rag-systems-retrieval-chunking-re-ranking-grounding-546f21eded2f",
+    "date": "2026-07-24",
+    "category": "AI System Design"
+  },
+  {
+    "id": "764a0d3f4e2f",
+    "title": "How AWS Lambda Runs 15 Trillion Invocations a Month: Firecracker, Snapshots, and Tiered Caches",
+    "subtitle": "Inside the microVM stack, snapshot restores, and three-tier caches that let one platform run trillions of tenant invocations.",
+    "url": "https://medium.com/@nadeem4-nk13/how-aws-lambda-runs-15-trillion-invocations-a-month-firecracker-snapshots-and-tiered-caches-764a0d3f4e2f",
+    "date": "2026-07-22",
+    "category": "System Design Case Studies"
+  },
+  {
+    "id": "15219335d078",
+    "title": "Pretraining vs. Post-Training: How a Text Predictor Becomes an Assistant",
+    "subtitle": "The two-stage training process that turns a raw next-token predictor into a model with a point of view.",
+    "url": "https://medium.com/@nadeem4-nk13/pretraining-vs-post-training-how-a-text-predictor-becomes-an-assistant-15219335d078",
+    "date": "2026-07-20",
+    "category": "J-Space Primer"
+  },
+  {
+    "id": "d998a5a1860d",
+    "title": "Chain-of-Thought and Scratchpad Reasoning: The Model Thinking Out Loud",
+    "subtitle": "Why letting a model write out its reasoning improves accuracy, and why that visible channel isn't the whole story.",
+    "url": "https://medium.com/@nadeem4-nk13/chain-of-thought-and-scratchpad-reasoning-the-model-thinking-out-loud-d998a5a1860d",
+    "date": "2026-07-20",
+    "category": "J-Space Primer"
+  },
+  {
+    "id": "bc5d61531c5a",
+    "title": "Attention Mechanism Basics: How Tokens Reach Across the Whole Context",
+    "subtitle": "How queries, keys, and values let any token pull information from anywhere earlier in a sequence, no matter how far back.",
+    "url": "https://medium.com/@nadeem4-nk13/attention-mechanism-basics-how-tokens-reach-across-the-whole-context-bc5d61531c5a",
+    "date": "2026-07-19",
+    "category": "J-Space Primer"
+  },
+  {
+    "id": "dfe1a585fce8",
+    "title": "Procrastinate: Turning Postgres Into Your Task Queue",
+    "subtitle": "How PostgreSQL's LISTEN/NOTIFY and SKIP LOCKED quietly replace your message broker, and when they shouldn't.",
+    "url": "https://medium.com/@nadeem4-nk13/procrastinate-turning-postgres-into-your-task-queue-dfe1a585fce8",
+    "date": "2026-07-17",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "439db0c2ef13",
+    "title": "GPT-Live: OpenAI's Full-Duplex Voice Architecture Ends the Turn-Taking Era",
+    "subtitle": "Every voice assistant you have used, from Siri to the original ChatGPT Advanced Voice Mode, shares a hidden assumption: conversation…",
+    "url": "https://medium.com/@nadeem4-nk13/gpt-live-openais-full-duplex-voice-architecture-ends-the-turn-taking-era-439db0c2ef13",
+    "date": "2026-07-16",
+    "category": "AI Breakthroughs"
+  },
+  {
+    "id": "b2263c43f869",
+    "title": "Postgres Learns to Speak Graph: Inside SQL/PGQ and PostgreSQL 19",
+    "subtitle": "PostgreSQL 19 ships native graph pattern-matching with SQL/PGQ. Here's how CREATE PROPERTY GRAPH and GRAPH_TABLE work, and how they stack up",
+    "url": "https://medium.com/@nadeem4-nk13/postgres-learns-to-speak-graph-inside-sql-pgq-and-postgresql-19-b2263c43f869",
+    "date": "2026-07-15",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "33ab164b6ee8",
+    "title": "How WhatsApp Moved 50 Billion Messages a Day With Just 32 Engineers",
+    "subtitle": "How 32 engineers ran a global messaging service on Erlang, Mnesia, and FreeBSD, and the ruthless simplicity that made it possible.",
+    "url": "https://medium.com/@nadeem4-nk13/how-whatsapp-moved-50-billion-messages-a-day-with-just-32-engineers-33ab164b6ee8",
+    "date": "2026-07-12",
+    "category": "System Design Case Studies"
+  },
+  {
+    "id": "ed1ee839d9fe",
+    "title": "Transformer Layers and the Residual Stream",
+    "subtitle": "The shared vector every transformer layer reads from and writes to, and why it's the concrete object interpretability tools actually probe.",
+    "url": "https://medium.com/@nadeem4-nk13/transformer-layers-and-the-residual-stream-ed1ee839d9fe",
+    "date": "2026-07-08",
+    "category": "J-Space Primer"
+  },
+  {
+    "id": "13eb0b809c97",
+    "title": "Prompt Engineering as a System Design Discipline",
+    "subtitle": "Why the next evolution of prompt engineering looks like software architecture, not wordsmithing.",
+    "url": "https://medium.com/@nadeem4-nk13/prompt-engineering-as-a-system-design-discipline-13eb0b809c97",
+    "date": "2026-07-07",
+    "category": "AI System Design"
+  },
+  {
+    "id": "a74a5a51f353",
+    "title": "A Global Workspace in Language Models: Anthropic Finds a Silent \"J-Space\" Inside Claude",
+    "subtitle": "Anthropic's J-lens uncovers a compact internal workspace in Claude that mirrors global workspace theory of consciousness.",
+    "url": "https://medium.com/@nadeem4-nk13/a-global-workspace-in-language-models-anthropic-finds-a-silent-j-space-inside-claude-a74a5a51f353",
+    "date": "2026-07-07",
+    "category": "AI Breakthroughs"
+  },
+  {
+    "id": "785ed050e5f7",
+    "title": "Why Framing Comes Before Architecture",
+    "subtitle": "Latency, cost, and quality are three dials that pull against each other. Good LLM design is choosing where each one sits, on purpose.",
+    "url": "https://medium.com/@nadeem4-nk13/why-framing-comes-before-architecture-785ed050e5f7",
+    "date": "2026-07-06",
+    "category": "AI System Design"
+  },
+  {
+    "id": "ef64ba10b45e",
+    "title": "How YouTube Scaled MySQL to 2.49 Billion Users: The Vitess Story",
+    "subtitle": "A tour of Vitess, the layer that lets YouTube run 2.49 billion users on plain MySQL, plus the 9 patterns any team can steal from it.",
+    "url": "https://medium.com/@nadeem4-nk13/how-youtube-scaled-mysql-to-2-49-billion-users-the-vitess-story-ef64ba10b45e",
+    "date": "2026-07-02",
+    "category": "System Design Case Studies"
+  },
+  {
+    "id": "40e9d6c87f1c",
+    "title": "Why LLM-Era AI Systems Break Every Rule You Learned About ML in Production",
+    "subtitle": "The model is just one component. The system is everything around it: context, tools, orchestration, evals, and cost controls.",
+    "url": "https://medium.com/@nadeem4-nk13/why-llm-era-ai-systems-break-every-rule-you-learned-about-ml-in-production-40e9d6c87f1c",
+    "date": "2026-07-01",
+    "category": "AI System Design"
+  },
+  {
+    "id": "866226068cc4",
+    "title": "PostgreSQL Internals, CDC, Kafka, and Distributed Systems Engineering Series",
+    "subtitle": "PostgreSQL WAL, logical replication, Kafka, CDC pipelines, and distributed systems lessons from production-scale systems.",
+    "url": "https://medium.com/@nadeem4-nk13/postgresql-internals-cdc-kafka-and-distributed-systems-engineering-series-866226068cc4",
+    "date": "2026-05-18",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "5c49dc2d9200",
+    "title": "Kafka-Based PostgreSQL → Salesforce Architecture (Part 2): How the System Actually Works",
+    "subtitle": "Reconciling streaming CDC, batch-oriented APIs, and lakehouse storage in a production-grade PostgreSQL to Salesforce architecture.",
+    "url": "https://medium.com/@nadeem4-nk13/kafka-based-postgresql-salesforce-architecture-part-2-how-the-system-actually-works-5c49dc2d9200",
+    "date": "2026-04-24",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "931e505f8910",
+    "title": "PostgreSQL to Salesforce at Scale: Evolving a CDC Pipeline with Kafka",
+    "subtitle": "From table-based buffering to a distributed log architecture for multi-consumer, high-throughput systems",
+    "url": "https://medium.com/@nadeem4-nk13/postgresql-to-salesforce-at-scale-evolving-a-cdc-pipeline-with-kafka-931e505f8910",
+    "date": "2026-04-10",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "0b5802323fa0",
+    "title": "Building a Reliable PostgreSQL → Salesforce CDC Pipeline: Lessons from WAL, Replication, and Failure Isolation",
+    "subtitle": "Designing a serverless data pipeline with Azure Functions while protecting PostgreSQL using deterministic control loops",
+    "url": "https://medium.com/@nadeem4-nk13/building-a-reliable-postgresql-salesforce-cdc-pipeline-lessons-from-wal-replication-and-0b5802323fa0",
+    "date": "2026-04-07",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "14d108cbfbb6",
+    "title": "Protecting PostgreSQL Primaries from Replication Slot Failures",
+    "subtitle": "Exporting slot telemetry and building an automated WAL protection control loop for high-throughput CDC pipelines.",
+    "url": "https://medium.com/dev-genius/protecting-postgresql-primaries-from-replication-slot-failures-14d108cbfbb6",
+    "date": "2026-03-19",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "10729660cf3a",
+    "title": "PostgreSQL Logical Replication at Scale: Database-Side Guardrails for 60M+ Change Events",
+    "subtitle": "Configuring replication slots, WAL retention limits, failover strategy, and monitoring to protect the primary under sustained peak load.",
+    "url": "https://medium.com/dev-genius/postgresql-logical-replication-at-scale-database-side-guardrails-for-60m-change-events-10729660cf3a",
+    "date": "2026-03-10",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "312593202881",
+    "title": "PostgreSQL Logical Replication Internals: restart_lsn vs confirmed_flush_lsn Explained",
+    "subtitle": "How LSN movement controls WAL retention and disk stability",
+    "url": "https://medium.com/dev-genius/postgresql-logical-replication-internals-restart-lsn-vs-confirmed-flush-lsn-explained-312593202881",
+    "date": "2026-02-24",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "8081ced8f765",
+    "title": "Understanding PostgreSQL Logical Replication: The Complete End-to-End Flow",
+    "subtitle": "Understand how PostgreSQL streams row-level changes using WAL, logical decoding, replication slots, and subscriber feedback.",
+    "url": "https://medium.com/dev-genius/understanding-postgresql-logical-replication-the-complete-end-to-end-flow-8081ced8f765",
+    "date": "2026-02-19",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "2385b1c976cc",
+    "title": "From Hot Partitions to Stable Throughput: Lessons From Kafka in Production",
+    "subtitle": "What partition skew, consumer lag, and downstream bottlenecks taught me about operating Kafka at scale",
+    "url": "https://medium.com/learnwithnk/from-hot-partitions-to-stable-throughput-lessons-from-kafka-in-production-2385b1c976cc",
+    "date": "2026-02-18",
+    "category": "Backend & Infra"
+  },
+  {
+    "id": "bc726e776f03",
+    "title": "How to Choose the Right Messaging System in Distributed Systems",
+    "subtitle": "A practical guide to task queues, Log-Based Queues, and Pub/Sub",
+    "url": "https://medium.com/learnwithnk/how-to-choose-the-right-messaging-system-in-distributed-systems-bc726e776f03",
+    "date": "2026-02-09",
+    "category": "Backend & Infra"
+  },
+  {
+    "id": "f1b9d92150fe",
+    "title": "Partitioning vs. Sharding: A Practical Guide to Scaling Beyond One Machine",
+    "subtitle": "Confused by database scaling? Here is a plain-English breakdown of partitioning and sharding, and how they keep your app running fast.",
+    "url": "https://medium.com/dev-genius/partitioning-vs-sharding-a-practical-guide-to-scaling-beyond-one-machine-f1b9d92150fe",
+    "date": "2026-02-09",
+    "category": "Backend & Infra"
+  },
+  {
+    "id": "bdb4bd9cf398",
+    "title": "How Kafka Really Works: Lessons from a 60M+ Events/Day Production Pipeline",
+    "subtitle": "Understanding Kafka's core architecture through real production experience at 60M+ events per day.",
+    "url": "https://medium.com/learnwithnk/kafka-under-the-hood-the-architecture-secrets-that-make-it-scale-bdb4bd9cf398",
+    "date": "2026-02-06",
+    "category": "Backend & Infra"
+  },
+  {
+    "id": "61e31954af90",
+    "title": "Beyond Accuracy: A Developer's Guide to Reliable LLM Evaluation",
+    "subtitle": "Accuracy is a vanity metric. To build production-grade AI, you need to master the tension between Precision, Recall, and the F1 Score",
+    "url": "https://medium.com/learnwithnk/beyond-accuracy-a-developers-guide-to-reliable-llm-evaluation-61e31954af90",
+    "date": "2026-01-31",
+    "category": "AI System Design"
+  },
+  {
+    "id": "f575c832af69",
+    "title": "How to Stop Your NL2SQL Agents From Crashing in Production: The Worker-Pool Pattern",
+    "subtitle": "A guide to process boundary isolation, preventing system-wide failures in LLM-driven data applications",
+    "url": "https://medium.com/dev-genius/how-to-stop-your-nl2sql-agents-from-crashing-in-production-the-worker-pool-pattern-f575c832af69",
+    "date": "2026-01-22",
+    "category": "AI System Design"
+  },
+  {
+    "id": "397bfa129673",
+    "title": "Beyond Schema: Why Your AI Can't Write Good SQL (and How to Fix It)",
+    "subtitle": "When we began building the NL2SQL platform, we thought, \"If the AI knows the table schemas, it should be able to write good SQL, right?\"…",
+    "url": "https://medium.com/learnwithnk/beyond-schema-why-your-ai-cant-write-good-sql-and-how-to-fix-it-397bfa129673",
+    "date": "2026-01-12",
+    "category": "AI System Design"
+  },
+  {
+    "id": "eb2db557446c",
+    "title": "Engineering Trust: A Defensive Architecture for NL2SQL Systems",
+    "subtitle": "The promise of Natural Language to SQL (NL2SQL) is transformative: democratising data access by enabling anyone to query complex databases…",
+    "url": "https://medium.com/learnwithnk/engineering-trust-a-defensive-architecture-for-nl2sql-systems-eb2db557446c",
+    "date": "2026-01-12",
+    "category": "AI System Design"
+  },
+  {
+    "id": "f3dbbd11b556",
+    "title": "Scaling Up RL: From Q-Tables to Deep Q-Networks (DQN)",
+    "subtitle": "Stop counting states and start approximating them. Here is how DQN scales Reinforcement Learning to the infinite.",
+    "url": "https://medium.com/learnwithnk/scaling-up-rl-from-q-tables-to-deep-q-networks-dqn-f3dbbd11b556",
+    "date": "2026-01-12",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "8e80491f3a01",
+    "title": "From Q-Learning to LLMs: Mastering the Bedrock of Post-Training",
+    "subtitle": "Master the basics of Value-Based Learning before diving into complex policy-based methods like PPO and GRPO.",
+    "url": "https://medium.com/learnwithnk/from-q-learning-to-llms-mastering-the-bedrock-of-post-training-8e80491f3a01",
+    "date": "2026-01-04",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "9d7e494a863b",
+    "title": "Scalable Inference with RDMA and Tiered KV Caching",
+    "subtitle": "How zero-copy networking and memory offloading resolve the GPU memory bottleneck",
+    "url": "https://medium.com/learnwithnk/scalable-inference-with-rdma-and-tiered-kv-caching-9d7e494a863b",
+    "date": "2025-11-28",
+    "category": "AI System Design"
+  },
+  {
+    "id": "7ec144f4e9c7",
+    "title": "The Intuition Behind LoRA & QLoRA: Fine-Tuning LLMs Without Going Broke",
+    "subtitle": "Large Language Models (LLMs) have unlocked extraordinary capabilities, but all are trained on general-purpose data. You have to write long…",
+    "url": "https://medium.com/learnwithnk/the-intuition-behind-lora-qlora-fine-tuning-llms-without-going-broke-7ec144f4e9c7",
+    "date": "2025-11-25",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "b60e8b0fb0b6",
+    "title": "The 70B LLM Optimisation Playbook: From 57.5GB to 24.3GB Per GPU",
+    "subtitle": "A step-by-step guide to Weight, KV Cache, and Activation quantization (FP8 & 4-bit) to reclaim VRAM and unlock 2x performance.",
+    "url": "https://medium.com/learnwithnk/the-70b-llm-optimisation-playbook-from-57-5gb-to-24-3gb-per-gpu-b60e8b0fb0b6",
+    "date": "2025-11-21",
+    "category": "AI System Design"
+  },
+  {
+    "id": "26e0b47e6745",
+    "title": "How to Serve a 70B Model with a 128K Context on Just 8 H100s",
+    "subtitle": "Deploying a 70-billion-parameter model with a 128K context limit is a massive infrastructure challenge. A single H100 SXM GPU with 80GB of…",
+    "url": "https://medium.com/learnwithnk/how-to-serve-a-70b-model-with-a-128k-context-on-just-8-h100s-26e0b47e6745",
+    "date": "2025-11-10",
+    "category": "AI System Design"
+  },
+  {
+    "id": "c1ad96442d50",
+    "title": "Decoding Real-Time LLM Inference: A Guide to the Latency vs. Throughput Bottleneck",
+    "subtitle": "A deep dive into the engineering bottlenecks (TTFT, batching, and the KV Cache) that define real-time LLM performance.",
+    "url": "https://medium.com/learnwithnk/decoding-real-time-llm-inference-a-guide-to-the-latency-vs-throughput-bottleneck-c1ad96442d50",
+    "date": "2025-10-31",
+    "category": "AI System Design"
+  },
+  {
+    "id": "aa27d1fe3dfa",
+    "title": "The Secret to the First Word: How LLMs Build Context with Prefill",
+    "subtitle": "A technical-but-simple guide to how LLMs process your prompt, build the KV Cache, and why it impacts response speed (TTFT)",
+    "url": "https://medium.com/learnwithnk/the-secret-to-the-first-word-how-llms-build-context-with-prefill-aa27d1fe3dfa",
+    "date": "2025-10-29",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "385235791650",
+    "title": "How LLMs Understand Your Prompt: A Deep Dive into Prefill Attention",
+    "subtitle": "Go beyond Q, K, V. Learn how causal masks, parallel heads, and the KV cache work together to process your prompt instantly",
+    "url": "https://medium.com/learnwithnk/how-llms-understand-your-prompt-a-deep-dive-into-prefill-attention-385235791650",
+    "date": "2025-10-27",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "e7d611e07e29",
+    "title": "From Prompt to Response: Unpacking the Magic of LLM Inference",
+    "subtitle": "Learn how Large Language Models (LLMs) work. This guide breaks down LLM inference into two simple phases: the prefill and the decode.",
+    "url": "https://medium.com/learnwithnk/from-prompt-to-response-unpacking-the-magic-of-llm-inference-e7d611e07e29",
+    "date": "2025-10-23",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "9a1f74843fbd",
+    "title": "I Learned How Azure Functions Run My Code: A Deep Dive into the Python Worker and gRPC",
+    "subtitle": "How Azure Functions runs Python: Inside the out-of-process model, the Python Worker, and its gRPC connection.",
+    "url": "https://medium.com/@nadeem4-nk13/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-python-worker-and-grpc-9a1f74843fbd",
+    "date": "2025-06-30",
+    "category": "Azure Functions Internals"
+  },
+  {
+    "id": "790425b723e7",
+    "title": "I Learned How Azure Functions Run My Code: A Deep Dive into the Host and WebJobs SDK",
+    "subtitle": "A deep dive into the Azure Functions Host and the WebJobs SDK engine that powers your serverless code.",
+    "url": "https://medium.com/@nadeem4-nk13/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-host-and-webjobs-sdk-790425b723e7",
+    "date": "2025-06-19",
+    "category": "Azure Functions Internals"
+  },
+  {
+    "id": "ac6850a49e05",
+    "title": "I Spent an Entire Weekend Demystifying the Azure Functions Runtime so that You Can Learn It in 5 Minutes.",
+    "subtitle": "Photo by Alexandre Debiève on Unsplash",
+    "url": "https://medium.com/learnwithnk/i-spent-an-entire-weekend-demystifying-the-azure-functions-runtime-so-that-you-can-learn-it-in-5-ac6850a49e05",
+    "date": "2025-06-16",
+    "category": "Azure Functions Internals"
+  },
+  {
+    "id": "b48cbddfa6dd",
+    "title": "Messy Logging Config? Here's the dictConfig Fix",
+    "subtitle": "Learn the intent behind dictConfig: using one clean dictionary to finally take control of your scattered Python logging configuration.",
+    "url": "https://medium.com/@nadeem4-nk13/messy-logging-config-heres-the-dictconfig-fix-b48cbddfa6dd",
+    "date": "2025-06-13",
+    "category": "Python Logging"
+  },
+  {
+    "id": "99425de18026",
+    "title": "Python Logging Unveiled: What Happens When You Call .info()?",
+    "subtitle": "Ever wonder how Python logging decides what to show? We break down the journey of your log messages from creation to output.",
+    "url": "https://medium.com/learnwithnk/python-logging-unveiled-what-happens-when-you-call-info-99425de18026",
+    "date": "2025-06-11",
+    "category": "Python Logging"
+  },
+  {
+    "id": "7ff17129f2a7",
+    "title": "How to Choose the Right Python Logging Setup: A Breakdown of the 4 Methods",
+    "subtitle": "Stop guessing which logging method to use. This guide breaks down the pros and cons of all four options to help you make the right decision",
+    "url": "https://medium.com/learnwithnk/how-to-choose-the-right-python-logging-setup-a-breakdown-of-the-4-methods-7ff17129f2a7",
+    "date": "2025-06-09",
+    "category": "Python Logging"
+  },
+  {
+    "id": "e70b75603c01",
+    "title": "What Actually Happens When You Use logger.setLevel() in Python?",
+    "subtitle": "Demystifying logger.setLevel(): See How Python Instantly Manages Your Log Levels.",
+    "url": "https://medium.com/@nadeem4-nk13/what-actually-happens-when-you-use-logger-setlevel-in-python-e70b75603c01",
+    "date": "2025-06-04",
+    "category": "Python Logging"
+  },
+  {
+    "id": "6d9fd3a5dc11",
+    "title": "Get Your Python Logs Talking: A Clear Guide to Adapters & Filters",
+    "subtitle": "Add powerful context to your Python logs. A straightforward walkthrough of LoggerAdapters and Filters for truly better insights",
+    "url": "https://medium.com/learnwithnk/get-your-python-logs-talking-a-clear-guide-to-adapters-filters-6d9fd3a5dc11",
+    "date": "2025-06-03",
+    "category": "Python Logging"
+  },
+  {
+    "id": "39042bde73e7",
+    "title": "Log Like a Pro: Understanding Python's Logging Essentials",
+    "subtitle": "Python logging deep dive: Grasp Loggers, Handlers, Filters, & Formatters for insightful, error-free code",
+    "url": "https://medium.com/learnwithnk/log-like-a-pro-understanding-pythons-logging-essentials-39042bde73e7",
+    "date": "2025-05-29",
+    "category": "Python Logging"
+  },
+  {
+    "id": "6a59f8ac7c00",
+    "title": "From Data to Vectors: How Vector Databases Revolutionize Data Storage",
+    "subtitle": "Master vector databases and how they store text, images, and audio as vectors to enhance search and recommendation systems",
+    "url": "https://medium.com/learnwithnk/from-data-to-vectors-how-vector-databases-revolutionize-data-storage-6a59f8ac7c00",
+    "date": "2024-09-24",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "f8595ebf4f92",
+    "title": "Discover the Magic Behind Your Searches: How Semantic and Vector Search Transform Your Online Experience",
+    "subtitle": "Discover how semantic and vector search technologies combine to deliver accurate, relevant, and efficient online search results.",
+    "url": "https://medium.com/learnwithnk/semantic-and-vector-search-enhancing-your-online-search-experience-f8595ebf4f92",
+    "date": "2024-09-20",
+    "category": "AI System Design"
+  },
+  {
+    "id": "45a44f2b0c97",
+    "title": "Understanding Azure Synapse Link: Initial Sync, Incremental Changes, and In-Place Updates",
+    "subtitle": "In the world of data management, where efficiency and accuracy are everything, especially with the massive amounts of information stored in…",
+    "url": "https://medium.com/learnwithnk/understanding-azure-synapse-link-initial-sync-incremental-changes-and-in-place-updates-45a44f2b0c97",
+    "date": "2024-09-16",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "6e66327ad300",
+    "title": "The Mechanics of Query Expansion in RAG Systems: A Theoretical Exploration of PRF and LLM Techniques",
+    "subtitle": "Learn How Query Expansion, PRF & LLMs Power RAG Systems for Enhanced Search Accuracy and Relevant Results",
+    "url": "https://medium.com/learnwithnk/the-mechanics-of-query-expansion-in-rag-systems-a-theoretical-exploration-of-prf-and-llm-6e66327ad300",
+    "date": "2024-09-16",
+    "category": "AI System Design"
+  },
+  {
+    "id": "bd09b243084e",
+    "title": "Are You Combining Software Engineering and Data Engineering for Maximum Efficiency?",
+    "subtitle": "Optimize Data Engineering with Top Software Engineering Practices: Enhance Code Efficiency, Decoupling, Python SQL & More",
+    "url": "https://medium.com/learnwithnk/are-you-combining-software-engineering-and-data-engineering-for-maximum-efficiency-bd09b243084e",
+    "date": "2024-09-16",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "d293a6d804d1",
+    "title": "Rediscovering Query Expansion: The Classic Technique Powering Modern AI Searches",
+    "subtitle": "Boost Your Search with Query Expansion, PRF & LLMs: Enhance Accuracy Using Classic Techniques and Modern AI Strategies",
+    "url": "https://medium.com/learnwithnk/rediscovering-query-expansion-the-classic-technique-powering-modern-ai-searches-d293a6d804d1",
+    "date": "2024-09-16",
+    "category": "AI System Design"
+  },
+  {
+    "id": "ad13abf46171",
+    "title": "Transitioning from Export to Data Lake to Azure Synapse Link: What You Need to Know?",
+    "subtitle": "As businesses increasingly rely on data-driven insights, choosing the right data storage and processing solutions is crucial. For those…",
+    "url": "https://medium.com/learnwithnk/transitioning-from-export-to-data-lake-to-azure-synapse-link-what-you-need-to-know-ad13abf46171",
+    "date": "2024-09-08",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "03382f4ccbd2",
+    "title": "Optimizing Data Synchronization for Downstream Systems in Azure Synapse Link",
+    "subtitle": "Keeping your source and downstream systems in sync is key to maintaining data accuracy and smooth operations. When using Azure Synapse…",
+    "url": "https://medium.com/learnwithnk/optimizing-data-synchronization-for-downstream-systems-in-azure-synapse-link-03382f4ccbd2",
+    "date": "2024-09-07",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "a052fa74a39a",
+    "title": "How Switching to Azure Synapse Link Delivers Cost Savings and Enhanced Performance",
+    "subtitle": "In this blog, we're diving into how switching to Azure Synapse Link can really save you money and boost your data performance. We'll walk…",
+    "url": "https://medium.com/learnwithnk/how-switching-to-azure-synapse-link-delivers-cost-savings-and-enhanced-performance-a052fa74a39a",
+    "date": "2024-09-07",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "f831425b28ae",
+    "title": "Demystifying D365 F&O Data Export: A Guide to Microsoft's Data Export Solutions",
+    "subtitle": "Over the past few years, Microsoft has rolled out three new ways to export data from D365 F&O. With one of these already set for…",
+    "url": "https://medium.com/learnwithnk/demystifying-d365-f-o-data-export-a-guide-to-microsofts-data-export-solutions-f831425b28ae",
+    "date": "2024-09-07",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "9f9e3d9d8054",
+    "title": "Managed Identities Explained",
+    "subtitle": "Managed Identities allow easy management of credentials lifecycle; access to any Azure Resource, API and SaaS that supports Azure AD Auth.",
+    "url": "https://medium.com/learnwithnk/managed-identities-explained-9f9e3d9d8054",
+    "date": "2024-08-18",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "fd77b4991c1e",
+    "title": "Choose the proper subscription and management group strategy",
+    "subtitle": "In my previous blog, we learned about, how various component creates logical or geographical boundaries. Today we will be learning about…",
+    "url": "https://medium.com/learnwithnk/azure-cloud-migration-step-2-choose-proper-subscription-and-management-group-strategy-fd77b4991c1e",
+    "date": "2024-08-18",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "d82f53b57c31",
+    "title": "What is Azure Data Lake?",
+    "subtitle": "\"Deep Dive into Azure Data Lake: Unleashing the Power of Big Data Storage and Analytics\"",
+    "url": "https://medium.com/learnwithnk/what-is-azure-data-lake-d82f53b57c31",
+    "date": "2023-08-30",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "169aad0ae2f0",
+    "title": "What is a Data Lake?",
+    "subtitle": "Diving into Data Lakes: A Beginner's Guide to Understanding the Basics",
+    "url": "https://medium.com/learnwithnk/what-is-a-data-lake-169aad0ae2f0",
+    "date": "2023-08-27",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "5b625b942d81",
+    "title": "What is Data Lakehouse?",
+    "subtitle": "Exploring the Benefits of Data Lakehouse Architecture: A Scalable Solution for Storing and Analyzing Structured and Unstructured Data",
+    "url": "https://medium.com/learnwithnk/what-is-data-lakehouse-5b625b942d81",
+    "date": "2023-03-16",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "8d7575ae2e38",
+    "title": "Azure AD Architecture Explained",
+    "subtitle": "Learn about the architecture of Azure Active Directory , and see how various design patterns are used to design Azure AD",
+    "url": "https://medium.com/learnwithnk/azure-ad-architecture-explained-8d7575ae2e38",
+    "date": "2022-03-09",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "d6807fbac236",
+    "title": "Azure Active Directory(Azure AD) Explained",
+    "subtitle": "Learn about Azure Active Directory, and how it helps protecting the user's identity and applications from security threats.",
+    "url": "https://medium.com/learnwithnk/azure-active-directory-azure-ad-explained-d6807fbac236",
+    "date": "2022-03-09",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "cadf62bd3459",
+    "title": "Best Practices in Spring Boot Project Structure",
+    "subtitle": "Learn about different layers of Microservice, how to create request body, DTO, and models, best practices, and versioning in spring…",
+    "url": "https://medium.com/learnwithnk/best-practices-in-spring-boot-project-structure-layers-of-microservice-versioning-in-api-cadf62bd3459",
+    "date": "2021-08-09",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "4c0349459277",
+    "title": "Consistency in Database",
+    "subtitle": "Learn data consistency in the databases, and when to use which type of consistency. Also, learn about different types of transactions.",
+    "url": "https://medium.com/learnwithnk/consistency-in-database-4c0349459277",
+    "date": "2021-07-20",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "6ef80ee9f6ae",
+    "title": "Dependency Injection Explained",
+    "subtitle": "Learn about dependency, different ways of providing a dependency to a class. and , how does spring boot injection dependency.",
+    "url": "https://medium.com/learnwithnk/dependency-injection-explained-spring-boot-dependency-injection-6ef80ee9f6ae",
+    "date": "2021-07-12",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "96adcb1a4b01",
+    "title": "How does Spring Boot Manage Dependency?",
+    "subtitle": "Learn about the management of dependencies; dependency scope; dependency versioning in Spring Boot. Also, learn about different classpath.",
+    "url": "https://medium.com/@nadeem4-nk13/how-does-spring-boot-manage-dependency-96adcb1a4b01",
+    "date": "2021-07-05",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "8ae514317532",
+    "title": "Know your pom.xml",
+    "subtitle": "Learn about different components of pom and how each part of pom plays a crucial role in better software development.",
+    "url": "https://medium.com/learnwithnk/know-your-pom-xml-8ae514317532",
+    "date": "2021-06-28",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "42acbe530200",
+    "title": "Do I need to scale my features?",
+    "subtitle": "In this blog, we will learn when we should scale the features. I usually divide Data Science projects into different pipelines: Exploratory…",
+    "url": "https://medium.com/learnwithnk/do-i-need-to-scale-my-features-42acbe530200",
+    "date": "2021-06-25",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "6ead5d1cecf8",
+    "title": "Multi-Module Spring Boot Project with Azure",
+    "subtitle": "This blog, we will learn about spring boot multi-nodule project This projects enables easy integration with azure.",
+    "url": "https://medium.com/learnwithnk/multi-module-spring-boot-project-with-azure-6ead5d1cecf8",
+    "date": "2021-02-01",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "a31ed1836afc",
+    "title": "Microsoft Azure Structure Explained",
+    "subtitle": "In my previous blog we discussed about Cloud Computing, and its type. From this blog, we will start diving deep in Microsoft Azure. We…",
+    "url": "https://medium.com/learnwithnk/microsoft-azure-structure-explained-a31ed1836afc",
+    "date": "2020-08-12",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "1a7d5fcd33f5",
+    "title": "OSI Model Demystified",
+    "subtitle": "In this blog, we have taken an example of Netflix to unveil the secret of the OSI model. Communication is explained as in humans are…",
+    "url": "https://medium.com/learnwithnk/osi-model-demystified-1a7d5fcd33f5",
+    "date": "2020-07-28",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "5168085e72a3",
+    "title": "Is your Application Cloud-Ready",
+    "subtitle": "This blogs helps in understanding the why and how of cloud native apps.",
+    "url": "https://medium.com/learnwithnk/is-your-application-cloud-ready-5168085e72a3",
+    "date": "2020-07-28",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "520c171143f1",
+    "title": "Kubernetes Architecture Demystified",
+    "subtitle": "In this blog, I have unveiled the underhood working of Kubernetes, so that developers can get a better understanding of Kubernetes.",
+    "url": "https://medium.com/learnwithnk/kubernetes-architecture-demystified-520c171143f1",
+    "date": "2020-07-28",
+    "category": "Backend & Infra"
+  },
+  {
+    "id": "ab47115570f3",
+    "title": "Singleton Pattern Made Easy",
+    "subtitle": "In this blog, I have explained when, why and how of singleton pattern. I have also tired to relate singleton pattern with real life…",
+    "url": "https://medium.com/dev-genius/singleton-pattern-made-easy-ab47115570f3",
+    "date": "2020-06-09",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "fa7b5197a820",
+    "title": "Cloud Computing: Making Life easier for companies",
+    "subtitle": "Before diving into Microsoft Azure, we should familiarize ourselves with basics of cloud computing, this will help us building a strong…",
+    "url": "https://medium.com/learnwithnk/cloud-computing-making-life-easier-for-companies-fa7b5197a820",
+    "date": "2020-05-28",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "c1ccda17c54",
+    "title": "How to manage IoT devices at scale",
+    "subtitle": "In this blog, I have tried to simplified the explaination of Azure Device Provisioning Service",
+    "url": "https://medium.com/learnwithnk/how-to-manage-iot-devices-at-scale-c1ccda17c54",
+    "date": "2020-05-13",
+    "category": "Azure & Cloud Fundamentals"
+  },
+  {
+    "id": "b6753bf9637d",
+    "title": "Is Abstraction a solution for most of your complex problem",
+    "subtitle": "In this blog, I have focused on how abstraction is solved some complex problem, and how it can solve some complex issue of your company.",
+    "url": "https://medium.com/learnwithnk/is-abstraction-a-solution-for-most-of-your-complex-problem-b6753bf9637d",
+    "date": "2020-05-05",
+    "category": "Java & Spring Boot"
+  },
+  {
+    "id": "d89f09c64f2a",
+    "title": "What's new with Azure Backup",
+    "subtitle": "Microsoft is heavily investing in all possible security aspects. Recently they have launched a security update for Recovery Service Vault.",
+    "url": "https://medium.com/@nadeem4-nk13/whats-new-with-azure-backup-d89f09c64f2a",
+    "date": "2020-02-08",
+    "category": "Azure & Cloud Fundamentals"
+  }
+]

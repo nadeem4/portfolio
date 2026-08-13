@@ -1,12 +1,17 @@
-import { fetchMediumPosts } from './medium';
-import { getBlogCategories, applyBlogCategories } from './blog-categories';
-import { siteConfig } from '@/config/site';
-import type { MediumPost } from './medium.types';
+import catalog from '@/config/blog-posts.json';
+import type { BlogPost } from './blog.types';
 
-export async function getBlogPosts(): Promise<MediumPost[]> {
-  const posts = await fetchMediumPosts(siteConfig.mediumFeedUrl);
-  const categories = getBlogCategories();
-  return applyBlogCategories(posts, categories).sort(
-    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
-  );
+/**
+ * The blog catalog, generated from Notion and committed to the repo.
+ *
+ * Medium's RSS feed caps at ten items against ninety-two published posts, so the
+ * feed is not used at all — this file is the whole source. Because it is imported
+ * at build time rather than fetched, a malformed catalog fails the build instead
+ * of silently rendering an empty blog page in production.
+ *
+ * Already ordered newest-first (ties broken by id) by the sync job, so there is
+ * nothing to sort at runtime.
+ */
+export function getBlogPosts(): BlogPost[] {
+  return catalog;
 }
