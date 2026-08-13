@@ -24,7 +24,7 @@ A focused project squashed into one commit scores worse than a folder of contest
 
 ## Gate: A Repo Must Have A Description
 
-Commit count is replaced by a simpler rule: **a repo appears only if it has a GitHub description.** Of 56 non-fork repos, 26 qualify.
+Commit count is replaced by a simpler rule: **a repo appears only if it has a GitHub description.** Of 55 non-fork repos, 28 qualify.
 
 This is a better proxy for three reasons:
 
@@ -36,7 +36,7 @@ It also rescues exactly what the commit filter wrongly hid — `mini-gpt`, `chan
 
 ## Overrides
 
-The description gate leaves 26 repos, of which twelve still read as student or throwaway work. Rather than reverse the auto-pull decision from PRs #2 and #3 and return to a hand-maintained list of *inclusions*, a small `config/project-overrides.ts` carries only the exceptions:
+The description gate leaves 28 repos, of which twelve still read as student or throwaway work. Rather than reverse the auto-pull decision from PRs #2 and #3 and return to a hand-maintained list of *inclusions*, a small `config/project-overrides.ts` carries only the exceptions:
 
 ```ts
 export const featured = [
@@ -54,7 +54,7 @@ export const hidden = [
 ];
 ```
 
-Both lists hold repo names, matched exactly. `featured` sorts to the top in the order given; `hidden` is removed entirely. Result: **14 visible repos, 6 pinned.**
+Both lists hold repo names, matched exactly. `featured` sorts to the top in the order given; `hidden` is removed entirely. Result: **16 visible repos, 6 pinned.**
 
 **Pinning applies to the default view only.** In the explicit `Most Starred` view, repos sort purely by stars with no pinning — a sort control that does not actually sort is worse than no control. `hidden` applies in every view.
 
@@ -130,5 +130,5 @@ Two pull requests, to keep each reviewable:
 ## Out of Scope
 
 - **Visual redesign of the project cards.** The original question was whether to restyle them as the blog was restyled. Curation comes first: restyling would only make the current selection prettier. Worth revisiting afterwards, against a curated list.
-- **Writing descriptions for the 30 undescribed repos.** The gate makes that the mechanism for surfacing one, but it is the author's judgement which deserve it.
+- **Writing descriptions for the remaining 27 undescribed repos.** The gate makes that the mechanism for surfacing one, but it is the author's judgement which deserve it. `ai_logger` and `data_masker` were described on 2026-08-13 and so now qualify; `ai_software_engineer` was deleted the same day.
 - **`nutrient_detector`'s blank description**, which is deliberate — it holds reference PDFs, not code, and the gate now excludes it automatically.
