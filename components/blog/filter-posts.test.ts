@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterPostsByCategory, getCategories } from './filter-posts';
+import { filterPostsByCategory } from './filter-posts';
 import type { BlogPost } from '@/lib/blog.types';
 
 function post(id: string, category: string): BlogPost {
@@ -19,15 +19,5 @@ describe('filterPostsByCategory', () => {
 
   it('returns nothing for a category no post carries', () => {
     expect(filterPostsByCategory(posts, 'Nonexistent')).toEqual([]);
-  });
-});
-
-describe('getCategories', () => {
-  it('returns the unique, sorted set of categories across all posts', () => {
-    expect(getCategories(posts)).toEqual(['Data', 'ML']);
-  });
-
-  it('collapses duplicates, so a category appears once however many posts use it', () => {
-    expect(getCategories([...posts, post('cccccccccccc', 'ML')])).toEqual(['Data', 'ML']);
   });
 });

@@ -48,7 +48,7 @@ Post count is still shown, as a number and as a bar relative to the largest cate
 ```mermaid
 flowchart TD
     A["config/blog-posts.json<br/>(committed catalog)"] --> B["lib/blog.ts<br/>getBlogPosts()"]
-    B --> C["lib/blog-stats.ts<br/>catalogSummary() / categoryStats()"]
+    B --> C["lib/blog-stats.ts<br/>catalogStats() / categoryStats()"]
     B --> D["/blog page"]
     C --> D
     D --> E["BlogMasthead<br/>totals and year range"]
@@ -69,7 +69,7 @@ Split so the derivation logic is testable without React.
 **`lib/blog-stats.ts`** — pure, no DOM and no JSX.
 
 - `categoryStats(posts): CategoryStat[]` → `{ category, count, latest, earliest }`, sorted by `latest` descending, ties broken by `category` ascending. The tie-break is not hypothetical: Azure & Cloud Fundamentals and Java & Spring Boot both last saw a post on `2024-09-16`. Without it, those two cards could swap between builds. (Five categories share July 2026 as their last-active *month*, but their exact dates differ, so they order deterministically on the date alone.)
-- `catalogSummary(posts): CatalogSummary` → `{ total, categoryCount, firstYear, lastYear }`.
+- `catalogStats(posts): CatalogStats | null` → `{ total, categoryCount, firstYear, lastYear }`, or `null` for an empty catalog so the masthead can render nothing.
 
 **`components/blog/blog-masthead.tsx`** — renders the summary line. Renders nothing when the catalog is empty, rather than `0 POSTS · 0 DOMAINS`.
 
@@ -102,7 +102,7 @@ Test-driven, per project convention.
 - per-category counts match the catalog
 - ordering is by `latest` descending, with ties broken by category name
 - `earliest` and `latest` bound each category correctly
-- `catalogSummary` year range spans the true first and last post
+- `catalogStats` year range spans the true first and last post
 - both functions accept `[]` and return empty results without throwing
 
 **`components/blog/category-cards.tsx`**
