@@ -26,17 +26,25 @@ describe('BlogList', () => {
     expect(screen.queryByText('Data Post')).not.toBeInTheDocument();
   });
 
-  it('restores every post when the filter is cleared', () => {
+  it('restores every post when the All card is clicked', () => {
     render(<BlogList posts={posts} />);
     fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    fireEvent.click(screen.getByRole('button', { name: /Show all/ }));
+    expect(screen.queryByText('Data Post')).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /All/ }));
+
     expect(screen.getByText('Data Post')).toBeInTheDocument();
     expect(screen.getByText('ML Post')).toBeInTheDocument();
   });
 
-  it('offers no clear control until a filter is active', () => {
+  it('always offers a way back to the full list, filtered or not', () => {
+    // The clear affordance must be permanently visible, not conditional --
+    // a control that only appears after filtering is one nobody finds.
     render(<BlogList posts={posts} />);
-    expect(screen.queryByRole('button', { name: /Show all/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /All/ })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
+    expect(screen.getByRole('button', { name: /All/ })).toBeInTheDocument();
   });
 
   it('shows a fallback message when there are no posts', () => {

@@ -14,6 +14,47 @@ const posts: BlogPost[] = [
   post('dddddd', 'Stale', '2020-01-01'),
 ];
 
+describe('the All card', () => {
+  // Regression: the chip row had an "All" chip. Converting to cards dropped it,
+  // leaving only a 10px dim text link as the way back to the full list, which
+  // read as a label rather than a control.
+  it('renders first, ahead of every category', () => {
+    render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
+    expect(screen.getAllByRole('button')[0]).toHaveTextContent(/All/);
+  });
+
+  it('shows the total post count across the catalog', () => {
+    render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
+    expect(screen.getByRole('button', { name: /All/ })).toHaveTextContent('4');
+  });
+
+  it('sits outside the category grid, so twelve categories tile evenly', () => {
+    // Thirteen is prime and orphans a card at 2, 3 and 4 columns alike; twelve
+    // divides cleanly by all three. All also is not a category.
+    const { container } = render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
+    const grid = container.querySelector('.grid');
+    expect(grid?.querySelectorAll('button')).toHaveLength(2); // the two categories, not All
+    expect(screen.getByRole('button', { name: /All/ })).not.toBe(grid?.firstElementChild);
+  });
+
+  it('is pressed when no category is selected, so the default state reads as a choice', () => {
+    render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
+    expect(screen.getByRole('button', { name: /All/ })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('is not pressed once a category is selected', () => {
+    render(<CategoryCards posts={posts} selected="Stale" onSelect={() => {}} />);
+    expect(screen.getByRole('button', { name: /All/ })).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('clears the filter when clicked', () => {
+    const onSelect = vi.fn();
+    render(<CategoryCards posts={posts} selected="Stale" onSelect={onSelect} />);
+    fireEvent.click(screen.getByRole('button', { name: /All/ }));
+    expect(onSelect).toHaveBeenCalledWith(null);
+  });
+});
+
 describe('CategoryCards', () => {
   it('renders one card per category', () => {
     render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
@@ -27,10 +68,10 @@ describe('CategoryCards', () => {
     expect(screen.getByRole('button', { name: /Stale/ })).toHaveTextContent('1');
   });
 
-  it('orders the most recently active category first', () => {
+  it('orders the most recently active category first, after the All card', () => {
     render(<CategoryCards posts={posts} selected={null} onSelect={() => {}} />);
     const names = screen.getAllByRole('button').map((b) => b.textContent);
-    expect(names[0]).toContain('Current');
+    expect(names[1]).toContain('Current');
   });
 
   it('selects a category when its card is clicked', () => {
