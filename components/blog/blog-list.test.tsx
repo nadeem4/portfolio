@@ -1,11 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BlogList } from './blog-list';
-import type { MediumPost } from '@/lib/medium.types';
+import type { BlogPost } from '@/lib/blog.types';
 
-const posts: MediumPost[] = [
-  { title: 'Data Post', link: 'https://a', pubDate: '', categories: ['Data'], contentSnippet: 'about data', imageUrl: null },
-  { title: 'ML Post', link: 'https://b', pubDate: '', categories: ['ML'], contentSnippet: 'about ml', imageUrl: null },
+function post(id: string, title: string, category: string, subtitle = ''): BlogPost {
+  return { id, title, subtitle, url: `https://medium.com/@you/p-${id}`, date: '2026-02-06', category };
+}
+
+const posts: BlogPost[] = [
+  post('aaaaaaaaaaaa', 'Data Post', 'Data', 'about data'),
+  post('bbbbbbbbbbbb', 'ML Post', 'ML', 'about ml'),
 ];
 
 describe('BlogList', () => {
@@ -27,19 +31,34 @@ describe('BlogList', () => {
     expect(screen.getByText(/posts temporarily unavailable/i)).toBeInTheDocument();
   });
 
-  it('renders a thumbnail image for a post with an imageUrl', () => {
-    const withImage: MediumPost[] = [
-      { title: 'Image Post', link: 'https://c', pubDate: '', categories: [], contentSnippet: 'has an image', imageUrl: 'https://cdn.example.com/cover.png' },
-    ];
-    // The thumbnail is decorative (alt=""), which removes it from the accessibility
-    // tree's "img" role, so it's queried directly rather than via getByRole('img').
-    const { container } = render(<BlogList posts={withImage} />);
-    const img = container.querySelector('img');
-    expect(img).toHaveAttribute('src', 'https://cdn.example.com/cover.png');
+  it('renders an identicon for every post', () => {
+    const { container } = render(<BlogList posts={posts} />);
+    expect(container.querySelectorAll('svg')).toHaveLength(posts.length);
   });
 
-  it('does not render a thumbnail image for a post without an imageUrl', () => {
+  it('no longer renders remote thumbnail images', () => {
+    // Cover images came from the Medium RSS payload, which is no longer fetched.
     const { container } = render(<BlogList posts={posts} />);
     expect(container.querySelector('img')).not.toBeInTheDocument();
+  });
+
+  it('shows the hand-written subtitle', () => {
+    render(<BlogList posts={posts} />);
+    expect(screen.getByText('about data')).toBeInTheDocument();
+  });
+
+  it('shows the published date as a machine-readable time element', () => {
+    const { container } = render(<BlogList posts={posts} />);
+    const time = container.querySelector('time');
+    expect(time).toHaveAttribute('dateTime', '2026-02-06');
+    expect(time).toHaveTextContent('2026-02-06');
+  });
+
+  it('links each post to its Medium url', () => {
+    render(<BlogList posts={posts} />);
+    expect(screen.getByRole('link', { name: 'Data Post' })).toHaveAttribute(
+      'href',
+      'https://medium.com/@you/p-aaaaaaaaaaaa',
+    );
   });
 });

@@ -9,5 +9,4 @@ export const siteConfig = {
     linkedin: 'https://www.linkedin.com/in/nadeem-khan-75135210a/',
     medium: 'https://medium.com/@nadeem4-nk13',
   },
-  mediumFeedUrl: 'https://medium.com/feed/@nadeem4-nk13',
 };
