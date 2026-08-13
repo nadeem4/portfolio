@@ -20,10 +20,11 @@ const buttonClasses =
 const VIEWS: { value: ProjectView; label: string }[] = [
   { value: 'recent', label: 'Recent' },
   { value: 'stars', label: 'Most Starred' },
-  { value: 'open-source', label: 'Open Source' },
 ];
 
-const DEFAULT_VISIBLE_COUNT = 5;
+// Matches the number of featured repos, so the initial render always shows the
+// full pinned set — otherwise pinning a repo would leave it behind "show more".
+const DEFAULT_VISIBLE_COUNT = 7;
 
 export function ProjectList({ repos, pipelines }: ProjectListProps) {
   const [view, setView] = useState<ProjectView>('recent');
@@ -53,15 +54,11 @@ export function ProjectList({ repos, pipelines }: ProjectListProps) {
         ))}
       </div>
 
-      {view === 'open-source' && sorted.length === 0 ? (
-        <p className="text-foreground-dim leading-relaxed">No open-source-licensed repos yet.</p>
-      ) : (
-        <ul className="space-y-6">
-          {visible.map((repo) => (
-            <ProjectCard key={repo.slug} repo={repo} pipeline={pipelines[repo.slug]} />
-          ))}
-        </ul>
-      )}
+      <ul className="space-y-6">
+        {visible.map((repo) => (
+          <ProjectCard key={repo.slug} repo={repo} pipeline={pipelines[repo.slug]} />
+        ))}
+      </ul>
 
       {visibleCount < sorted.length && (
         <button type="button" onClick={() => setVisibleCount(sorted.length)} className={buttonClasses}>

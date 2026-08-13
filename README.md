@@ -8,7 +8,7 @@ Personal portfolio built with Next.js (App Router). Blog posts come from a commi
 2. Replace `public/resume.pdf` with your real resume.
 3. Update `config/live-projects.ts` as you ship real live projects.
 4. Optionally add pipeline-diagram overrides per repo in `config/project-pipelines.ts`.
-5. Optionally set `GITHUB_TOKEN` to a fine-grained PAT scoped to "Public Repositories (read-only)" — this raises the GitHub API rate limit and enables the commit-count filter on `/projects`. Without it, the site still works, just at GitHub's unauthenticated 60 req/hour limit.
+5. Optionally set `GITHUB_TOKEN` to a fine-grained PAT scoped to "Public Repositories (read-only)" to raise the GitHub API rate limit. This matters much less than it used to: `/projects` now makes a single API call per revalidation rather than one per repo, so the unauthenticated 60 req/hour limit is ample.
 
 ## Blog catalog
 
@@ -38,6 +38,21 @@ Because the catalog is imported at build time, a malformed file fails the build 
 ### Post artwork
 
 Blog cards show a generated identicon rather than a cover image. `lib/identicon.ts` turns a post's hex id into a deterministic 7×7 symmetric grid, and `components/blog/identicon.tsx` renders it as inline SVG using `currentColor`, so it picks up the accent colour and adapts to the light theme. The same post always produces the same mark, and a golden test locks the output so a refactor cannot silently change every mark on the site.
+
+## Which repos appear on /projects
+
+Repos are pulled from the GitHub API automatically. A repo qualifies if it is **public**, is not a fork, is not the profile-README repo, and **has a GitHub description**.
+
+Public matters: `GET /users/{username}/repos` returns public repositories only, even with a token, so a private repo can never appear here no matter what its description says. Making it public is the only route — and conversely, a broadly-scoped `GITHUB_TOKEN` cannot leak private repos onto the site.
+
+The description is the curation mechanism: writing one is how you surface a repo, and removing one is how you hide it. That replaced a minimum-commit-count filter, which measured how you worked rather than whether the work was good — it hid a from-scratch transformer squashed into a single commit while showing a folder of contest solutions with seven.
+
+`config/project-overrides.ts` holds the exceptions:
+
+- `featured` — pinned to the top of the default view, in the order listed.
+- `hidden` — removed from every view. Only repos that pass the description gate need listing here.
+
+Featured pinning applies to the default view only. `Most Starred` sorts strictly by star count, because a sort control that doesn't sort is worse than none. `DEFAULT_VISIBLE_COUNT` in `project-list.tsx` should stay at least as large as the `featured` list, or a pinned repo ends up behind "Load more".
 
 ## Development
 
