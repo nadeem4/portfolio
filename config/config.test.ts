@@ -16,7 +16,7 @@ describe('site config', () => {
 
   it('groups skills under the four expected categories', () => {
     const categories = skillGroups.map((g) => g.category);
-    expect(categories).toEqual(['Languages', 'Data', 'ML', 'Infra']);
+    expect(categories).toEqual(['Languages', 'Data', 'AI', 'Infra']);
     skillGroups.forEach((group) => expect(group.items.length).toBeGreaterThan(0));
   });
 
