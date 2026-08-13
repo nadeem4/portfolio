@@ -8,7 +8,7 @@ describe('site config', () => {
   it('has the fields required to render the hero and contact sections', () => {
     expect(siteConfig.name).toBeTruthy();
     expect(siteConfig.email).toContain('@');
-    expect(siteConfig.mediumFeedUrl).toMatch(/^https:\/\/medium\.com\/feed\//);
+    expect(siteConfig.socials.medium).toMatch(/^https:\/\/medium\.com\//);
     expect(siteConfig.socials.github).toContain('github.com');
     expect(siteConfig.githubUsername).toBeTruthy();
     expect(typeof siteConfig.githubUsername).toBe('string');

@@ -3,3 +3,9 @@ node_modules
 .env*.local
 .DS_Store
 *.tsbuildinfo
+
+# Superpowers brainstorming session files
+.superpowers/
+
+# Git worktrees created by Claude Code (embedded repos, never commit)
+.claude/worktrees/

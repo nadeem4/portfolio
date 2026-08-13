@@ -1,86 +1,67 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-
-vi.mock('@/config/blog-categories.json', () => ({
-  default: { 'https://medium.com/@you/post-one': 'Data Engineering' },
-}));
-
+import { describe, it, expect } from 'vitest';
 import { getBlogPosts } from './blog';
+import { BLOG_CATEGORIES } from './blog.types';
 
-const VALID_FEED = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0"><channel>
-  <title>Example Feed</title>
-  <item>
-    <title>Post One</title>
-    <link>https://medium.com/@you/post-one</link>
-    <pubDate>Mon, 01 Jun 2026 12:00:00 GMT</pubDate>
-    <category>Some Medium Tag</category>
-    <description><![CDATA[A short summary of post one.]]></description>
-  </item>
-  <item>
-    <title>Post Two</title>
-    <link>https://medium.com/@you/post-two</link>
-    <pubDate>Mon, 01 Jun 2026 12:00:00 GMT</pubDate>
-    <category>Another Tag</category>
-    <description><![CDATA[A short summary of post two.]]></description>
-  </item>
-</channel></rss>`;
-
-const OUT_OF_ORDER_FEED = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0"><channel>
-  <title>Example Feed</title>
-  <item>
-    <title>Older Post</title>
-    <link>https://medium.com/@you/older-post</link>
-    <pubDate>Mon, 01 Jun 2026 12:00:00 GMT</pubDate>
-    <description><![CDATA[Older.]]></description>
-  </item>
-  <item>
-    <title>Newest Post</title>
-    <link>https://medium.com/@you/newest-post</link>
-    <pubDate>Wed, 12 Aug 2026 15:47:58 GMT</pubDate>
-    <description><![CDATA[Newest.]]></description>
-  </item>
-  <item>
-    <title>Middle Post</title>
-    <link>https://medium.com/@you/middle-post</link>
-    <pubDate>Thu, 15 Jul 2026 09:00:00 GMT</pubDate>
-    <description><![CDATA[Middle.]]></description>
-  </item>
-</channel></rss>`;
+const posts = getBlogPosts();
 
 describe('getBlogPosts', () => {
-  beforeEach(() => {
-    vi.stubGlobal('fetch', vi.fn());
+  it('returns the catalog synchronously, not a Promise', () => {
+    expect(posts).not.toBeInstanceOf(Promise);
+    expect(Array.isArray(posts)).toBe(true);
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
+  it('returns the whole catalog, not a feed-sized slice', () => {
+    // Medium's RSS feed caps at 10 items; the catalog is the reason this page exists.
+    expect(posts.length).toBeGreaterThan(80);
+  });
+});
+
+describe('catalog integrity', () => {
+  it('gives every post all six fields, non-empty', () => {
+    for (const post of posts) {
+      for (const field of ['id', 'title', 'subtitle', 'url', 'date', 'category'] as const) {
+        expect(post[field], `${field} on ${post.id}`).toBeTruthy();
+      }
+    }
   });
 
-  it('fetches Medium posts and assigns categories from the config file', async () => {
-    vi.mocked(fetch).mockResolvedValue({ ok: true, text: () => Promise.resolve(VALID_FEED) } as Response);
-
-    const posts = await getBlogPosts();
-
-    expect(posts).toHaveLength(2);
-    expect(posts[0].title).toBe('Post One');
-    expect(posts[0].categories).toEqual(['Data Engineering']);
+  it('uses unique, well-formed hex ids', () => {
+    const ids = posts.map((p) => p.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) {
+      expect(id).toMatch(/^[0-9a-f]{6,}$/);
+    }
   });
 
-  it('assigns "Uncategorized" when a post has no matching entry in the config file', async () => {
-    vi.mocked(fetch).mockResolvedValue({ ok: true, text: () => Promise.resolve(VALID_FEED) } as Response);
-
-    const posts = await getBlogPosts();
-
-    expect(posts[1].title).toBe('Post Two');
-    expect(posts[1].categories).toEqual(['Uncategorized']);
+  it('ends every url with its own id, so the two can never drift apart', () => {
+    for (const post of posts) {
+      expect(post.url, post.id).toMatch(new RegExp(`${post.id}$`));
+    }
   });
 
-  it('returns posts sorted newest-first by pubDate, regardless of feed order', async () => {
-    vi.mocked(fetch).mockResolvedValue({ ok: true, text: () => Promise.resolve(OUT_OF_ORDER_FEED) } as Response);
+  it('points every url at Medium over https', () => {
+    for (const post of posts) {
+      expect(post.url).toMatch(/^https:\/\/medium\.com\//);
+    }
+  });
 
-    const posts = await getBlogPosts();
+  it('dates every post as an ISO calendar date', () => {
+    for (const post of posts) {
+      expect(post.date, post.id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(Number.isNaN(Date.parse(post.date)), post.id).toBe(false);
+    }
+  });
 
-    expect(posts.map((post) => post.title)).toEqual(['Newest Post', 'Middle Post', 'Older Post']);
+  it('assigns every post a category defined in the Notion schema', () => {
+    for (const post of posts) {
+      expect(BLOG_CATEGORIES, post.id).toContain(post.category);
+    }
+  });
+
+  it('orders posts newest-first, breaking ties by id so the file is deterministic', () => {
+    // 25 posts share a date with another, so the tie-break is load-bearing:
+    // without it the daily sync job would emit phantom diffs.
+    const expected = [...posts].sort((a, b) => (a.date === b.date ? a.id.localeCompare(b.id) : b.date.localeCompare(a.date)));
+    expect(posts.map((p) => p.id)).toEqual(expected.map((p) => p.id));
   });
 });

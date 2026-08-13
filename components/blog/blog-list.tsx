@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import type { MediumPost } from '@/lib/medium.types';
+import type { BlogPost } from '@/lib/blog.types';
 import { filterPostsByCategory, getCategories } from './filter-posts';
+import { Identicon } from './identicon';
 
 interface BlogListProps {
-  posts: MediumPost[];
+  posts: BlogPost[];
 }
 
 const chipClasses =
@@ -35,25 +36,24 @@ export function BlogList({ posts }: BlogListProps) {
       </div>
       <ul className="divide-y divide-border">
         {visible.map((post) => (
-          <li key={post.link} className="flex items-start gap-4 py-4">
-            {post.imageUrl && (
-              <img
-                src={post.imageUrl}
-                alt=""
-                loading="lazy"
-                className="h-20 w-20 shrink-0 rounded border border-border object-cover"
-              />
-            )}
+          <li key={post.id} className="flex items-start gap-4 py-4">
+            <Identicon
+              id={post.id}
+              className="h-20 w-20 shrink-0 rounded border border-border bg-background-raised p-2 text-accent"
+            />
             <div>
               <a
-                href={post.link}
+                href={post.url}
                 target="_blank"
                 rel="noreferrer"
                 className="font-medium transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
               >
                 {post.title}
               </a>
-              <p className="mt-1 text-foreground-dim leading-relaxed">{post.contentSnippet}</p>
+              <p className="mt-1 text-foreground-dim leading-relaxed">{post.subtitle}</p>
+              <time dateTime={post.date} className="mt-2 block text-xs uppercase tracking-widest text-foreground-dim">
+                {post.date}
+              </time>
             </div>
           </li>
         ))}
