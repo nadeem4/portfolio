@@ -4,4 +4,5 @@ export interface MediumPost {
   pubDate: string;
   categories: string[];
   contentSnippet: string;
+  imageUrl: string | null;
 }

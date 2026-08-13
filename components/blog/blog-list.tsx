@@ -35,16 +35,26 @@ export function BlogList({ posts }: BlogListProps) {
       </div>
       <ul className="divide-y divide-border">
         {visible.map((post) => (
-          <li key={post.link} className="py-4">
-            <a
-              href={post.link}
-              target="_blank"
-              rel="noreferrer"
-              className="font-medium transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
-            >
-              {post.title}
-            </a>
-            <p className="mt-1 text-foreground-dim leading-relaxed">{post.contentSnippet}</p>
+          <li key={post.link} className="flex items-start gap-4 py-4">
+            {post.imageUrl && (
+              <img
+                src={post.imageUrl}
+                alt=""
+                loading="lazy"
+                className="h-20 w-20 shrink-0 rounded border border-border object-cover"
+              />
+            )}
+            <div>
+              <a
+                href={post.link}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
+              >
+                {post.title}
+              </a>
+              <p className="mt-1 text-foreground-dim leading-relaxed">{post.contentSnippet}</p>
+            </div>
           </li>
         ))}
       </ul>

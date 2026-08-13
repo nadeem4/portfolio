@@ -6,5 +6,7 @@ import type { MediumPost } from './medium.types';
 export async function getBlogPosts(): Promise<MediumPost[]> {
   const posts = await fetchMediumPosts(siteConfig.mediumFeedUrl);
   const categories = getBlogCategories();
-  return applyBlogCategories(posts, categories);
+  return applyBlogCategories(posts, categories).sort(
+    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime(),
+  );
 }

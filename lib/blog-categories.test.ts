@@ -3,8 +3,8 @@ import { applyBlogCategories, getBlogCategories } from './blog-categories';
 import type { MediumPost } from './medium.types';
 
 const posts: MediumPost[] = [
-  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Some Medium Tag'], contentSnippet: '' },
-  { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '' },
+  { title: 'Post One', link: 'https://medium.com/@you/post-one', pubDate: '', categories: ['Some Medium Tag'], contentSnippet: '', imageUrl: null },
+  { title: 'Post Two', link: 'https://medium.com/@you/post-two', pubDate: '', categories: ['Another Tag'], contentSnippet: '', imageUrl: null },
 ];
 
 describe('getBlogCategories', () => {
