@@ -6,3 +6,6 @@ node_modules
 
 # Superpowers brainstorming session files
 .superpowers/
+
+# Git worktrees created by Claude Code (embedded repos, never commit)
+.claude/worktrees/
