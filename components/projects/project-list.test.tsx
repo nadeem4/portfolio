@@ -42,14 +42,21 @@ describe('ProjectList', () => {
     expect(screen.queryByText('repo-i')).not.toBeInTheDocument();
   });
 
-  it('offers only the Recent and Most Starred views', () => {
+  it('offers Featured, Recent and Most Starred views', () => {
     render(<ProjectList repos={repos} pipelines={{}} />);
 
+    expect(screen.getByRole('button', { name: 'Featured' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Recent' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Most Starred' })).toBeInTheDocument();
     // The Open Source view filtered by licence presence, which is not what the
     // term means; it was removed rather than left to collide with contributions.
     expect(screen.queryByRole('button', { name: /open source/i })).not.toBeInTheDocument();
+  });
+
+  it('defaults to Featured, so the pinned order is not mislabelled as Recent', () => {
+    render(<ProjectList repos={repos} pipelines={{}} />);
+    expect(screen.getByRole('button', { name: 'Featured' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'Recent' })).toHaveAttribute('aria-pressed', 'false');
   });
 
   it('re-sorts strictly by stars when Most Starred is clicked, discarding pinned order', () => {
