@@ -1,6 +1,6 @@
 import { Hero } from '@/components/hero/hero';
 import { Experience } from '@/components/home/experience';
-import { SelectedWriting } from '@/components/home/selected-writing';
+import { SelectedWriting } from '@/components/blog/selected-writing';
 import { SkillsVisual } from '@/components/skills/skills-visual';
 import { ResumeSection } from '@/components/resume/resume-section';
 import { ContactSection } from '@/components/contact/contact-section';

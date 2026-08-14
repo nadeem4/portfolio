@@ -1,9 +1,12 @@
 import { BlogList } from '@/components/blog/blog-list';
 import { BlogMasthead } from '@/components/blog/blog-masthead';
 import { getBlogPosts } from '@/lib/blog';
+import { getSelectedPosts } from '@/lib/selected-writing';
 
 export default function BlogPage() {
   const posts = getBlogPosts();
+  const selected = getSelectedPosts();
+
   return (
     <main className="px-6 py-12">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -11,7 +14,7 @@ export default function BlogPage() {
           <h1 className="text-2xl font-bold tracking-tight">Blog</h1>
           <BlogMasthead posts={posts} />
         </header>
-        <BlogList posts={posts} />
+        <BlogList posts={posts} selected={selected} />
       </div>
     </main>
   );

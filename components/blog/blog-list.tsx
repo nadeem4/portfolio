@@ -4,13 +4,22 @@ import { useState } from 'react';
 import type { BlogPost } from '@/lib/blog.types';
 import { filterPostsByCategory } from './filter-posts';
 import { CategoryCards } from './category-cards';
+import { SelectedWriting } from './selected-writing';
 import { Identicon } from './identicon';
 
 interface BlogListProps {
   posts: BlogPost[];
+  /**
+   * Curated highlights, shown above the archive when no category is selected.
+   *
+   * Hidden while a category is active: a cross-cutting highlight reel sitting
+   * above a filtered list of one category reads as noise, and the All card
+   * brings it straight back.
+   */
+  selected?: BlogPost[];
 }
 
-export function BlogList({ posts }: BlogListProps) {
+export function BlogList({ posts, selected = [] }: BlogListProps) {
   const [category, setCategory] = useState<string | null>(null);
 
   if (posts.length === 0) {
@@ -23,9 +32,13 @@ export function BlogList({ posts }: BlogListProps) {
     <div className="space-y-8">
       <CategoryCards posts={posts} selected={category} onSelect={setCategory} />
 
+      {category === null && selected.length > 0 && <SelectedWriting posts={selected} />}
+
       <div>
         <div className="flex items-baseline justify-between gap-4 pb-1">
-          <h2 className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">{category ?? 'Latest'}</h2>
+          {/* "All posts" rather than "Latest" once highlights sit above: with a
+              curated tier present, completeness is the useful distinction. */}
+          <h2 className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">{category ?? 'All posts'}</h2>
           <p className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
             {visible.length} {visible.length === 1 ? 'post' : 'posts'}
           </p>
