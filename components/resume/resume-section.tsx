@@ -1,4 +1,13 @@
-export function ResumeSection() {
+import { hasResume } from '@/lib/resume';
+
+interface ResumeSectionProps {
+  /** Defaults to whether public/resume.pdf exists; injectable for tests. */
+  available?: boolean;
+}
+
+export function ResumeSection({ available = hasResume() }: ResumeSectionProps = {}) {
+  if (!available) return null;
+
   return (
     <section aria-label="Resume" className="space-y-4">
       <h2 className="text-xs uppercase tracking-widest font-medium text-foreground-dim">Resume</h2>
