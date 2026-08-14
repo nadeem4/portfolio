@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import { BlogList } from '@/components/blog/blog-list';
 import { BlogMasthead } from '@/components/blog/blog-masthead';
 import { getBlogPosts } from '@/lib/blog';
 import { getSelectedPosts } from '@/lib/selected-writing';
+
+export const metadata: Metadata = {
+  title: 'Blog',
+  description:
+    'Writing on Postgres CDC, Kafka at scale, distributed SQL execution, and applied AI infrastructure.',
+};
 
 export default function BlogPage() {
   const posts = getBlogPosts();

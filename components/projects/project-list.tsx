@@ -18,6 +18,7 @@ const buttonClasses =
   'inline-block rounded border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2';
 
 const VIEWS: { value: ProjectView; label: string }[] = [
+  { value: 'featured', label: 'Featured' },
   { value: 'recent', label: 'Recent' },
   { value: 'stars', label: 'Most Starred' },
 ];
@@ -27,7 +28,7 @@ const VIEWS: { value: ProjectView; label: string }[] = [
 const DEFAULT_VISIBLE_COUNT = 7;
 
 export function ProjectList({ repos, pipelines }: ProjectListProps) {
-  const [view, setView] = useState<ProjectView>('recent');
+  const [view, setView] = useState<ProjectView>('featured');
   const [visibleCount, setVisibleCount] = useState(DEFAULT_VISIBLE_COUNT);
 
   const sorted = sortRepos(repos, view);

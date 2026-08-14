@@ -1,4 +1,12 @@
+import type { Metadata } from 'next';
 import { liveProjects } from '@/config/live-projects';
+
+// Unlinked from the nav until something is deployed, but still reachable by URL,
+// so it gets its own title rather than falling back to the site default.
+export const metadata: Metadata = {
+  title: 'Live Projects',
+  robots: { index: false },
+};
 
 export default function LiveProjectsPage() {
   return (

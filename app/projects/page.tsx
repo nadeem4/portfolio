@@ -1,6 +1,12 @@
+import type { Metadata } from 'next';
 import { ProjectList } from '@/components/projects/project-list';
 import { getGithubRepos } from '@/lib/projects';
 import { projectPipelines } from '@/config/project-pipelines';
+
+export const metadata: Metadata = {
+  title: 'Projects',
+  description: 'Open-source work: NL2SQL execution, metadata-driven ETL, search, and LLM tooling.',
+};
 
 export const revalidate = 21600;
 
