@@ -12,9 +12,13 @@ export interface BlogPost {
 /**
  * Every category defined in the Notion database schema.
  *
- * All fourteen are listed, not just the twelve currently carrying posts —
- * validating against the in-use set would fail the first time an unused
- * category is assigned to a new post.
+ * All sixteen are listed, not just those currently carrying posts — validating
+ * against the in-use set would fail the first time an unused category is
+ * assigned to a new post.
+ *
+ * Kept in sync by hand with the Notion select options. A category present in the
+ * catalogue but missing here fails the catalogue test, which is the intended
+ * signal that this list has drifted.
  */
 export const BLOG_CATEGORIES = [
   'AI System Design',
@@ -31,4 +35,6 @@ export const BLOG_CATEGORIES = [
   'Azure & Cloud Fundamentals',
   'Azure Functions Internals',
   'Java & Spring Boot',
+  'Data Science',
+  'Software Engineering',
 ] as const;

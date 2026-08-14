@@ -68,12 +68,14 @@ function Card({ label, count, weight, meta, isSelected, onClick }: CardProps) {
  * on a small dim text link beside the list heading, which read as a label
  * rather than a control and left people stuck inside a category.
  *
- * It sits above the grid rather than inside it. With twelve categories, All as
- * a thirteenth card left an orphan on the final row at every breakpoint —
- * thirteen is prime, so it tiles evenly at no column count. Twelve divides
- * cleanly by two, three, and four. Keeping All out also stops it reading as a
- * category, which it isn't. It carries only the total; the masthead above
- * already states the year range.
+ * It sits above the grid rather than inside it, for two reasons. All is not a
+ * category, so presenting it as one of the cards misrepresents it. And adding a
+ * card to the grid perturbs how the categories tile — when this was written
+ * there were twelve, and a thirteenth card orphaned a single item on the final
+ * row at every breakpoint. The category count is data and moves as posts are
+ * recategorised, so the layout should not depend on any particular value of it.
+ *
+ * It carries only the total; the masthead above already states the year range.
  */
 export function CategoryCards({ posts, selected, onSelect }: CategoryCardsProps) {
   const stats = categoryStats(posts);
