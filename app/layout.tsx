@@ -18,7 +18,13 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: siteConfig.name,
+  // Every page previously rendered the identical title "Nadeem Khan", which is
+  // useless in a search result and in a row of browser tabs. Pages set their own
+  // and the template appends the name.
+  title: {
+    default: `${siteConfig.name} — ${siteConfig.role}`,
+    template: `%s · ${siteConfig.name}`,
+  },
   description: siteConfig.pitch,
 };
 
