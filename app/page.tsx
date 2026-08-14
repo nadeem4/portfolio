@@ -1,4 +1,5 @@
 import { Hero } from '@/components/hero/hero';
+import { Experience } from '@/components/home/experience';
 import { SelectedWriting } from '@/components/home/selected-writing';
 import { SkillsVisual } from '@/components/skills/skills-visual';
 import { ResumeSection } from '@/components/resume/resume-section';
@@ -14,9 +15,13 @@ export default function HomePage() {
     <main className="px-6 py-12">
       <div className="max-w-2xl mx-auto space-y-12">
         <Hero />
-        {/* Directly under the hero: the hero makes a claim, this is the evidence
-            for it. Previously the strongest work on the site was two clicks away
-            and the space here went to a skills chip list. */}
+        {/* Claim, then context, then evidence. The hero states what he does,
+            experience says where and at what scope so a reader can establish
+            level, and the writing below is the corroboration. This space
+            previously went to a skills chip list. */}
+        <div className="border-t border-border pt-12">
+          <Experience />
+        </div>
         <div className="border-t border-border pt-12">
           <SelectedWriting posts={selected} total={total} />
         </div>
