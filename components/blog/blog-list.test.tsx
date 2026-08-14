@@ -75,6 +75,35 @@ describe('BlogList', () => {
     expect(time).toHaveTextContent('2026-02-06');
   });
 
+  it('shows curated highlights above the archive when nothing is filtered', () => {
+    render(<BlogList posts={posts} selected={[posts[1]]} />);
+    expect(screen.getByRole('heading', { name: /selected writing/i })).toBeInTheDocument();
+  });
+
+  it('hides the highlights while a category is active', () => {
+    // A cross-cutting highlight reel above a single-category list reads as noise.
+    render(<BlogList posts={posts} selected={[posts[1]]} />);
+    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
+    expect(screen.queryByRole('heading', { name: /selected writing/i })).not.toBeInTheDocument();
+  });
+
+  it('brings the highlights back when the filter is cleared', () => {
+    render(<BlogList posts={posts} selected={[posts[1]]} />);
+    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
+    fireEvent.click(screen.getByRole('button', { name: /All/ }));
+    expect(screen.getByRole('heading', { name: /selected writing/i })).toBeInTheDocument();
+  });
+
+  it('renders no highlights section when none are supplied', () => {
+    render(<BlogList posts={posts} />);
+    expect(screen.queryByRole('heading', { name: /selected writing/i })).not.toBeInTheDocument();
+  });
+
+  it('labels the unfiltered list as the full archive, not "Latest"', () => {
+    render(<BlogList posts={posts} selected={[posts[1]]} />);
+    expect(screen.getByRole('heading', { name: /all posts/i })).toBeInTheDocument();
+  });
+
   it('links each post to its Medium url', () => {
     render(<BlogList posts={posts} />);
     expect(screen.getByRole('link', { name: 'Data Post' })).toHaveAttribute(

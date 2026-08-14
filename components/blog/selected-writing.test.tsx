@@ -53,6 +53,13 @@ describe('SelectedWriting', () => {
     expect(container.querySelectorAll('svg')).toHaveLength(posts.length);
   });
 
+  it('omits the archive link when no total is given', () => {
+    // On /blog the archive is already directly below, so the link is redundant.
+    render(<SelectedWriting posts={posts} />);
+    expect(screen.queryByRole('link', { name: /All \d+ posts/ })).not.toBeInTheDocument();
+    expect(screen.getByText('Kafka at 60M events a day')).toBeInTheDocument();
+  });
+
   it('renders nothing when nothing is selected', () => {
     const { container } = render(<SelectedWriting posts={[]} total={0} />);
     expect(container).toBeEmptyDOMElement();
