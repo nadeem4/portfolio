@@ -509,7 +509,7 @@
     "subtitle": "Optimize Data Engineering with Top Software Engineering Practices: Enhance Code Efficiency, Decoupling, Python SQL & More",
     "url": "https://medium.com/learnwithnk/are-you-combining-software-engineering-and-data-engineering-for-maximum-efficiency-bd09b243084e",
     "date": "2024-09-16",
-    "category": "Java & Spring Boot"
+    "category": "Software Engineering"
   },
   {
     "id": "d293a6d804d1",
@@ -621,7 +621,7 @@
     "subtitle": "Learn data consistency in the databases, and when to use which type of consistency. Also, learn about different types of transactions.",
     "url": "https://medium.com/learnwithnk/consistency-in-database-4c0349459277",
     "date": "2021-07-20",
-    "category": "Java & Spring Boot"
+    "category": "Backend & Infra"
   },
   {
     "id": "6ef80ee9f6ae",
@@ -653,7 +653,7 @@
     "subtitle": "In this blog, we will learn when we should scale the features. I usually divide Data Science projects into different pipelines: Exploratory…",
     "url": "https://medium.com/learnwithnk/do-i-need-to-scale-my-features-42acbe530200",
     "date": "2021-06-25",
-    "category": "Java & Spring Boot"
+    "category": "Data Science"
   },
   {
     "id": "6ead5d1cecf8",
@@ -677,7 +677,7 @@
     "subtitle": "In this blog, we have taken an example of Netflix to unveil the secret of the OSI model. Communication is explained as in humans are…",
     "url": "https://medium.com/learnwithnk/osi-model-demystified-1a7d5fcd33f5",
     "date": "2020-07-28",
-    "category": "Java & Spring Boot"
+    "category": "Backend & Infra"
   },
   {
     "id": "5168085e72a3",
@@ -701,7 +701,7 @@
     "subtitle": "In this blog, I have explained when, why and how of singleton pattern. I have also tired to relate singleton pattern with real life…",
     "url": "https://medium.com/dev-genius/singleton-pattern-made-easy-ab47115570f3",
     "date": "2020-06-09",
-    "category": "Java & Spring Boot"
+    "category": "Software Engineering"
   },
   {
     "id": "fa7b5197a820",
@@ -725,7 +725,7 @@
     "subtitle": "In this blog, I have focused on how abstraction is solved some complex problem, and how it can solve some complex issue of your company.",
     "url": "https://medium.com/learnwithnk/is-abstraction-a-solution-for-most-of-your-complex-problem-b6753bf9637d",
     "date": "2020-05-05",
-    "category": "Java & Spring Boot"
+    "category": "Software Engineering"
   },
   {
     "id": "d89f09c64f2a",
