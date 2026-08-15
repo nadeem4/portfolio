@@ -1,5 +1,21 @@
 [
   {
+    "id": "ede499c71411",
+    "title": "Inside the Encoder: Tokens, Attention, and How a Transformer Actually Works",
+    "subtitle": "Opening the sealed box: token embeddings, positional encoding, self-attention, multi-head, feedforward, and residuals.",
+    "url": "https://medium.com/@nadeem4-nk13/inside-the-encoder-tokens-attention-and-how-a-transformer-actually-works-ede499c71411",
+    "date": "2026-08-15",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "f32b19d708c8",
+    "title": "Distance Metrics and Similarity Search: Cosine, Euclidean, and Dot Product",
+    "subtitle": "Cosine, Euclidean, and dot product are not interchangeable dropdown options — pick the wrong one and every query still returns a confident, quietly wrong ranking.",
+    "url": "https://medium.com/@nadeem4-nk13/distance-metrics-and-similarity-search-cosine-euclidean-and-dot-product-f32b19d708c8",
+    "date": "2026-08-15",
+    "category": "Vector Databases"
+  },
+  {
     "id": "3b5bf9705c59",
     "title": "Scaling Contrastive Training: Batch Size, GPU Gathering, and Gradient Caching",
     "subtitle": "Why bigger training batches make embedding models better, and how teams build batches too big for any single GPU to hold",

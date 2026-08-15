@@ -15,7 +15,7 @@ interface SelectedWritingProps {
  * A curated handful of posts, surfaced on the homepage.
  *
  * The strongest evidence on this site was previously reachable only by opening
- * /blog and scanning a 92-item list, where it sat styled identically to
+ * /blog and scanning the full archive, where it sat styled identically to
  * introductory explainers. This puts it one click from the front door.
  *
  * Context lines come from each post's own subtitle rather than a parallel set

@@ -4,7 +4,7 @@
  * Every strong engineering site curates a small set above the archive —
  * "Popular Posts", "Publications", "Analyses", "Favorites". None present an
  * undifferentiated list of everything they have written, which is what a flat
- * 92-item archive is. These are the entries that get surfaced on the homepage.
+ * flat archive is. These are the entries that get surfaced on the homepage.
  *
  * Selection favours systems actually operated in production over explainers and
  * third-party case studies: reading about scale is not the same evidence as
