@@ -9,3 +9,6 @@ node_modules
 
 # Git worktrees created by Claude Code (embedded repos, never commit)
 .claude/worktrees/
+
+# Playwright MCP snapshots
+.playwright-mcp/
