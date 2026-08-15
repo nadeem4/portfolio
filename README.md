@@ -66,4 +66,23 @@ npm run lint     # run ESLint
 
 ## Deployment
 
-Connected to Vercel: push to `main` for production, open a PR for a preview deployment. No environment variables are required to run the site.
+**Not yet deployed.** No Vercel project exists for this repo.
+
+### First deploy
+
+1. At [vercel.com/new](https://vercel.com/new), import `nadeem4/portfolio`.
+2. Accept the detected defaults — Next.js, `npm run build`, no root directory override. There is deliberately no `vercel.json`; nothing needs configuring.
+3. Deploy.
+
+Once the Git integration is connected, pushes to `main` deploy to production and pull requests get preview deployments.
+
+### Environment variables
+
+**None are required.** `GITHUB_TOKEN` is optional and raises the GitHub API rate limit; `/projects` makes a single API call per six-hour revalidation, which is comfortably inside the unauthenticated 60 requests/hour limit, so it is not needed at this scale.
+
+`VERCEL_PROJECT_PRODUCTION_URL` and `VERCEL_URL` are injected by Vercel automatically. `lib/site-url.ts` reads them to build `metadataBase`, the sitemap, `robots.txt`, and the OpenGraph image URL, so those resolve to the real domain with no configuration. Locally they are absent and it falls back to `http://localhost:3000`, which is why local builds show localhost in `og:image` — expected, not a bug.
+
+### After the first deploy
+
+- **Enable Web Analytics** in the project settings. `@vercel/analytics` is already wired up in `app/layout.tsx`, but its script 404s until Analytics is switched on — that is the `/_vercel/insights/script.js` error visible in the console before then.
+- **Add a custom domain** if wanted. Nothing in the code hardcodes a domain, so pointing one at the project is sufficient.
