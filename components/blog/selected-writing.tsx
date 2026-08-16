@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Identicon } from './identicon';
+import { formatPostDate } from '@/lib/blog-stats';
 import type { BlogPost } from '@/lib/blog.types';
 
 interface SelectedWritingProps {
@@ -9,7 +10,16 @@ interface SelectedWritingProps {
    * rendered. Omitted on /blog, where the archive is already directly below.
    */
   total?: number;
+  /**
+   * ISO date of the newest post in the **catalog**, not of the selected ones.
+   *
+   * The curated list is ordered for legibility rather than recency, so without
+   * this a visitor cannot tell whether the last post was yesterday or two years
+   * ago. Shown beside the archive link as a currency signal.
+   */
+  latestDate?: string;
 }
+
 
 /**
  * A curated handful of posts, surfaced on the homepage.
@@ -21,7 +31,7 @@ interface SelectedWritingProps {
  * Context lines come from each post's own subtitle rather than a parallel set
  * of hand-written blurbs, so they cannot drift out of sync with the catalog.
  */
-export function SelectedWriting({ posts, total }: SelectedWritingProps) {
+export function SelectedWriting({ posts, total, latestDate }: SelectedWritingProps) {
   if (posts.length === 0) return null;
 
   return (
@@ -34,6 +44,14 @@ export function SelectedWriting({ posts, total }: SelectedWritingProps) {
             className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
           >
             All {total} posts
+            {latestDate && (
+              <>
+                <span aria-hidden="true" className="mx-1.5 opacity-50">
+                  ·
+                </span>
+                <span className="text-accent">latest {formatPostDate(latestDate)}</span>
+              </>
+            )}
           </Link>
         )}
       </div>

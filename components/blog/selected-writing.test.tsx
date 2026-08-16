@@ -53,6 +53,30 @@ describe('SelectedWriting', () => {
     expect(container.querySelectorAll('svg')).toHaveLength(posts.length);
   });
 
+  it('shows when the most recent post was published', () => {
+    // The curated list is ordered for legibility, not recency, so without this
+    // a visitor cannot tell whether the last post was yesterday or two years ago.
+    render(<SelectedWriting posts={posts} total={94} latestDate="2026-08-15" />);
+    expect(screen.getByRole('link', { name: /latest 15 Aug 2026/ })).toBeInTheDocument();
+  });
+
+  it('always shows the year, so an old date cannot read as recent', () => {
+    render(<SelectedWriting posts={posts} total={94} latestDate="2024-03-02" />);
+    expect(screen.getByRole('link', { name: /latest 2 Mar 2024/ })).toBeInTheDocument();
+  });
+
+  it('builds the date from the string, not a Date, to avoid a timezone shift', () => {
+    // Parsing 2026-08-01 yields UTC midnight, which a negative-offset locale
+    // renders as 31 July.
+    render(<SelectedWriting posts={posts} total={94} latestDate="2026-08-01" />);
+    expect(screen.getByRole('link', { name: /latest 1 Aug 2026/ })).toBeInTheDocument();
+  });
+
+  it('omits the recency signal when no date is given', () => {
+    render(<SelectedWriting posts={posts} total={94} />);
+    expect(screen.queryByText(/latest/i)).not.toBeInTheDocument();
+  });
+
   it('omits the archive link when no total is given', () => {
     // On /blog the archive is already directly below, so the link is redundant.
     render(<SelectedWriting posts={posts} />);
