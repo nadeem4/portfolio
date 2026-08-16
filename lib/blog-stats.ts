@@ -9,6 +9,21 @@ export interface CategoryStat {
   latest: string;
 }
 
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * Formats an ISO date as "15 Aug 2026".
+ *
+ * Built from the string, never a Date: parsing `2026-08-01` yields UTC midnight,
+ * which a negative-offset locale renders as the previous month. The year is
+ * always shown — these dates signal recency, and a bare "15 Aug" reads as this
+ * year even when it isn't.
+ */
+export function formatPostDate(iso: string): string {
+  const [year, month, day] = iso.split('-');
+  return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
+}
+
 export interface CatalogStats {
   total: number;
   categoryCount: number;

@@ -1,41 +1,33 @@
-import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { Identicon } from './identicon';
 import type { BlogPost } from '@/lib/blog.types';
 
-interface SelectedWritingProps {
+interface PostListProps {
+  heading: string;
   posts: BlogPost[];
-  /**
-   * Total posts in the catalog. When given, a link through to the archive is
-   * rendered. Omitted on /blog, where the archive is already directly below.
-   */
-  total?: number;
+  /** Optional control rendered opposite the heading, e.g. a link to the archive. */
+  action?: ReactNode;
 }
 
 /**
- * A curated handful of posts, surfaced on the homepage.
+ * A headed list of posts.
  *
- * The strongest evidence on this site was previously reachable only by opening
- * /blog and scanning the full archive, where it sat styled identically to
- * introductory explainers. This puts it one click from the front door.
+ * Used for both blocks on the homepage — the curated "Selected writing" and the
+ * recency-ordered "Latest" — which differ only in their heading and contents.
+ * They are deliberately allowed to overlap: a post can be both pinned and
+ * recent, and they answer different questions.
  *
- * Context lines come from each post's own subtitle rather than a parallel set
- * of hand-written blurbs, so they cannot drift out of sync with the catalog.
+ * Context lines come from each post's own subtitle rather than a parallel set of
+ * hand-written blurbs, so they cannot drift out of sync with the catalog.
  */
-export function SelectedWriting({ posts, total }: SelectedWritingProps) {
+export function PostList({ heading, posts, action }: PostListProps) {
   if (posts.length === 0) return null;
 
   return (
     <section>
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Selected writing</h2>
-        {total !== undefined && (
-          <Link
-            href="/blog"
-            className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
-          >
-            All {total} posts
-          </Link>
-        )}
+        <h2 className="text-sm font-bold uppercase tracking-[0.18em]">{heading}</h2>
+        {action}
       </div>
 
       <ul className="mt-4 divide-y divide-border">
