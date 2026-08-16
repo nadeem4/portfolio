@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { BlogPost } from '@/lib/blog.types';
 import { filterPostsByCategory } from './filter-posts';
 import { CategoryCards } from './category-cards';
-import { SelectedWriting } from './selected-writing';
+import { PostList } from './post-list';
 import { Identicon } from './identicon';
 
 interface BlogListProps {
@@ -32,7 +32,7 @@ export function BlogList({ posts, selected = [] }: BlogListProps) {
     <div className="space-y-8">
       <CategoryCards posts={posts} selected={category} onSelect={setCategory} />
 
-      {category === null && selected.length > 0 && <SelectedWriting posts={selected} />}
+      {category === null && selected.length > 0 && <PostList heading="Selected writing" posts={selected} />}
 
       <div>
         <div className="flex items-baseline justify-between gap-4 pb-1">
