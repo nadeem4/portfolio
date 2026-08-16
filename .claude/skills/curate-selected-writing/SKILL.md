@@ -1,13 +1,13 @@
 ---
 name: curate-selected-writing
-description: Use when choosing which blog posts lead on the homepage, when new posts have been published and config/selected-writing.ts may need revisiting, or when deciding what writing to feature
+description: Use when choosing which blog posts lead on the homepage, when new posts have been published and config/selected-writing.json may need revisiting, or when deciding what writing to feature
 ---
 
 # Curate the Selected writing list
 
 ## Overview
 
-`config/selected-writing.ts` holds a handful of post ids that lead on the homepage, above a 92-post archive. It is the site's answer to a real problem: the strongest post was previously row ~30 of a flat list, styled identically to an introductory explainer, and a recruiter screening in thirty seconds never reached it.
+`config/selected-writing.json` holds a handful of post ids that lead on the homepage, above the full archive. It is the site's answer to a real problem: the strongest post was previously row ~30 of a flat list, styled identically to an introductory explainer, and a recruiter screening in thirty seconds never reached it.
 
 **Core principle: this is a filter, not a shelf.** Every post added weakens the ones already there. The question is never "is this post good" — it is "is this stronger than the weakest post currently on the list."
 
@@ -41,7 +41,7 @@ Do not sort by date. Do not sort by category.
 | **Context lines come from each post's `subtitle`.** | The component reads `post.subtitle`. Never hand-write a parallel blurb. |
 | **Every id must resolve** against `config/blog-posts.json`. A test enforces this. | A typo silently drops a post from the homepage. |
 
-Because context lines are subtitles, **a post with a weak subtitle is a weak candidate** regardless of merit. One post's subtitle is a scraped image credit; **17** are truncated Medium intro paragraphs ending in an ellipsis. No test catches these. Read the subtitle before selecting — fix it in Notion and resync if the post deserves the slot.
+Because context lines are subtitles, **a post with a weak subtitle is a weak candidate** regardless of merit. One post's subtitle is a scraped image credit; a number are truncated Medium intro paragraphs ending in an ellipsis. No test catches these. Read the subtitle before selecting — fix it in Notion and resync if the post deserves the slot.
 
 ## The bar rises as the list fills
 
@@ -71,7 +71,7 @@ This matters where criteria collide: `mini-gpt` is a featured repo, so "Attentio
 
 They assert every id resolves, no duplicates, the three-to-six cap, and `subtitle.trim().length > 20`.
 
-**That length check catches nothing real.** All 92 posts pass it — the shortest subtitle is 38 characters, including every truncated one. **Subtitle quality is entirely a manual judgement.** Do not treat a green test run as evidence the context lines are good.
+**That length check catches nothing real.** Every post passes it, including every truncated one — real subtitles comfortably exceed twenty characters. **Subtitle quality is entirely a manual judgement.** Do not treat a green test run as evidence the context lines are good.
 
 ## Common mistakes
 

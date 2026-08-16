@@ -1,6 +1,18 @@
-import { selectedWriting } from '@/config/selected-writing';
+import selectedWriting from '@/config/selected-writing.json';
 import { getBlogPosts } from './blog';
 import type { BlogPost } from './blog.types';
+
+/**
+ * The handful of posts that lead on the homepage, in display order.
+ *
+ * Held as JSON rather than TypeScript so an automated sync can rewrite it
+ * safely — editing a `.ts` file programmatically means regex surgery or a
+ * parser, either of which can produce a file that does not compile. JSON can
+ * only be malformed in ways that fail loudly.
+ *
+ * The selection criteria live in `.claude/skills/curate-selected-writing`.
+ */
+export { selectedWriting };
 
 /**
  * Resolves post ids to posts, preserving the order of the ids.

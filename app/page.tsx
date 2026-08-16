@@ -37,7 +37,7 @@ export default function HomePage() {
           <Experience />
         </div>
         <div className="border-t border-border pt-12">
-          <PostList heading="Selected writing" posts={selected} action={<ArchiveLink total={posts.length} />} />
+          <PostList heading="Selected writing" posts={selected} action={<ArchiveLink />} />
         </div>
         <div className="border-t border-border pt-12">
           <PostList heading="Latest" posts={latest} />

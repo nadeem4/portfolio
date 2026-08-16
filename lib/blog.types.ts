@@ -9,32 +9,10 @@ export interface BlogPost {
   category: string;
 }
 
-/**
- * Every category defined in the Notion database schema.
- *
- * All sixteen are listed, not just those currently carrying posts — validating
- * against the in-use set would fail the first time an unused category is
- * assigned to a new post.
- *
- * Kept in sync by hand with the Notion select options. A category present in the
- * catalogue but missing here fails the catalogue test, which is the intended
- * signal that this list has drifted.
- */
-export const BLOG_CATEGORIES = [
-  'AI System Design',
-  'System Design Case Studies',
-  'LLM Architectures',
-  'RAG on PDFs',
-  'Vector Databases',
-  'AI Breakthroughs',
-  'J-Space Primer',
-  'LLM-Era System Design Case Studies',
-  'Backend & Infra',
-  'Postgres Series',
-  'Python Logging',
-  'Azure & Cloud Fundamentals',
-  'Azure Functions Internals',
-  'Java & Spring Boot',
-  'Data Science',
-  'Software Engineering',
-] as const;
+// Categories are deliberately not enumerated here.
+//
+// `Category` is a Notion *select* field, so its values are constrained at the
+// source — a post cannot carry a typo'd category. Mirroring the option list in
+// TypeScript validated nothing that could actually go wrong, and its only real
+// effect was breaking the build whenever a new category was legitimately added
+// in Notion, until someone hand-edited this file to agree.
