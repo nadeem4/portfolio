@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { getSelectedPosts, selectPosts } from './selected-writing';
+import { getSelectedPosts, selectPosts, selectedWriting } from './selected-writing';
 import { getBlogPosts } from './blog';
-import { selectedWriting } from '@/config/selected-writing';
 import type { BlogPost } from './blog.types';
 
 function post(id: string): BlogPost {

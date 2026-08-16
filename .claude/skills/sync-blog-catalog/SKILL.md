@@ -7,7 +7,7 @@ description: Use when the Notion blog database has changed and config/blog-posts
 
 ## Overview
 
-`config/blog-posts.json` is the site's only source of blog content. Medium is not fetched at runtime — its RSS feed caps at 10 items against ~92 published posts, which is why the catalog exists. The catalog is generated from a Notion database and committed.
+`config/blog-posts.json` is the site's only source of blog content. Medium is not fetched at runtime — its RSS feed caps at 10 items against far more published posts than that, which is why the catalog exists. The catalog is generated from a Notion database and committed.
 
 **Core principle:** regenerate the whole file, then diff every field against the previous version. Never hand-edit entries.
 
@@ -40,7 +40,7 @@ Reach for SQL only for an aggregate view mode can't express, such as `GROUP BY "
 
 ### Always check `has_more` — truncation is silent and destructive
 
-`page_size` caps at **100**. The catalog is at **94** — six rows from the cliff.
+`page_size` caps at **100**, and the catalog is approaching it.
 
 **If you ignore `has_more`, the failure is silent and it deletes data:** a truncated Notion snapshot diffed against the full file reports the missing posts as *removed*, and regeneration then writes a file without them.
 
@@ -67,9 +67,9 @@ Six keys, in this order. Field names differ between Notion and the file:
 
 Copy `title` and `subtitle` **verbatim** — no rewording, no punctuation fixes.
 
-**File format: two-space indent, LF line endings, trailing newline.** Produce it with `JSON.stringify(posts, null, 2) + '\n'`. The committed file is LF; on Windows git will warn `LF will be replaced by CRLF`. If a run writes CRLF, **all 94 lines rewrite** and the field diff drowns in a whole-file phantom change — the same failure the sort tie-break exists to prevent.
+**File format: two-space indent, LF line endings, trailing newline.** Produce it with `JSON.stringify(posts, null, 2) + '\n'`. The committed file is LF; on Windows git will warn `LF will be replaced by CRLF`. If a run writes CRLF, **every line rewrites** and the field diff drowns in a whole-file phantom change — the same failure the sort tie-break exists to prevent.
 
-**View mode returns more columns than you need, and one of them is a trap.** Alongside the six above it returns `date:Published Date:is_datetime` and a top-level **`url` that is the Notion page URL, not the Medium URL**. The file's `url` key must come from `Medium URL`. Mapping the wrong one wires 92 rows to Notion pages — silently, since both are valid URLs. Drop every column not in the table.
+**View mode returns more columns than you need, and one of them is a trap.** Alongside the six above it returns `date:Published Date:is_datetime` and a top-level **`url` that is the Notion page URL, not the Medium URL**. The file's `url` key must come from `Medium URL`. Mapping the wrong one wires every row to a Notion page — silently, since both are valid URLs. Drop every column not in the table.
 
 Normalise a missing subtitle defensively: treat `null`, `""`, and an absent key alike and emit `""`. Never invent one.
 
@@ -78,18 +78,6 @@ Normalise a missing subtitle defensively: treat `null`, `""`, and an absent key 
 **`date` descending, ties broken by `id` ascending — plain lexicographic string compare**, matching the verification snippet's `a.id < b.id`. Ids are hex but variable-length, so string order and numeric-hex order are not the same; write the comparator to agree with the checker.
 
 Twenty-seven posts share a publication date with at least one other. Without the tie-break, regeneration emits a different order each run and the diff fills with phantom changes. This matters more once a scheduled job is opening the PRs.
-
-## Categories drift
-
-`BLOG_CATEGORIES` in `lib/blog.types.ts` must list **every option defined in the Notion select**, not just those currently carrying posts. The catalog test rejects any category not in that list.
-
-When categories change, fetch the schema to get the authoritative option list — `notion-fetch` on the data source URL returns it, and `notion-fetch` has no query quota:
-
-```
-notion-fetch  id: collection://5969f396-0382-49d7-a9ca-520a44f1da2a
-```
-
-This has already bitten once: `Data Science` and `Software Engineering` were added in Notion, and the catalog test failed until they were added to `BLOG_CATEGORIES`.
 
 ## Auditing without changing anything
 
@@ -101,12 +89,11 @@ Regenerating. For a read-only check, use the section above instead.
 
 1. Copy the current file aside so you can diff against it.
 2. Fetch all rows in view mode, paging until `has_more` is false.
-3. **Dump the raw payload to a scratch file outside the repo, then map, sort and write the output with a script.** Do not hand-transcribe records into the file. Transcription is the largest risk in this task: 94 records × 6 fields, and a single dropped character in a subtitle ships a corrupted post with a **fully green test suite**, because nothing validates content. Scripting it makes the copy verbatim and everything after it mechanical.
+3. **Dump the raw payload to a scratch file outside the repo, then map, sort and write the output with a script.** Do not hand-transcribe records into the file. Transcription is the largest risk in this task: every record, every field, and a single dropped character in a subtitle ships a corrupted post with a **fully green test suite**, because nothing validates content. Scripting it makes the copy verbatim and everything after it mechanical.
 4. Diff **all five non-id fields**, not just `category`. Report added, removed, and changed posts with before → after values.
 5. Reconcile per-category counts against Notion.
-6. Check every id in `config/selected-writing.ts` still resolves — a recategorised or deleted post must not silently drop off the homepage.
-7. If the Notion select gained options, update `BLOG_CATEGORIES`.
-8. Run `npx vitest run`, `npx tsc --noEmit`, `npm run build`.
+6. Check every id in `config/selected-writing.json` still resolves — a recategorised or deleted post must not silently drop off the homepage.
+7. Run `npx vitest run`, `npx tsc --noEmit`, `npm run build`.
 
 ## Verification
 
@@ -136,7 +123,6 @@ The transcription is long and mechanical, so a subagent is reasonable. Tell it e
 | Using SQL mode by default | Exhausts the workspace quota, then blocks later syncs |
 | Diffing only `category` | Silent title, subtitle, url or date changes ship unnoticed |
 | Omitting the id tie-break | Phantom diffs on every regeneration |
-| Forgetting `BLOG_CATEGORIES` | Catalog test fails, or a new category ships unvalidated |
 | Assuming `id` is 12 hex chars | One real post has an 11-char id (`c1ccda17c54`); the check is `{6,}` |
 | Hand-editing an entry | Next regeneration silently reverts it |
 | Ignoring `has_more` | Truncated fetch reports real posts as deleted, then drops them |
@@ -149,8 +135,8 @@ Some entries are faithfully in sync and still wrong, because the source is wrong
 
 - `ac6850a49e05` — subtitle is `"Photo by Alexandre Debiève on Unsplash"`, a scraped image credit. It renders on the site.
 - `d82f53b57c31` — subtitle is wrapped in literal quote characters.
-- **17** subtitles are truncated Medium intro paragraphs ending in an ellipsis rather than written descriptions.
+- A number of subtitles are truncated Medium intro paragraphs ending in an ellipsis rather than written descriptions.
 
-## Counts in this file go stale
+## Do not quote counts
 
-The post count, shared-date count and ellipsis count above are true at the time of writing and drift with every sync. Treat them as orientation, not assertions — recompute anything you are about to rely on. Comments elsewhere in the repo carry the same hazard; `config/selected-writing.ts` and `components/blog/selected-writing.tsx` have both quoted a hardcoded archive size that a later sync falsified.
+This file names no post counts, and neither should anything it produces. Counts drift with every sync, and a stale number in a procedure gets quoted back later as if it had been checked. State the rule, not the tally — "page until `has_more` is false", not "94 rows against a 100 cap".

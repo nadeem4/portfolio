@@ -52,8 +52,8 @@ describe('PostList', () => {
   });
 
   it('renders the action opposite the heading when given', () => {
-    render(<PostList heading="Selected writing" posts={posts} action={<ArchiveLink total={94} />} />);
-    expect(screen.getByRole('link', { name: /All 94 posts/ })).toHaveAttribute('href', '/blog');
+    render(<PostList heading="Selected writing" posts={posts} action={<ArchiveLink />} />);
+    expect(screen.getByRole('link', { name: /All posts/ })).toHaveAttribute('href', '/blog');
   });
 
   it('renders no action when none is given', () => {
@@ -68,13 +68,14 @@ describe('PostList', () => {
 });
 
 describe('ArchiveLink', () => {
-  it('carries only the total, not a date', () => {
-    // It previously also carried the newest post's date, which made the whole
-    // element one link to /blog — clicking a date that named a specific post
-    // landed you on a list instead.
-    render(<ArchiveLink total={94} />);
-    const link = screen.getByRole('link', { name: /All 94 posts/ });
+  it('carries neither a count nor a date', () => {
+    // The count is already stated in the activity line and the /blog masthead.
+    // The date used to live here too, which made the whole element one link to
+    // /blog — clicking a date that named a specific post landed you on a list.
+    render(<ArchiveLink />);
+    const link = screen.getByRole('link', { name: /All posts/ });
     expect(link).toHaveAttribute('href', '/blog');
     expect(link.textContent).not.toMatch(/latest/i);
+    expect(link.textContent).not.toMatch(/\d/);
   });
 });

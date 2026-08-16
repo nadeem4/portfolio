@@ -34,9 +34,9 @@ This has already been reported as a production bug — that link previews would 
 | `robots.txt` | Deployed domain in the `Sitemap:` line | Same fallback |
 | `/opengraph-image` | HTTP 200, `image/png`, ~38 KB | Satori renders at request time |
 | `/icon` | HTTP 200, `image/png`, ~400 bytes | Same |
-| `/api/github` | ~13 repos, `nl2sql` first | GitHub rate limits are per-IP and Vercel's are shared |
+| `/api/github` | a non-trivial repo list, `nl2sql` first | GitHub rate limits are per-IP and Vercel's are shared |
 
-Three sitemap URLs is correct even though the site lists 92 posts — the posts are external.
+Three sitemap URLs is correct however many posts the site lists — the posts are external.
 | Nav | No "Live Projects" until one is `live` | Conditional on config |
 
 ## Curl is blocked by default
@@ -75,7 +75,7 @@ All four pages must return 200 with **four distinct titles**. They were identica
 
 Empty means rate-limited. But one stale repo also passes "non-empty". Assert the shape:
 
-- roughly **13** repos, with **`nl2sql` first** (the pinned order from `config/project-overrides.ts`)
+- more than a couple of repos, with **`nl2sql` first** (the pinned order from `config/project-overrides.ts`)
 - no repo whose `description` is empty — the description gate should have excluded it
 
 The endpoint also returns `stars` and `updatedAt` for every repo. **Use it to check the tab ordering objectively** rather than eyeballing: `Recent` must equal the API sorted by `updatedAt` descending, `Most Starred` by `stars` descending.
