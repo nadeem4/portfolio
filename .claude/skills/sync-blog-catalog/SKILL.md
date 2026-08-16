@@ -40,14 +40,14 @@ Reach for SQL only for an aggregate view mode can't express, such as `GROUP BY "
 
 ### Always check `has_more` — truncation is silent and destructive
 
-`page_size` caps at **100**. The catalog is at ~92, so a single call covers it *today* and will stop covering it soon.
+`page_size` caps at **100**. The catalog is at **94** — six rows from the cliff.
 
 **If you ignore `has_more`, the failure is silent and it deletes data:** a truncated Notion snapshot diffed against the full file reports the missing posts as *removed*, and regeneration then writes a file without them.
 
-Page until exhausted, and assert the total afterwards:
+**Always run the cursor loop, unconditionally.** Do not check `has_more` once, see `false`, and move on — that works until the day it doesn't, and the day it doesn't is silent. Paging costs nothing in view mode.
 
 ```
-has_more: true  ->  call again with start_cursor: <next_cursor>
+loop: fetch -> if has_more, fetch again with start_cursor: <next_cursor> -> until has_more is false
 ```
 
 Before diffing, sanity-check the row count against the committed file. **If Notion returns materially fewer rows than the file has, suspect truncation before you conclude posts were deleted.**
@@ -65,7 +65,9 @@ Six keys, in this order. Field names differ between Notion and the file:
 | `date` | `date:Published Date:start` (already `YYYY-MM-DD`) |
 | `category` | `Category` |
 
-Copy `title` and `subtitle` **verbatim** — no rewording, no punctuation fixes. Two-space indent, trailing newline.
+Copy `title` and `subtitle` **verbatim** — no rewording, no punctuation fixes.
+
+**File format: two-space indent, LF line endings, trailing newline.** Produce it with `JSON.stringify(posts, null, 2) + '\n'`. The committed file is LF; on Windows git will warn `LF will be replaced by CRLF`. If a run writes CRLF, **all 94 lines rewrite** and the field diff drowns in a whole-file phantom change — the same failure the sort tie-break exists to prevent.
 
 **View mode returns more columns than you need, and one of them is a trap.** Alongside the six above it returns `date:Published Date:is_datetime` and a top-level **`url` that is the Notion page URL, not the Medium URL**. The file's `url` key must come from `Medium URL`. Mapping the wrong one wires 92 rows to Notion pages — silently, since both are valid URLs. Drop every column not in the table.
 
@@ -73,9 +75,9 @@ Normalise a missing subtitle defensively: treat `null`, `""`, and an absent key 
 
 ## Sort order is load-bearing
 
-**`date` descending, ties broken by `id` ascending.**
+**`date` descending, ties broken by `id` ascending — plain lexicographic string compare**, matching the verification snippet's `a.id < b.id`. Ids are hex but variable-length, so string order and numeric-hex order are not the same; write the comparator to agree with the checker.
 
-Twenty-five posts share a publication date with at least one other. Without the tie-break, regeneration emits a different order each run and the diff fills with phantom changes. This matters more once a scheduled job is opening the PRs.
+Twenty-seven posts share a publication date with at least one other. Without the tie-break, regeneration emits a different order each run and the diff fills with phantom changes. This matters more once a scheduled job is opening the PRs.
 
 ## Categories drift
 
@@ -98,8 +100,8 @@ To answer "is the catalog still in sync?" **do not run the procedure below** —
 Regenerating. For a read-only check, use the section above instead.
 
 1. Copy the current file aside so you can diff against it.
-2. Fetch all rows in view mode.
-3. Write the new `config/blog-posts.json`, sorted as above.
+2. Fetch all rows in view mode, paging until `has_more` is false.
+3. **Dump the raw payload to a scratch file outside the repo, then map, sort and write the output with a script.** Do not hand-transcribe records into the file. Transcription is the largest risk in this task: 94 records × 6 fields, and a single dropped character in a subtitle ships a corrupted post with a **fully green test suite**, because nothing validates content. Scripting it makes the copy verbatim and everything after it mechanical.
 4. Diff **all five non-id fields**, not just `category`. Report added, removed, and changed posts with before → after values.
 5. Reconcile per-category counts against Notion.
 6. Check every id in `config/selected-writing.ts` still resolves — a recategorised or deleted post must not silently drop off the homepage.
@@ -147,4 +149,8 @@ Some entries are faithfully in sync and still wrong, because the source is wrong
 
 - `ac6850a49e05` — subtitle is `"Photo by Alexandre Debiève on Unsplash"`, a scraped image credit. It renders on the site.
 - `d82f53b57c31` — subtitle is wrapped in literal quote characters.
-- Roughly 18 subtitles are truncated Medium intro paragraphs ending in an ellipsis rather than written descriptions.
+- **17** subtitles are truncated Medium intro paragraphs ending in an ellipsis rather than written descriptions.
+
+## Counts in this file go stale
+
+The post count, shared-date count and ellipsis count above are true at the time of writing and drift with every sync. Treat them as orientation, not assertions — recompute anything you are about to rely on. Comments elsewhere in the repo carry the same hazard; `config/selected-writing.ts` and `components/blog/selected-writing.tsx` have both quoted a hardcoded archive size that a later sync falsified.
