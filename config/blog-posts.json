@@ -1,5 +1,13 @@
 [
   {
+    "id": "6fab698c33eb",
+    "title": "The Curse of Dimensionality: Why Exact Nearest-Neighbor Search Does Not Scale",
+    "subtitle": "As dimensionality increases, it becomes effectively impossible to tell the nearest point in a dataset from the farthest one.",
+    "url": "https://medium.com/@nadeem4-nk13/the-curse-of-dimensionality-why-exact-nearest-neighbor-search-does-not-scale-6fab698c33eb",
+    "date": "2026-08-16",
+    "category": "Vector Databases"
+  },
+  {
     "id": "ede499c71411",
     "title": "Inside the Encoder: Tokens, Attention, and How a Transformer Actually Works",
     "subtitle": "Opening the sealed box: token embeddings, positional encoding, self-attention, multi-head, feedforward, and residuals.",
