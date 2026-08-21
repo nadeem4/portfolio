@@ -1,5 +1,21 @@
 [
   {
+    "id": "69533a96507d",
+    "title": "Indexing Deep Dive: IVF and IVF-PQ",
+    "subtitle": "HNSW buys speed and recall by keeping a graph, and every vector it touches, resident in RAM — IVF and IVF-PQ are what cluster-based systems reach for when that stops fitting.",
+    "url": "https://medium.com/@nadeem4-nk13/indexing-deep-dive-ivf-and-ivf-pq-69533a96507d",
+    "date": "2026-08-21",
+    "category": "Vector Databases"
+  },
+  {
+    "id": "cfed874edd5a",
+    "title": "Indexing Deep Dive: HNSW, Under the Hood",
+    "subtitle": "How the multi-layer proximity graph is actually built and searched, and where the real trade-offs live.",
+    "url": "https://medium.com/@nadeem4-nk13/indexing-deep-dive-hnsw-under-the-hood-cfed874edd5a",
+    "date": "2026-08-20",
+    "category": "Vector Databases"
+  },
+  {
     "id": "6fab698c33eb",
     "title": "The Curse of Dimensionality: Why Exact Nearest-Neighbor Search Does Not Scale",
     "subtitle": "As dimensionality increases, it becomes effectively impossible to tell the nearest point in a dataset from the farthest one.",
