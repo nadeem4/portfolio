@@ -1,5 +1,13 @@
 [
   {
+    "id": "b97872b101fd",
+    "title": "Vector Compression and Quantisation: Fitting Billions of Vectors in Memory",
+    "subtitle": "A billion 768-dimensional float32 vectors take about 3 terabytes just for the raw numbers.",
+    "url": "https://medium.com/@nadeem4-nk13/vector-compression-and-quantisation-fitting-billions-of-vectors-in-memory-b97872b101fd",
+    "date": "2026-08-22",
+    "category": "Vector Databases"
+  },
+  {
     "id": "69533a96507d",
     "title": "Indexing Deep Dive: IVF and IVF-PQ",
     "subtitle": "HNSW buys speed and recall by keeping a graph, and every vector it touches, resident in RAM — IVF and IVF-PQ are what cluster-based systems reach for when that stops fitting.",
