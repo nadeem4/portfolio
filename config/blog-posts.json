@@ -3,7 +3,7 @@
     "id": "b97872b101fd",
     "title": "Vector Compression and Quantisation: Fitting Billions of Vectors in Memory",
     "subtitle": "A billion 768-dimensional float32 vectors take about 3 terabytes just for the raw numbers.",
-    "url": "https://medium.com/@nadeem4-nk13/vector-compression-and-quantisation-fitting-billions-of-vectors-in-memory-b97872b101fd",
+    "url": "https://medium.com/learnwithnk/vector-compression-and-quantisation-fitting-billions-of-vectors-in-memory-b97872b101fd",
     "date": "2026-08-22",
     "category": "Vector Databases"
   },
@@ -11,7 +11,7 @@
     "id": "69533a96507d",
     "title": "Indexing Deep Dive: IVF and IVF-PQ",
     "subtitle": "HNSW buys speed and recall by keeping a graph, and every vector it touches, resident in RAM — IVF and IVF-PQ are what cluster-based systems reach for when that stops fitting.",
-    "url": "https://medium.com/@nadeem4-nk13/indexing-deep-dive-ivf-and-ivf-pq-69533a96507d",
+    "url": "https://medium.com/learnwithnk/indexing-deep-dive-ivf-and-ivf-pq-69533a96507d",
     "date": "2026-08-21",
     "category": "Vector Databases"
   },
@@ -19,7 +19,7 @@
     "id": "cfed874edd5a",
     "title": "Indexing Deep Dive: HNSW, Under the Hood",
     "subtitle": "How the multi-layer proximity graph is actually built and searched, and where the real trade-offs live.",
-    "url": "https://medium.com/@nadeem4-nk13/indexing-deep-dive-hnsw-under-the-hood-cfed874edd5a",
+    "url": "https://medium.com/learnwithnk/indexing-deep-dive-hnsw-under-the-hood-cfed874edd5a",
     "date": "2026-08-20",
     "category": "Vector Databases"
   },
@@ -27,7 +27,7 @@
     "id": "6fab698c33eb",
     "title": "The Curse of Dimensionality: Why Exact Nearest-Neighbor Search Does Not Scale",
     "subtitle": "As dimensionality increases, it becomes effectively impossible to tell the nearest point in a dataset from the farthest one.",
-    "url": "https://medium.com/@nadeem4-nk13/the-curse-of-dimensionality-why-exact-nearest-neighbor-search-does-not-scale-6fab698c33eb",
+    "url": "https://medium.com/learnwithnk/the-curse-of-dimensionality-why-exact-nearest-neighbor-search-does-not-scale-6fab698c33eb",
     "date": "2026-08-16",
     "category": "Vector Databases"
   },
@@ -35,7 +35,7 @@
     "id": "ede499c71411",
     "title": "Inside the Encoder: Tokens, Attention, and How a Transformer Actually Works",
     "subtitle": "Opening the sealed box: token embeddings, positional encoding, self-attention, multi-head, feedforward, and residuals.",
-    "url": "https://medium.com/@nadeem4-nk13/inside-the-encoder-tokens-attention-and-how-a-transformer-actually-works-ede499c71411",
+    "url": "https://medium.com/learnwithnk/inside-the-encoder-tokens-attention-and-how-a-transformer-actually-works-ede499c71411",
     "date": "2026-08-15",
     "category": "Vector Databases"
   },
@@ -43,7 +43,7 @@
     "id": "f32b19d708c8",
     "title": "Distance Metrics and Similarity Search: Cosine, Euclidean, and Dot Product",
     "subtitle": "Cosine, Euclidean, and dot product are not interchangeable dropdown options — pick the wrong one and every query still returns a confident, quietly wrong ranking.",
-    "url": "https://medium.com/@nadeem4-nk13/distance-metrics-and-similarity-search-cosine-euclidean-and-dot-product-f32b19d708c8",
+    "url": "https://medium.com/learnwithnk/distance-metrics-and-similarity-search-cosine-euclidean-and-dot-product-f32b19d708c8",
     "date": "2026-08-15",
     "category": "Vector Databases"
   },
@@ -51,7 +51,7 @@
     "id": "3b5bf9705c59",
     "title": "Scaling Contrastive Training: Batch Size, GPU Gathering, and Gradient Caching",
     "subtitle": "Why bigger training batches make embedding models better, and how teams build batches too big for any single GPU to hold",
-    "url": "https://medium.com/@nadeem4-nk13/scaling-contrastive-training-batch-size-gpu-gathering-and-gradient-caching-3b5bf9705c59",
+    "url": "https://medium.com/learnwithnk/scaling-contrastive-training-batch-size-gpu-gathering-and-gradient-caching-3b5bf9705c59",
     "date": "2026-08-12",
     "category": "Vector Databases"
   },
@@ -59,7 +59,7 @@
     "id": "5007aa0d6b09",
     "title": "How Embedding Models Actually Learn: The Math Behind Contrastive Training",
     "subtitle": "The InfoNCE formula, the pooling code, and the training loop behind every embedding model, worked through with real numbers.",
-    "url": "https://medium.com/@nadeem4-nk13/how-embedding-models-actually-learn-the-math-behind-contrastive-training-5007aa0d6b09",
+    "url": "https://medium.com/learnwithnk/how-embedding-models-actually-learn-the-math-behind-contrastive-training-5007aa0d6b09",
     "date": "2026-08-09",
     "category": "Vector Databases"
   },
@@ -67,7 +67,7 @@
     "id": "594f30ae787c",
     "title": "Embeddings 101: How Text, Images, and Audio Become Vectors",
     "subtitle": "How embedding models learn to turn text, images, and audio into vectors, explained with everyday analogies and no jargon.",
-    "url": "https://medium.com/@nadeem4-nk13/embeddings-101-how-text-images-and-audio-become-vectors-594f30ae787c",
+    "url": "https://medium.com/learnwithnk/embeddings-101-how-text-images-and-audio-become-vectors-594f30ae787c",
     "date": "2026-08-09",
     "category": "Vector Databases"
   },
@@ -75,7 +75,7 @@
     "id": "f2e8c08fef1a",
     "title": "What Is a Vector Database? Origins, Use Cases, and How It Differs from Relational and NoSQL Systems",
     "subtitle": "Why nearest-neighbor search needed an entirely new kind of database, not just a new column type.",
-    "url": "https://medium.com/@nadeem4-nk13/what-is-a-vector-database-origins-use-cases-and-how-it-differs-from-relational-and-nosql-systems-f2e8c08fef1a",
+    "url": "https://medium.com/learnwithnk/what-is-a-vector-database-origins-use-cases-and-how-it-differs-from-relational-and-nosql-systems-f2e8c08fef1a",
     "date": "2026-08-02",
     "category": "Vector Databases"
   },
@@ -83,7 +83,7 @@
     "id": "074e8f423854",
     "title": "LLM Serving Architectures: Batching, KV-Cache, Multi-Tenancy",
     "subtitle": "Inside the batching, caching, and multi-tenancy decisions that determine your cost per token.",
-    "url": "https://medium.com/@nadeem4-nk13/llm-serving-architectures-batching-kv-cache-multi-tenancy-074e8f423854",
+    "url": "https://medium.com/learnwithnk/llm-serving-architectures-batching-kv-cache-multi-tenancy-074e8f423854",
     "date": "2026-07-31",
     "category": "AI System Design"
   },
@@ -91,7 +91,7 @@
     "id": "f1aaab955d2d",
     "title": "Orchestration & Memory: Context Management for Long-Running Agents",
     "subtitle": "A system design guide to context windows, memory types, and multi-agent coordination for agents that run for hours or days.",
-    "url": "https://medium.com/@nadeem4-nk13/orchestration-memory-context-management-for-long-running-agents-f1aaab955d2d",
+    "url": "https://medium.com/learnwithnk/orchestration-memory-context-management-for-long-running-agents-f1aaab955d2d",
     "date": "2026-07-30",
     "category": "AI System Design"
   },
@@ -99,7 +99,7 @@
     "id": "b19eecbace9e",
     "title": "Agentic Systems: Tool Use, Planning, Multi-Step Reasoning",
     "subtitle": "A system design guide to how agents plan, call tools, and reason across multiple steps in production.",
-    "url": "https://medium.com/@nadeem4-nk13/agentic-systems-tool-use-planning-multi-step-reasoning-b19eecbace9e",
+    "url": "https://medium.com/learnwithnk/agentic-systems-tool-use-planning-multi-step-reasoning-b19eecbace9e",
     "date": "2026-07-29",
     "category": "AI System Design"
   },
@@ -107,7 +107,7 @@
     "id": "82d5f583b31c",
     "title": "Fine-Tuning vs. RAG vs. Prompting: Choosing the Right Approach",
     "subtitle": "A practical framework for deciding when to prompt, retrieve, or fine-tune, and how to combine all three.",
-    "url": "https://medium.com/@nadeem4-nk13/fine-tuning-vs-rag-vs-prompting-choosing-the-right-approach-82d5f583b31c",
+    "url": "https://medium.com/learnwithnk/fine-tuning-vs-rag-vs-prompting-choosing-the-right-approach-82d5f583b31c",
     "date": "2026-07-27",
     "category": "AI System Design"
   },
@@ -115,7 +115,7 @@
     "id": "3ea9ce6f3159",
     "title": "Embeddings & Vector Databases: Architecture and Trade-offs",
     "subtitle": "Inside the index: how embedding choices and ANN architecture decide your RAG system's speed, cost, and recall.",
-    "url": "https://medium.com/@nadeem4-nk13/embeddings-vector-databases-architecture-and-trade-offs-3ea9ce6f3159",
+    "url": "https://medium.com/learnwithnk/embeddings-vector-databases-architecture-and-trade-offs-3ea9ce6f3159",
     "date": "2026-07-25",
     "category": "Vector Databases"
   },
@@ -123,7 +123,7 @@
     "id": "546f21eded2f",
     "title": "Designing RAG Systems: Retrieval, Chunking, Re-ranking, Grounding",
     "subtitle": "Chunking, hybrid retrieval, re-ranking, and grounding checks: designing RAG as a pipeline instead of a single embedding lookup",
-    "url": "https://medium.com/@nadeem4-nk13/designing-rag-systems-retrieval-chunking-re-ranking-grounding-546f21eded2f",
+    "url": "https://medium.com/learnwithnk/designing-rag-systems-retrieval-chunking-re-ranking-grounding-546f21eded2f",
     "date": "2026-07-24",
     "category": "AI System Design"
   },
@@ -131,7 +131,7 @@
     "id": "764a0d3f4e2f",
     "title": "How AWS Lambda Runs 15 Trillion Invocations a Month: Firecracker, Snapshots, and Tiered Caches",
     "subtitle": "Inside the microVM stack, snapshot restores, and three-tier caches that let one platform run trillions of tenant invocations.",
-    "url": "https://medium.com/@nadeem4-nk13/how-aws-lambda-runs-15-trillion-invocations-a-month-firecracker-snapshots-and-tiered-caches-764a0d3f4e2f",
+    "url": "https://medium.com/learnwithnk/how-aws-lambda-runs-15-trillion-invocations-a-month-firecracker-snapshots-and-tiered-caches-764a0d3f4e2f",
     "date": "2026-07-22",
     "category": "System Design Case Studies"
   },
@@ -139,7 +139,7 @@
     "id": "15219335d078",
     "title": "Pretraining vs. Post-Training: How a Text Predictor Becomes an Assistant",
     "subtitle": "The two-stage training process that turns a raw next-token predictor into a model with a point of view.",
-    "url": "https://medium.com/@nadeem4-nk13/pretraining-vs-post-training-how-a-text-predictor-becomes-an-assistant-15219335d078",
+    "url": "https://medium.com/learnwithnk/pretraining-vs-post-training-how-a-text-predictor-becomes-an-assistant-15219335d078",
     "date": "2026-07-20",
     "category": "J-Space Primer"
   },
@@ -147,7 +147,7 @@
     "id": "d998a5a1860d",
     "title": "Chain-of-Thought and Scratchpad Reasoning: The Model Thinking Out Loud",
     "subtitle": "Why letting a model write out its reasoning improves accuracy, and why that visible channel isn't the whole story.",
-    "url": "https://medium.com/@nadeem4-nk13/chain-of-thought-and-scratchpad-reasoning-the-model-thinking-out-loud-d998a5a1860d",
+    "url": "https://medium.com/learnwithnk/chain-of-thought-and-scratchpad-reasoning-the-model-thinking-out-loud-d998a5a1860d",
     "date": "2026-07-20",
     "category": "J-Space Primer"
   },
@@ -155,7 +155,7 @@
     "id": "bc5d61531c5a",
     "title": "Attention Mechanism Basics: How Tokens Reach Across the Whole Context",
     "subtitle": "How queries, keys, and values let any token pull information from anywhere earlier in a sequence, no matter how far back.",
-    "url": "https://medium.com/@nadeem4-nk13/attention-mechanism-basics-how-tokens-reach-across-the-whole-context-bc5d61531c5a",
+    "url": "https://medium.com/learnwithnk/attention-mechanism-basics-how-tokens-reach-across-the-whole-context-bc5d61531c5a",
     "date": "2026-07-19",
     "category": "J-Space Primer"
   },
@@ -163,7 +163,7 @@
     "id": "dfe1a585fce8",
     "title": "Procrastinate: Turning Postgres Into Your Task Queue",
     "subtitle": "How PostgreSQL's LISTEN/NOTIFY and SKIP LOCKED quietly replace your message broker, and when they shouldn't.",
-    "url": "https://medium.com/@nadeem4-nk13/procrastinate-turning-postgres-into-your-task-queue-dfe1a585fce8",
+    "url": "https://medium.com/learnwithnk/procrastinate-turning-postgres-into-your-task-queue-dfe1a585fce8",
     "date": "2026-07-17",
     "category": "Postgres Series"
   },
@@ -171,7 +171,7 @@
     "id": "439db0c2ef13",
     "title": "GPT-Live: OpenAI's Full-Duplex Voice Architecture Ends the Turn-Taking Era",
     "subtitle": "Every voice assistant you have used, from Siri to the original ChatGPT Advanced Voice Mode, shares a hidden assumption: conversation…",
-    "url": "https://medium.com/@nadeem4-nk13/gpt-live-openais-full-duplex-voice-architecture-ends-the-turn-taking-era-439db0c2ef13",
+    "url": "https://medium.com/learnwithnk/gpt-live-openais-full-duplex-voice-architecture-ends-the-turn-taking-era-439db0c2ef13",
     "date": "2026-07-16",
     "category": "AI Breakthroughs"
   },
@@ -179,7 +179,7 @@
     "id": "b2263c43f869",
     "title": "Postgres Learns to Speak Graph: Inside SQL/PGQ and PostgreSQL 19",
     "subtitle": "PostgreSQL 19 ships native graph pattern-matching with SQL/PGQ. Here's how CREATE PROPERTY GRAPH and GRAPH_TABLE work, and how they stack up",
-    "url": "https://medium.com/@nadeem4-nk13/postgres-learns-to-speak-graph-inside-sql-pgq-and-postgresql-19-b2263c43f869",
+    "url": "https://medium.com/learnwithnk/postgres-learns-to-speak-graph-inside-sql-pgq-and-postgresql-19-b2263c43f869",
     "date": "2026-07-15",
     "category": "Postgres Series"
   },
@@ -187,7 +187,7 @@
     "id": "33ab164b6ee8",
     "title": "How WhatsApp Moved 50 Billion Messages a Day With Just 32 Engineers",
     "subtitle": "How 32 engineers ran a global messaging service on Erlang, Mnesia, and FreeBSD, and the ruthless simplicity that made it possible.",
-    "url": "https://medium.com/@nadeem4-nk13/how-whatsapp-moved-50-billion-messages-a-day-with-just-32-engineers-33ab164b6ee8",
+    "url": "https://medium.com/learnwithnk/how-whatsapp-moved-50-billion-messages-a-day-with-just-32-engineers-33ab164b6ee8",
     "date": "2026-07-12",
     "category": "System Design Case Studies"
   },
@@ -195,7 +195,7 @@
     "id": "ed1ee839d9fe",
     "title": "Transformer Layers and the Residual Stream",
     "subtitle": "The shared vector every transformer layer reads from and writes to, and why it's the concrete object interpretability tools actually probe.",
-    "url": "https://medium.com/@nadeem4-nk13/transformer-layers-and-the-residual-stream-ed1ee839d9fe",
+    "url": "https://medium.com/learnwithnk/transformer-layers-and-the-residual-stream-ed1ee839d9fe",
     "date": "2026-07-08",
     "category": "J-Space Primer"
   },
@@ -203,7 +203,7 @@
     "id": "13eb0b809c97",
     "title": "Prompt Engineering as a System Design Discipline",
     "subtitle": "Why the next evolution of prompt engineering looks like software architecture, not wordsmithing.",
-    "url": "https://medium.com/@nadeem4-nk13/prompt-engineering-as-a-system-design-discipline-13eb0b809c97",
+    "url": "https://medium.com/learnwithnk/prompt-engineering-as-a-system-design-discipline-13eb0b809c97",
     "date": "2026-07-07",
     "category": "AI System Design"
   },
@@ -211,7 +211,7 @@
     "id": "a74a5a51f353",
     "title": "A Global Workspace in Language Models: Anthropic Finds a Silent \"J-Space\" Inside Claude",
     "subtitle": "Anthropic's J-lens uncovers a compact internal workspace in Claude that mirrors global workspace theory of consciousness.",
-    "url": "https://medium.com/@nadeem4-nk13/a-global-workspace-in-language-models-anthropic-finds-a-silent-j-space-inside-claude-a74a5a51f353",
+    "url": "https://medium.com/learnwithnk/a-global-workspace-in-language-models-anthropic-finds-a-silent-j-space-inside-claude-a74a5a51f353",
     "date": "2026-07-07",
     "category": "AI Breakthroughs"
   },
@@ -219,7 +219,7 @@
     "id": "785ed050e5f7",
     "title": "Why Framing Comes Before Architecture",
     "subtitle": "Latency, cost, and quality are three dials that pull against each other. Good LLM design is choosing where each one sits, on purpose.",
-    "url": "https://medium.com/@nadeem4-nk13/why-framing-comes-before-architecture-785ed050e5f7",
+    "url": "https://medium.com/learnwithnk/why-framing-comes-before-architecture-785ed050e5f7",
     "date": "2026-07-06",
     "category": "AI System Design"
   },
@@ -227,7 +227,7 @@
     "id": "ef64ba10b45e",
     "title": "How YouTube Scaled MySQL to 2.49 Billion Users: The Vitess Story",
     "subtitle": "A tour of Vitess, the layer that lets YouTube run 2.49 billion users on plain MySQL, plus the 9 patterns any team can steal from it.",
-    "url": "https://medium.com/@nadeem4-nk13/how-youtube-scaled-mysql-to-2-49-billion-users-the-vitess-story-ef64ba10b45e",
+    "url": "https://medium.com/learnwithnk/how-youtube-scaled-mysql-to-2-49-billion-users-the-vitess-story-ef64ba10b45e",
     "date": "2026-07-02",
     "category": "System Design Case Studies"
   },
@@ -235,7 +235,7 @@
     "id": "40e9d6c87f1c",
     "title": "Why LLM-Era AI Systems Break Every Rule You Learned About ML in Production",
     "subtitle": "The model is just one component. The system is everything around it: context, tools, orchestration, evals, and cost controls.",
-    "url": "https://medium.com/@nadeem4-nk13/why-llm-era-ai-systems-break-every-rule-you-learned-about-ml-in-production-40e9d6c87f1c",
+    "url": "https://medium.com/learnwithnk/why-llm-era-ai-systems-break-every-rule-you-learned-about-ml-in-production-40e9d6c87f1c",
     "date": "2026-07-01",
     "category": "AI System Design"
   },
@@ -243,7 +243,7 @@
     "id": "866226068cc4",
     "title": "PostgreSQL Internals, CDC, Kafka, and Distributed Systems Engineering Series",
     "subtitle": "PostgreSQL WAL, logical replication, Kafka, CDC pipelines, and distributed systems lessons from production-scale systems.",
-    "url": "https://medium.com/@nadeem4-nk13/postgresql-internals-cdc-kafka-and-distributed-systems-engineering-series-866226068cc4",
+    "url": "https://medium.com/learnwithnk/postgresql-internals-cdc-kafka-and-distributed-systems-engineering-series-866226068cc4",
     "date": "2026-05-18",
     "category": "Postgres Series"
   },
@@ -251,7 +251,7 @@
     "id": "5c49dc2d9200",
     "title": "Kafka-Based PostgreSQL → Salesforce Architecture (Part 2): How the System Actually Works",
     "subtitle": "Reconciling streaming CDC, batch-oriented APIs, and lakehouse storage in a production-grade PostgreSQL to Salesforce architecture.",
-    "url": "https://medium.com/@nadeem4-nk13/kafka-based-postgresql-salesforce-architecture-part-2-how-the-system-actually-works-5c49dc2d9200",
+    "url": "https://medium.com/learnwithnk/kafka-based-postgresql-salesforce-architecture-part-2-how-the-system-actually-works-5c49dc2d9200",
     "date": "2026-04-24",
     "category": "Postgres Series"
   },
@@ -259,7 +259,7 @@
     "id": "931e505f8910",
     "title": "PostgreSQL to Salesforce at Scale: Evolving a CDC Pipeline with Kafka",
     "subtitle": "From table-based buffering to a distributed log architecture for multi-consumer, high-throughput systems",
-    "url": "https://medium.com/@nadeem4-nk13/postgresql-to-salesforce-at-scale-evolving-a-cdc-pipeline-with-kafka-931e505f8910",
+    "url": "https://medium.com/learnwithnk/postgresql-to-salesforce-at-scale-evolving-a-cdc-pipeline-with-kafka-931e505f8910",
     "date": "2026-04-10",
     "category": "Postgres Series"
   },
@@ -267,7 +267,7 @@
     "id": "0b5802323fa0",
     "title": "Building a Reliable PostgreSQL → Salesforce CDC Pipeline: Lessons from WAL, Replication, and Failure Isolation",
     "subtitle": "Designing a serverless data pipeline with Azure Functions while protecting PostgreSQL using deterministic control loops",
-    "url": "https://medium.com/@nadeem4-nk13/building-a-reliable-postgresql-salesforce-cdc-pipeline-lessons-from-wal-replication-and-0b5802323fa0",
+    "url": "https://medium.com/learnwithnk/building-a-reliable-postgresql-salesforce-cdc-pipeline-lessons-from-wal-replication-and-0b5802323fa0",
     "date": "2026-04-07",
     "category": "Postgres Series"
   },
@@ -451,7 +451,7 @@
     "id": "9a1f74843fbd",
     "title": "I Learned How Azure Functions Run My Code: A Deep Dive into the Python Worker and gRPC",
     "subtitle": "How Azure Functions runs Python: Inside the out-of-process model, the Python Worker, and its gRPC connection.",
-    "url": "https://medium.com/@nadeem4-nk13/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-python-worker-and-grpc-9a1f74843fbd",
+    "url": "https://medium.com/learnwithnk/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-python-worker-and-grpc-9a1f74843fbd",
     "date": "2025-06-30",
     "category": "Azure Functions Internals"
   },
@@ -459,7 +459,7 @@
     "id": "790425b723e7",
     "title": "I Learned How Azure Functions Run My Code: A Deep Dive into the Host and WebJobs SDK",
     "subtitle": "A deep dive into the Azure Functions Host and the WebJobs SDK engine that powers your serverless code.",
-    "url": "https://medium.com/@nadeem4-nk13/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-host-and-webjobs-sdk-790425b723e7",
+    "url": "https://medium.com/learnwithnk/i-learned-how-azure-functions-run-my-code-a-deep-dive-into-the-host-and-webjobs-sdk-790425b723e7",
     "date": "2025-06-19",
     "category": "Azure Functions Internals"
   },
@@ -475,7 +475,7 @@
     "id": "b48cbddfa6dd",
     "title": "Messy Logging Config? Here's the dictConfig Fix",
     "subtitle": "Learn the intent behind dictConfig: using one clean dictionary to finally take control of your scattered Python logging configuration.",
-    "url": "https://medium.com/@nadeem4-nk13/messy-logging-config-heres-the-dictconfig-fix-b48cbddfa6dd",
+    "url": "https://medium.com/learnwithnk/messy-logging-config-heres-the-dictconfig-fix-b48cbddfa6dd",
     "date": "2025-06-13",
     "category": "Python Logging"
   },
@@ -499,7 +499,7 @@
     "id": "e70b75603c01",
     "title": "What Actually Happens When You Use logger.setLevel() in Python?",
     "subtitle": "Demystifying logger.setLevel(): See How Python Instantly Manages Your Log Levels.",
-    "url": "https://medium.com/@nadeem4-nk13/what-actually-happens-when-you-use-logger-setlevel-in-python-e70b75603c01",
+    "url": "https://medium.com/learnwithnk/what-actually-happens-when-you-use-logger-setlevel-in-python-e70b75603c01",
     "date": "2025-06-04",
     "category": "Python Logging"
   },
@@ -683,7 +683,7 @@
     "id": "96adcb1a4b01",
     "title": "How does Spring Boot Manage Dependency?",
     "subtitle": "Learn about the management of dependencies; dependency scope; dependency versioning in Spring Boot. Also, learn about different classpath.",
-    "url": "https://medium.com/@nadeem4-nk13/how-does-spring-boot-manage-dependency-96adcb1a4b01",
+    "url": "https://medium.com/learnwithnk/how-does-spring-boot-manage-dependency-96adcb1a4b01",
     "date": "2021-07-05",
     "category": "Java & Spring Boot"
   },
@@ -779,7 +779,7 @@
     "id": "d89f09c64f2a",
     "title": "What's new with Azure Backup",
     "subtitle": "Microsoft is heavily investing in all possible security aspects. Recently they have launched a security update for Recovery Service Vault.",
-    "url": "https://medium.com/@nadeem4-nk13/whats-new-with-azure-backup-d89f09c64f2a",
+    "url": "https://medium.com/learnwithnk/whats-new-with-azure-backup-d89f09c64f2a",
     "date": "2020-02-08",
     "category": "Azure & Cloud Fundamentals"
   }

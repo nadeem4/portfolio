@@ -12,3 +12,4 @@ node_modules
 
 # Playwright MCP snapshots
 .playwright-mcp/
+.firecrawl/
