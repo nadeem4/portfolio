@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { BlogList } from './blog-list';
 import type { BlogPost } from '@/lib/blog.types';
 
@@ -13,38 +13,23 @@ const posts: BlogPost[] = [
 ];
 
 describe('BlogList', () => {
-  it('shows every post by default', () => {
+  it('shows every post', () => {
     render(<BlogList posts={posts} />);
     expect(screen.getByText('Data Post')).toBeInTheDocument();
     expect(screen.getByText('ML Post')).toBeInTheDocument();
   });
 
-  it('narrows to one category when its card is clicked', () => {
+  it('offers a card per category as the way into each topic', () => {
     render(<BlogList posts={posts} />);
-    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    expect(screen.getByText('ML Post')).toBeInTheDocument();
-    expect(screen.queryByText('Data Post')).not.toBeInTheDocument();
+    // Scoped to the nav: the post titles below also contain the category words.
+    const nav = within(screen.getByRole('navigation', { name: /categories/i }));
+    expect(nav.getByRole('link', { name: /Data/ })).toHaveAttribute('href', '/blog/data');
+    expect(nav.getByRole('link', { name: /ML/ })).toHaveAttribute('href', '/blog/ml');
   });
 
-  it('restores every post when the All card is clicked', () => {
+  it('always offers a way back to the full list', () => {
     render(<BlogList posts={posts} />);
-    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    expect(screen.queryByText('Data Post')).not.toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /All/ }));
-
-    expect(screen.getByText('Data Post')).toBeInTheDocument();
-    expect(screen.getByText('ML Post')).toBeInTheDocument();
-  });
-
-  it('always offers a way back to the full list, filtered or not', () => {
-    // The clear affordance must be permanently visible, not conditional --
-    // a control that only appears after filtering is one nobody finds.
-    render(<BlogList posts={posts} />);
-    expect(screen.getByRole('button', { name: /All/ })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    expect(screen.getByRole('button', { name: /All/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /All/ })).toBeInTheDocument();
   });
 
   it('shows a fallback message when there are no posts', () => {
@@ -75,22 +60,8 @@ describe('BlogList', () => {
     expect(time).toHaveTextContent('2026-02-06');
   });
 
-  it('shows curated highlights above the archive when nothing is filtered', () => {
+  it('shows curated highlights above the archive', () => {
     render(<BlogList posts={posts} selected={[posts[1]]} />);
-    expect(screen.getByRole('heading', { name: /selected writing/i })).toBeInTheDocument();
-  });
-
-  it('hides the highlights while a category is active', () => {
-    // A cross-cutting highlight reel above a single-category list reads as noise.
-    render(<BlogList posts={posts} selected={[posts[1]]} />);
-    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    expect(screen.queryByRole('heading', { name: /selected writing/i })).not.toBeInTheDocument();
-  });
-
-  it('brings the highlights back when the filter is cleared', () => {
-    render(<BlogList posts={posts} selected={[posts[1]]} />);
-    fireEvent.click(screen.getByRole('button', { name: /ML/ }));
-    fireEvent.click(screen.getByRole('button', { name: /All/ }));
     expect(screen.getByRole('heading', { name: /selected writing/i })).toBeInTheDocument();
   });
 
@@ -99,7 +70,7 @@ describe('BlogList', () => {
     expect(screen.queryByRole('heading', { name: /selected writing/i })).not.toBeInTheDocument();
   });
 
-  it('labels the unfiltered list as the full archive, not "Latest"', () => {
+  it('labels the list as the full archive, not "Latest"', () => {
     render(<BlogList posts={posts} selected={[posts[1]]} />);
     expect(screen.getByRole('heading', { name: /all posts/i })).toBeInTheDocument();
   });

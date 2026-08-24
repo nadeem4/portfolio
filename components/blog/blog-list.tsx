@@ -1,8 +1,4 @@
-'use client';
-
-import { useState } from 'react';
 import type { BlogPost } from '@/lib/blog.types';
-import { filterPostsByCategory } from './filter-posts';
 import { CategoryCards } from './category-cards';
 import { PostList } from './post-list';
 import { Identicon } from './identicon';
@@ -10,42 +6,43 @@ import { Identicon } from './identicon';
 interface BlogListProps {
   posts: BlogPost[];
   /**
-   * Curated highlights, shown above the archive when no category is selected.
+   * Curated highlights, shown above the archive.
    *
-   * Hidden while a category is active: a cross-cutting highlight reel sitting
-   * above a filtered list of one category reads as noise, and the All card
-   * brings it straight back.
+   * They sit on the hub only. A cross-cutting highlight reel above a
+   * single-category page would read as noise, so the category pages omit it.
    */
   selected?: BlogPost[];
 }
 
+/**
+ * The blog hub: category navigation, curated highlights, then the full archive.
+ *
+ * Renders on the server. Narrowing to one category is a navigation now rather
+ * than local state, so there is nothing here to keep in a `useState`.
+ */
 export function BlogList({ posts, selected = [] }: BlogListProps) {
-  const [category, setCategory] = useState<string | null>(null);
-
   if (posts.length === 0) {
     return <p className="text-foreground-dim leading-relaxed">Posts temporarily unavailable — check back soon.</p>;
   }
 
-  const visible = filterPostsByCategory(posts, category);
-
   return (
     <div className="space-y-8">
-      <CategoryCards posts={posts} selected={category} onSelect={setCategory} />
+      <CategoryCards posts={posts} />
 
-      {category === null && selected.length > 0 && <PostList heading="Selected writing" posts={selected} />}
+      {selected.length > 0 && <PostList heading="Selected writing" posts={selected} />}
 
       <div>
         <div className="flex items-baseline justify-between gap-4 pb-1">
           {/* "All posts" rather than "Latest" once highlights sit above: with a
               curated tier present, completeness is the useful distinction. */}
-          <h2 className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">{category ?? 'All posts'}</h2>
+          <h2 className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">All posts</h2>
           <p className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
-            {visible.length} {visible.length === 1 ? 'post' : 'posts'}
+            {posts.length} {posts.length === 1 ? 'post' : 'posts'}
           </p>
         </div>
 
         <ul className="divide-y divide-border">
-          {visible.map((post) => (
+          {posts.map((post) => (
             <li key={post.id} className="flex items-start gap-3 py-3">
               <Identicon
                 id={post.id}

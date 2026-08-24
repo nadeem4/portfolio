@@ -61,6 +61,28 @@ describe('PostList', () => {
     expect(screen.queryByRole('link', { name: /All \d+ posts/ })).not.toBeInTheDocument();
   });
 
+  it('can hide the heading visually while keeping it for assistive tech', () => {
+    // A category page names its topic in the h1 directly above the list, so a
+    // visible h2 repeating it is duplication — but the section still needs an
+    // accessible name.
+    render(<PostList heading="Vector Databases" posts={posts} headingHidden />);
+    const heading = screen.getByRole('heading', { name: 'Vector Databases' });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass('sr-only');
+  });
+
+  it('can omit the topic label where every post shares one', () => {
+    // On a category page the label is identical on every row and says nothing.
+    render(<PostList heading="Latest" posts={posts} showCategory={false} />);
+    expect(screen.queryByText('Backend & Infra')).toBeNull();
+    expect(screen.getAllByText('2026-02-06')).toHaveLength(posts.length);
+  });
+
+  it('shows the topic label by default, since most lists mix topics', () => {
+    render(<PostList heading="Latest" posts={posts} />);
+    expect(screen.getAllByText('Backend & Infra').length).toBe(posts.length);
+  });
+
   it('renders nothing when there are no posts', () => {
     const { container } = render(<PostList heading="Latest" posts={[]} />);
     expect(container).toBeEmptyDOMElement();
