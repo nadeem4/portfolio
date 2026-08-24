@@ -80,7 +80,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           )}
         </header>
 
-        <PostList heading={category} posts={posts} />
+        {/* The h1 above already names the topic, and every post on this page
+            carries it — so the list heading and the per-row topic label would
+            both be the same words repeated. The heading stays in the tree for
+            assistive technology; the row label goes entirely, leaving the date,
+            which is the part that actually differs. */}
+        <PostList heading={category} posts={posts} headingHidden showCategory={false} />
       </div>
     </main>
   );

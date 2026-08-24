@@ -53,6 +53,23 @@ describe('CategoryPage', () => {
     }
   });
 
+  it('names the category exactly once on the page', async () => {
+    // Regression: the h1 and the list heading both rendered the category name,
+    // and every row repeated it again as metadata.
+    const category = 'Vector Databases';
+    render(await CategoryPage(params(categorySlug(category))));
+    const visible = screen.getAllByText(category).filter((el) => !el.classList.contains('sr-only'));
+    expect(visible).toHaveLength(1);
+    expect(visible[0].tagName).toBe('H1');
+  });
+
+  it('drops the per-row topic label, keeping the date', async () => {
+    const { container } = render(await CategoryPage(params(categorySlug('Postgres Series'))));
+    const rows = container.querySelectorAll('ul li');
+    expect(rows.length).toBeGreaterThan(1);
+    expect(container.querySelectorAll('ul li time').length).toBe(rows.length);
+  });
+
   it('404s on a slug no category maps to', async () => {
     await expect(CategoryPage(params('not-a-real-category'))).rejects.toThrow();
   });
