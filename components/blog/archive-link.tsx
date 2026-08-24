@@ -3,6 +3,9 @@ import Link from 'next/link';
 /**
  * Link through to the full archive, sized to sit opposite a section heading.
  *
+ * Points at /blog/archive rather than /blog: the hub shows only the latest ten,
+ * so a control labelled "All posts" that landed there would be a lie.
+ *
  * Carries no count. The total is already stated in the activity line under the
  * hero and in the /blog masthead; a third copy beside the heading was
  * repetition. It previously also carried the newest post's date, which made the
@@ -12,7 +15,7 @@ import Link from 'next/link';
 export function ArchiveLink() {
   return (
     <Link
-      href="/blog"
+      href="/blog/archive"
       className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
     >
       All posts

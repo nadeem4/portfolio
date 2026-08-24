@@ -11,6 +11,10 @@ describe('sitemap', () => {
     expect(urls.some((u) => u.endsWith('/blog'))).toBe(true);
   });
 
+  it('lists the archive, which holds the full run', () => {
+    expect(urls.some((u) => u.endsWith('/blog/archive'))).toBe(true);
+  });
+
   it('lists every category page, so the topic hubs are crawlable', () => {
     const categories = [...new Set(getBlogPosts().map((p) => p.category))];
     categories.forEach((category) => {
