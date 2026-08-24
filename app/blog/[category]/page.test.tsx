@@ -30,15 +30,20 @@ describe('CategoryPage', () => {
     others.forEach((post) => expect(screen.queryByText(post.title)).toBeNull());
   });
 
-  it('renders a header image for the category', async () => {
-    const slug = categorySlug('Postgres Series');
-    render(await CategoryPage(params(slug)));
-    const banner = document.querySelector('img');
-    // next/image rewrites src through the optimizer, so the original path
-    // arrives url-encoded inside the query string.
-    expect(decodeURIComponent(banner?.getAttribute('src') ?? '')).toContain(
-      `/blog/${slug}/opengraph-image`,
-    );
+  it('heads the page typographically, with no banner image to fetch', async () => {
+    // The header was a PNG pulled through the image optimizer. Rendering it as
+    // type instead means there is no request that can fail, and it stays crisp
+    // at any width.
+    const { container } = render(await CategoryPage(params(categorySlug('Postgres Series'))));
+    expect(container.querySelector('img')).toBeNull();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Postgres Series');
+    expect(screen.getByText(/blog --category/)).toBeInTheDocument();
+  });
+
+  it('states the post count and year range under the title', async () => {
+    render(await CategoryPage(params(categorySlug('Python Logging'))));
+    const expected = posts.filter((p) => p.category === 'Python Logging').length;
+    expect(screen.getByText(new RegExp(`${expected} posts`))).toBeInTheDocument();
   });
 
   it('renders every category without throwing', async () => {

@@ -19,7 +19,7 @@ export function categorySlug(category: string): string {
 }
 
 /** Every category present in the catalog, deduplicated and sorted by name. */
-export function allCategories(): string[] {
+function allCategories(): string[] {
   return [...new Set(getBlogPosts().map((post) => post.category))].sort((a, b) => a.localeCompare(b));
 }
 

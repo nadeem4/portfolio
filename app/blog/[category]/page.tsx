@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PostList } from '@/components/blog/post-list';
@@ -51,29 +50,24 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   return (
     <main className="px-6 py-12">
       <div className="max-w-2xl mx-auto space-y-8">
-        <header className="space-y-4">
-          {/* The category's social card, reused as the page banner so the two
-              can never drift apart. Decorative: the h1 below states the same
-              name, so announcing it twice would only be noise. Routed through
-              next/image because at 1200x630 this is the page's LCP element and
-              the raw PNG is ~40KB at every viewport. */}
-          <Image
-            src={`/blog/${slug}/opengraph-image`}
-            alt=""
-            width={1200}
-            height={630}
-            priority
-            className="w-full rounded border border-border"
-          />
-          <div className="space-y-2">
-            <Link
-              href="/blog"
-              className="inline-block text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
-            >
-              ← All writing
-            </Link>
-            <h1 className="text-2xl font-bold tracking-tight">{category}</h1>
-            {stat && (
+        {/* Set in type rather than as a banner image. A generated PNG had to be
+            fetched through the image optimizer to appear, which is a request
+            that can fail — and did, in dev. Type cannot fail, stays sharp at
+            any width, and costs nothing to load. The social card is still a
+            PNG, because a crawler has no other way to read one. */}
+        <header className="space-y-3">
+          <Link
+            href="/blog"
+            className="inline-block text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
+          >
+            ← All writing
+          </Link>
+          <div aria-hidden="true" className="h-0.5 w-full rounded-sm bg-accent" />
+          <p className="font-mono text-[0.7rem] tracking-[0.12em] text-accent">&gt; blog --category</p>
+          <h1 className="text-2xl font-bold tracking-tight">{category}</h1>
+          {stat && (
+            <>
+              <div aria-hidden="true" className="h-px w-full bg-border" />
               <p className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
                 {stat.count} {stat.count === 1 ? 'post' : 'posts'}
                 <span aria-hidden="true" className="mx-1.5 opacity-50">
@@ -82,8 +76,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 {stat.earliest.slice(0, 4)}
                 {stat.earliest.slice(0, 4) !== stat.latest.slice(0, 4) && `–${stat.latest.slice(0, 4)}`}
               </p>
-            )}
-          </div>
+            </>
+          )}
         </header>
 
         <PostList heading={category} posts={posts} />
