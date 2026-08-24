@@ -18,9 +18,9 @@ export function categorySlug(category: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-/** Every category present in the catalog, deduplicated. */
-function allCategories(): string[] {
-  return [...new Set(getBlogPosts().map((post) => post.category))];
+/** Every category present in the catalog, deduplicated and sorted by name. */
+export function allCategories(): string[] {
+  return [...new Set(getBlogPosts().map((post) => post.category))].sort((a, b) => a.localeCompare(b));
 }
 
 /** Slugs for every category, for `generateStaticParams`. */
