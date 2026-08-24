@@ -20,13 +20,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: `${baseUrl}/blog/archive`,
+      changeFrequency: 'daily',
+      priority: 0.6,
+    },
+    {
       url: `${baseUrl}/projects`,
       changeFrequency: 'daily',
       priority: 0.7,
     },
     // One entry per category page. Derived from the catalog rather than listed
     // by hand, so a category added in Notion becomes crawlable on the next sync.
-    // Ranked below /blog: the hub carries the whole archive, a category a slice.
+    // Ranked below /blog: the hub is the entry point, a topic page a slice of it.
     ...categoryStats(getBlogPosts()).map((stat) => ({
       url: `${baseUrl}/blog/${categorySlug(stat.category)}`,
       changeFrequency: 'weekly' as const,

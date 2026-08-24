@@ -34,16 +34,25 @@ describe('PostList', () => {
 
   it('preserves the order given rather than re-sorting', () => {
     const { container } = render(<PostList heading="Latest" posts={posts} />);
-    const titles = [...container.querySelectorAll('ul a')].map((a) => a.textContent);
+    const titles = [...container.querySelectorAll('ul a')].map((a) => a.firstChild?.textContent);
     expect(titles).toEqual(['Kafka at 60M events a day', 'Protecting Postgres primaries']);
   });
 
   it('links each post to its Medium url', () => {
     render(<PostList heading="Latest" posts={posts} />);
-    expect(screen.getByRole('link', { name: 'Kafka at 60M events a day' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Kafka at 60M events a day/ })).toHaveAttribute(
       'href',
       'https://medium.com/@you/p-aaaaaaaaaaaa',
     );
+  });
+
+  it('marks each post as leaving the site, in text as well as an arrow', () => {
+    // Every post lives on Medium. A screen reader gets no warning from an arrow
+    // that is hidden from it, so the destination is named as well.
+    render(<PostList heading="Latest" posts={posts} />);
+    const link = screen.getByRole('link', { name: /Kafka at 60M events a day/ });
+    expect(link).toHaveAccessibleName(/opens on Medium/i);
+    expect(link).toHaveAttribute('target', '_blank');
   });
 
   it('renders an identicon per post', () => {
@@ -53,7 +62,7 @@ describe('PostList', () => {
 
   it('renders the action opposite the heading when given', () => {
     render(<PostList heading="Selected writing" posts={posts} action={<ArchiveLink />} />);
-    expect(screen.getByRole('link', { name: /All posts/ })).toHaveAttribute('href', '/blog');
+    expect(screen.getByRole('link', { name: /All posts/ })).toHaveAttribute('href', '/blog/archive');
   });
 
   it('renders no action when none is given', () => {
@@ -96,7 +105,7 @@ describe('ArchiveLink', () => {
     // /blog — clicking a date that named a specific post landed you on a list.
     render(<ArchiveLink />);
     const link = screen.getByRole('link', { name: /All posts/ });
-    expect(link).toHaveAttribute('href', '/blog');
+    expect(link).toHaveAttribute('href', '/blog/archive');
     expect(link.textContent).not.toMatch(/latest/i);
     expect(link.textContent).not.toMatch(/\d/);
   });

@@ -58,6 +58,9 @@ export function PostList({
               className="h-8 w-8 shrink-0 rounded border border-border bg-background-raised p-1 text-accent"
             />
             <div>
+              {/* Every post lives on Medium, so each of these leaves the site.
+                  The arrow says so before the click; the hidden text says so to
+                  a screen reader, which otherwise gets no warning at all. */}
               <a
                 href={post.url}
                 target="_blank"
@@ -65,6 +68,10 @@ export function PostList({
                 className="font-medium leading-snug transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
               >
                 {post.title}
+                <span aria-hidden="true" className="ml-1 text-foreground-dim">
+                  ↗
+                </span>
+                <span className="sr-only"> (opens on Medium)</span>
               </a>
               <p className="mt-1 text-sm leading-relaxed text-foreground-dim">{post.subtitle}</p>
               <p className="mt-1.5 text-[0.6rem] uppercase tracking-[0.14em] text-foreground-dim">
