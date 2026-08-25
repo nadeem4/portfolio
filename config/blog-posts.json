@@ -1,5 +1,13 @@
 [
   {
+    "id": "adee6b7e3434",
+    "title": "Indexing Deep Dive: DiskANN and Disk-Resident Graphs",
+    "subtitle": "Keeping almost everything on SSD and designing the graph so a few solid-state reads per query still hit HNSW-competitive recall.",
+    "url": "https://medium.com/learnwithnk/indexing-deep-dive-diskann-and-disk-resident-graphs-adee6b7e3434",
+    "date": "2026-08-25",
+    "category": "Vector Databases"
+  },
+  {
     "id": "b97872b101fd",
     "title": "Vector Compression and Quantisation: Fitting Billions of Vectors in Memory",
     "subtitle": "A billion 768-dimensional float32 vectors take about 3 terabytes just for the raw numbers.",
