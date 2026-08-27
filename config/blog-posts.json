@@ -1,5 +1,13 @@
 [
   {
+    "id": "97f30840e7a7",
+    "title": "Distributed Systems Concerns: Replication, Consistency, and Query Routing",
+    "subtitle": "Sharding solves the problem of a vector index outgrowing one machine, but not what happens next when machines fail and networks partition.",
+    "url": "https://medium.com/learnwithnk/distributed-systems-concerns-replication-consistency-and-query-routing-97f30840e7a7",
+    "date": "2026-08-27",
+    "category": "Vector Databases"
+  },
+  {
     "id": "3ccebd409078",
     "title": "Sharding and Partitioning at Scale: Splitting Billions of Vectors Across Machines",
     "subtitle": "Past a single machine's ceiling, the only path forward is splitting the vector space across machines.",
