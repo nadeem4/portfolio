@@ -96,6 +96,16 @@ describe('PostList', () => {
     const { container } = render(<PostList heading="Latest" posts={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
+
+  it('drops the identicon and subtitle in compact mode, keeping title and meta', () => {
+    // The homepage Latest block sits directly under Selected writing in the
+    // same format; compact rows are what keep it from reading as a duplicate.
+    const { container } = render(<PostList heading="Latest" posts={posts} compact />);
+    expect(container.querySelectorAll('svg')).toHaveLength(0);
+    expect(screen.queryByText('Understanding Kafka through real production experience')).toBeNull();
+    expect(screen.getByText('Kafka at 60M events a day')).toBeInTheDocument();
+    expect(screen.getAllByText('2026-02-06')).toHaveLength(posts.length);
+  });
 });
 
 describe('ArchiveLink', () => {
