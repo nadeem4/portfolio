@@ -19,8 +19,17 @@ export function CommandPalette() {
         setOpen(false);
       }
     }
+    // The header's PaletteTrigger lives in a separate client tree, so it
+    // reaches this dialog through a window event rather than shared state.
+    function handleToggle() {
+      setOpen((prev) => !prev);
+    }
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('command-palette:toggle', handleToggle);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('command-palette:toggle', handleToggle);
+    };
   }, []);
 
   if (!open) return null;
