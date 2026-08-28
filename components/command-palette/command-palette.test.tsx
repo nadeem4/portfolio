@@ -20,6 +20,14 @@ describe('CommandPalette', () => {
     expect(screen.queryByText('Go to Blog')).not.toBeInTheDocument();
   });
 
+  it('toggles when the command-palette:toggle event is dispatched', async () => {
+    render(<CommandPalette />);
+    fireEvent(window, new CustomEvent('command-palette:toggle'));
+    expect(await screen.findByPlaceholderText('Jump to...')).toBeInTheDocument();
+    fireEvent(window, new CustomEvent('command-palette:toggle'));
+    expect(screen.queryByPlaceholderText('Jump to...')).not.toBeInTheDocument();
+  });
+
   it('closes on Escape', async () => {
     render(<CommandPalette />);
     fireEvent.keyDown(document, { key: 'k', ctrlKey: true });
