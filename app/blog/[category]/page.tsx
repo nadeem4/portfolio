@@ -49,7 +49,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <main className="px-6 py-12">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-8">
         {/* Set in type rather than as a banner image. A generated PNG had to be
             fetched through the image optimizer to appear, which is a request
             that can fail — and did, in dev. Type cannot fail, stays sharp at

@@ -44,4 +44,12 @@ describe('HomePage', () => {
     const latest = screen.getByRole('heading', { name: 'Latest' });
     expect(latest).toBeInTheDocument();
   });
+
+  it('widens the content column on large screens, matching every other page', async () => {
+    // All pages share one wrapper (max-w-2xl, lg:max-w-3xl) so the column
+    // stops changing width as a visitor navigates between them.
+    const { container } = render(await HomePage());
+    const column = container.querySelector('main > div');
+    expect(column).toHaveClass('max-w-2xl', 'lg:max-w-3xl');
+  });
 });

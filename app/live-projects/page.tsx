@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function LiveProjectsPage() {
   return (
     <main className="px-6 py-12">
-      <div className="max-w-2xl mx-auto space-y-12">
+      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-12">
         <h1 className="text-2xl font-bold tracking-tight">Live Projects</h1>
         <ul className="divide-y divide-border">
           {liveProjects.map((project) => (

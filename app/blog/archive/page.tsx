@@ -20,7 +20,7 @@ export default function ArchivePage() {
 
   return (
     <main className="px-6 py-12">
-      <div className="max-w-2xl mx-auto space-y-8">
+      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-8">
         <header className="space-y-3">
           <Link
             href="/blog"

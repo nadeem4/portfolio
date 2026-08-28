@@ -29,7 +29,7 @@ export default async function HomePage() {
 
   return (
     <main className="px-6 py-12">
-      <div className="max-w-2xl mx-auto space-y-12">
+      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-12">
         <div className="space-y-6">
           <Hero />
           {/* Hugs the hero deliberately: the blocks below sit past the
