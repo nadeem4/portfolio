@@ -22,6 +22,14 @@ interface PostListProps {
    * where the whole list is one topic and the label would repeat on every row.
    */
   showCategory?: boolean;
+  /**
+   * Drop the identicon and subtitle, leaving title and meta only.
+   *
+   * For a list that sits directly under another full-format one — the homepage
+   * Latest block under Selected writing — where a second run of identical rows
+   * reads as a duplicate rather than a second answer.
+   */
+  compact?: boolean;
 }
 
 /**
@@ -40,6 +48,7 @@ export function PostList({
   action,
   headingHidden = false,
   showCategory = true,
+  compact = false,
 }: PostListProps) {
   if (posts.length === 0) return null;
 
@@ -53,10 +62,12 @@ export function PostList({
       <ul className={headingHidden ? 'divide-y divide-border' : 'mt-4 divide-y divide-border'}>
         {posts.map((post) => (
           <li key={post.id} className="flex items-start gap-3 py-3">
-            <Identicon
-              id={post.id}
-              className="h-8 w-8 shrink-0 rounded border border-border bg-background-raised p-1 text-accent"
-            />
+            {!compact && (
+              <Identicon
+                id={post.id}
+                className="h-8 w-8 shrink-0 rounded border border-border bg-background-raised p-1 text-accent"
+              />
+            )}
             <div>
               {/* Every post lives on Medium, so each of these leaves the site.
                   The arrow says so before the click; the hidden text says so to
@@ -73,7 +84,7 @@ export function PostList({
                 </span>
                 <span className="sr-only"> (opens on Medium)</span>
               </a>
-              <p className="mt-1 text-sm leading-relaxed text-foreground-dim">{post.subtitle}</p>
+              {!compact && <p className="mt-1 text-sm leading-relaxed text-foreground-dim">{post.subtitle}</p>}
               <p className="mt-1.5 text-[0.6rem] uppercase tracking-[0.14em] text-foreground-dim">
                 {showCategory && (
                   <>
