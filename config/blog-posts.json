@@ -1,5 +1,21 @@
 [
   {
+    "id": "5a8c6f11b571",
+    "title": "pgvector Internals Overview: How Postgres Learned to Speak Vector",
+    "subtitle": "Choosing between IVFFlat and HNSW, and the MVCC filtering problem both index types have to solve.",
+    "url": "https://medium.com/learnwithnk/pgvector-internals-overview-how-postgres-learned-to-speak-vector-5a8c6f11b571",
+    "date": "2026-08-30",
+    "category": "Postgres Series"
+  },
+  {
+    "id": "cb5f7cc419ad",
+    "title": "Hybrid Search: Combining Vector Similarity with Metadata Filters and Keyword Search",
+    "subtitle": "Why Reciprocal Rank Fusion beats naive score blending, and how pre-filtering, post-filtering, and filter-aware graph traversal trade off under selective filters.",
+    "url": "https://medium.com/learnwithnk/hybrid-search-combining-vector-similarity-with-metadata-filters-and-keyword-search-cb5f7cc419ad",
+    "date": "2026-08-29",
+    "category": "Vector Databases"
+  },
+  {
     "id": "97f30840e7a7",
     "title": "Distributed Systems Concerns: Replication, Consistency, and Query Routing",
     "subtitle": "Sharding solves the problem of a vector index outgrowing one machine, but not what happens next when machines fail and networks partition.",
