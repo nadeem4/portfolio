@@ -16,10 +16,12 @@ export function counterLabel(key: string): string {
 
 export interface ScoreboardProps {
   counters: Counters;
+  /** The previous operation's counters, when there was one, for the delta. */
+  previous?: Counters;
 }
 
 /** What the last operation cost. DOM text, never painted into the canvas. */
-export function Scoreboard({ counters }: ScoreboardProps) {
+export function Scoreboard({ counters, previous }: ScoreboardProps) {
   const headingId = useId();
   const entries = Object.entries(counters);
 
@@ -38,7 +40,22 @@ export function Scoreboard({ counters }: ScoreboardProps) {
           {entries.map(([key, value]) => (
             <div key={key}>
               <dt className="text-[0.6rem] uppercase tracking-[0.14em] text-foreground-dim">{counterLabel(key)}</dt>
-              <dd className="mt-1 font-mono text-lg text-foreground">{value}</dd>
+              <dd className="mt-1 flex items-baseline gap-2 font-mono text-lg text-foreground">
+                {value}
+                {/* The movement, not just the level: inserting ten points costs
+                    ten more distance computations, and that is the whole lesson
+                    of a flat index stated as a number. */}
+                {(() => {
+                  const before = previous?.[key];
+                  if (before === undefined || before === value) return null;
+                  const delta = value - before;
+                  return (
+                    <span className="text-xs text-accent">
+                      {delta > 0 ? `+${delta}` : `${delta}`}
+                    </span>
+                  );
+                })()}
+              </dd>
             </div>
           ))}
         </dl>

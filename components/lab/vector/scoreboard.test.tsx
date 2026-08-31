@@ -55,3 +55,27 @@ describe('Scoreboard', () => {
     expect(screen.getByText('0')).toBeInTheDocument();
   });
 });
+
+describe('Scoreboard deltas', () => {
+  it('shows how a counter moved against the previous operation', () => {
+    // "129" alone is inert. The change is the linear relationship the prose
+    // promises — insert ten points, pay ten more distance computations.
+    render(<Scoreboard counters={{ distanceComputations: 139 }} previous={{ distanceComputations: 129 }} />);
+    expect(screen.getByText('+10')).toBeInTheDocument();
+  });
+
+  it('marks a fall as well as a rise', () => {
+    render(<Scoreboard counters={{ distanceComputations: 120 }} previous={{ distanceComputations: 129 }} />);
+    expect(screen.getByText('-9')).toBeInTheDocument();
+  });
+
+  it('shows no delta when the counter did not move', () => {
+    render(<Scoreboard counters={{ distanceComputations: 129 }} previous={{ distanceComputations: 129 }} />);
+    expect(screen.queryByText(/^[+-]/)).not.toBeInTheDocument();
+  });
+
+  it('shows no delta when there is nothing to compare against', () => {
+    render(<Scoreboard counters={{ distanceComputations: 129 }} />);
+    expect(screen.queryByText(/^[+-]/)).not.toBeInTheDocument();
+  });
+});
