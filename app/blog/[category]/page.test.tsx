@@ -82,3 +82,25 @@ describe('generateMetadata', () => {
     expect(meta.description).toBeTruthy();
   });
 });
+
+describe('CategoryPage labs', () => {
+  it('links the vector index playground from Vector Databases', async () => {
+    render(await CategoryPage(params(categorySlug('Vector Databases'))));
+    const link = screen.getByRole('link', { name: /vector index playground/i });
+    expect(link).toHaveAttribute('href', '/lab/vector-index');
+  });
+
+  it('says what the lab is for, not just that it exists', async () => {
+    render(await CategoryPage(params(categorySlug('Vector Databases'))));
+    expect(screen.getByRole('heading', { name: 'Lab' })).toBeInTheDocument();
+    expect(screen.getByText(/distance computation/i)).toBeInTheDocument();
+  });
+
+  it('shows no lab block on a category that has none', async () => {
+    // Nothing is linked until it is actually deployed behind the link — the
+    // same rule the header applies to /live-projects.
+    render(await CategoryPage(params(categorySlug('Postgres Series'))));
+    expect(screen.queryByRole('heading', { name: 'Lab' })).toBeNull();
+    expect(screen.queryByRole('link', { name: /playground/i })).toBeNull();
+  });
+});

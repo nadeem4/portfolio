@@ -39,6 +39,28 @@ Because the catalog is imported at build time, a malformed file fails the build 
 
 Blog cards show a generated identicon rather than a cover image. `lib/identicon.ts` turns a post's hex id into a deterministic 7×7 symmetric grid, and `components/blog/identicon.tsx` renders it as inline SVG using `currentColor`, so it picks up the accent colour and adapts to the light theme. The same post always produces the same mark, and a golden test locks the output so a refactor cannot silently change every mark on the site.
 
+## Labs
+
+`/lab` holds interactive explanations of the writing — a mechanism a reader can run rather than a description of it running. Each lab is one route under `app/lab/<slug>/`, and the split that matters is:
+
+| Layer | Contains | Rule |
+|---|---|---|
+| `lib/lab/<topic>/` | The mechanism, as pure functions | No React import, ever. Fully unit-tested, with no DOM dependency. |
+| `components/lab/<topic>/` | That lab's rendering | Client components, thin — the drawing code iterates a draw list computed in `lib/` and decides nothing else. |
+| `app/lab/<slug>/` | The page | A server component. Prose first, then the client island. |
+
+The prose on a lab page is not decoration: it is the SEO answer for a page whose value is otherwise client-side JavaScript, the no-JavaScript fallback, and half the accessibility story. A lab page whose server HTML is an empty `<div>` is a bug.
+
+Every operation is pure and threads its state — `op(state, args) → { state, result, steps, counters }` — which is what makes the operation log double as the undo stack, and what makes every trace reproducible in a test.
+
+### Shipped
+
+- **`/lab/vector-index`** — the vector index playground. A live flat index: click the canvas to insert a point, click a point to remove it, switch modes to move the query. The scrubber replays the trace of the last operation step by step, the scoreboard counts what it cost, and the health readout carries recall against brute-force ground truth. Deep-linkable with `?index=` and `?k=` (read once, on the server; there is no URL-state syncing). Serves the Vector Databases series.
+
+The lab is linked from the header nav, the sitemap and the command palette. `config/labs.ts` does not exist yet. Both arrive with the second lab: a registry with one entry is a list wearing a costume, and a nav item is worth adding once there is a section behind it rather than a page.
+
+See `docs/superpowers/specs/2026-08-30-interactive-labs-design.md` for the full design, including which labs are planned and which were deliberately cut.
+
 ## Which repos appear on /projects
 
 Repos are pulled from the GitHub API automatically. A repo qualifies if it is **public**, is not a fork, is not the profile-README repo, and **has a GitHub description**.

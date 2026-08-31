@@ -17,6 +17,13 @@ describe('Header', () => {
     expect(screen.getByRole('link', { name: 'Projects' })).toHaveAttribute('href', '/projects');
   });
 
+  it('links to the lab', () => {
+    // Unlike /live-projects, the lab is linked unconditionally: there is a real
+    // page behind it, so the "advertises an absence" rule does not apply.
+    render(<Header />);
+    expect(screen.getByRole('link', { name: 'Lab' })).toHaveAttribute('href', '/lab/vector-index');
+  });
+
   it('shows a visible command-palette trigger', () => {
     render(<Header />);
     expect(screen.getByRole('button', { name: 'Open command palette' })).toBeInTheDocument();

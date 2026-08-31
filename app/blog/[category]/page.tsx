@@ -80,6 +80,26 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           )}
         </header>
 
+        {/* One hand-written condition rather than a registry: config/labs.ts
+            earns its keep at more than one lab and arrives with the second.
+            And nothing is linked before it is deployed — a link to a
+            "COMING SOON" page advertises an absence. */}
+        {category === 'Vector Databases' && (
+          <section className="rounded border border-border bg-background-raised p-4">
+            <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Lab</h2>
+            <p className="mt-2 text-sm leading-relaxed text-foreground-dim">
+              Build an index by hand — insert points, delete them, run a query — and watch every distance
+              computation it costs.
+            </p>
+            <Link
+              href="/lab/vector-index"
+              className="mt-3 inline-block text-[0.65rem] uppercase tracking-[0.18em] text-accent transition-colors hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
+            >
+              Open the vector index playground →
+            </Link>
+          </section>
+        )}
+
         {/* The h1 above already names the topic, and every post on this page
             carries it — so the list heading and the per-row topic label would
             both be the same words repeated. The heading stays in the tree for

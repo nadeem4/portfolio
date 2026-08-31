@@ -13,3 +13,6 @@ node_modules
 # Playwright MCP snapshots
 .playwright-mcp/
 .firecrawl/
+
+# Superpowers planning artifacts (specs, plans). Working notes, not shipped code.
+docs/superpowers/
