@@ -3677,7 +3677,7 @@ export default async function VectorIndexLabPage({ searchParams }: LabPageProps)
 
 Run: `npx vitest run app/lab/vector-index`
 
-Expected: PASS (16 tests).
+Expected: PASS (17 tests).
 
 - [ ] **Step 5: Commit**
 
