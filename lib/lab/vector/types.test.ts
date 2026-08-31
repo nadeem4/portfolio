@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import type { Counters, Metric, OpResult, Point, Ranked, SearchParams, Vec } from './types';
 
-// These types are locked across four PRs, so this file exists to make a rename or a
-// restructure fail somewhere rather than nowhere: `npx tsc --noEmit` rejects the
-// annotations below, and vitest rejects the module going missing entirely.
+// These types are locked across 36 tasks. The runtime assertions exercise the
+// usage pattern, but `tsc --noEmit` is the only guard against renames or
+// restructures: esbuild elides type-only imports at transform time.
 
 interface ToyState {
   readonly points: readonly Point[];
