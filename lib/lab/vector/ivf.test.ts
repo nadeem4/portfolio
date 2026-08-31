@@ -382,7 +382,12 @@ describe('rebuildIvf', () => {
   it('never rewinds the id counter, because ids are never reused', () => {
     const { state } = trainIvf(points, params);
     const drifted = blobInserts(state, 20);
-    const deleted = ivfDelete(drifted, drifted.cells.flat()[0]).state;
+    // Deleting the max-id point is the only case where a from-scratch retrain
+    // would rewind the counter: trainIvf derives nextId from the ids present,
+    // so only removing the current maximum can lower what it computes. Any
+    // other deletion leaves the same max behind and the clamp would be inert.
+    const maxId = Math.max(...drifted.points.keys());
+    const deleted = ivfDelete(drifted, maxId).state;
     expect(rebuildIvf(deleted, params).state.nextId).toBe(deleted.nextId);
   });
 
