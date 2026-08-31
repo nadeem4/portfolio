@@ -3331,7 +3331,7 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
 
 Run: `npx vitest run components/lab/vector/vector-lab.test.tsx`
 
-Expected: PASS (17 tests).
+Expected: PASS (16 tests).
 
 - [ ] **Step 5: Commit**
 
@@ -3677,7 +3677,7 @@ export default async function VectorIndexLabPage({ searchParams }: LabPageProps)
 
 Run: `npx vitest run app/lab/vector-index`
 
-Expected: PASS (17 tests).
+Expected: PASS (16 tests).
 
 - [ ] **Step 5: Commit**
 
