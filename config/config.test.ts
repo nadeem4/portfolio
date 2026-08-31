@@ -1,4 +1,7 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { siteConfig } from './site';
 import { skillGroups } from './skills';
 import { projectPipelines } from './project-pipelines';
@@ -29,5 +32,14 @@ describe('site config', () => {
   it('marks live projects as coming-soon until a real URL is added', () => {
     expect(liveProjects.length).toBeGreaterThan(0);
     liveProjects.forEach((project) => expect(project.status).toBe('coming-soon'));
+  });
+});
+
+describe('README', () => {
+  it('documents the labs section that ships with the first lab', () => {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    const readme = readFileSync(join(__dirname, '../README.md'), 'utf8');
+    expect(readme).toContain('## Labs');
+    expect(readme).toContain('/lab/vector-index');
   });
 });
