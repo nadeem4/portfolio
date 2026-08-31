@@ -1,10 +1,24 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { HealthReadout } from './health-readout';
+import { HealthReadout, formatRecall } from './health-readout';
 
 function valueFor(label: string): string {
   return screen.getByText(label).nextElementSibling?.textContent ?? '';
 }
+
+describe('formatRecall', () => {
+  it('renders a fraction as a whole percentage', () => {
+    expect(formatRecall(1)).toBe('100%');
+    expect(formatRecall(0.7)).toBe('70%');
+    expect(formatRecall(0)).toBe('0%');
+  });
+
+  it('renders a dash when no query has been asked', () => {
+    // Zero recall and no query at all are different states, and showing 0%
+    // before the first search would read as a broken index.
+    expect(formatRecall(null)).toBe('—');
+  });
+});
 
 describe('HealthReadout', () => {
   it('renders a term and a value for every row it is given', () => {
