@@ -3686,6 +3686,7 @@ git commit -m "feat: /lab/vector-index page with server-rendered prose and the i
 **Files:**
 - Edit: `app/blog/[category]/page.tsx`
 - Edit: `app/blog/[category]/page.test.tsx`
+- Edit: `config/config.test.ts`
 - Edit: `README.md`
 
 Nav, sitemap and the command palette are deliberately untouched: the spec forbids wiring them until a second lab exists, on the same rule the header already states for `/live-projects`.
@@ -5130,7 +5131,7 @@ inside a wiring task:
 
 **Files:**
 - Modify: `components/lab/vector/use-vector-lab.ts`
-- Test: `components/lab/vector/use-vector-lab.test.tsx` (appended block)
+- Test: `components/lab/vector/use-vector-lab.test.ts` (appended block)
 
 **Interfaces:**
 - Consumes:
@@ -5161,7 +5162,7 @@ inside a wiring task:
 
 - [ ] **Step 1: Write the failing test**
 
-Append to `components/lab/vector/use-vector-lab.test.tsx`:
+Append to `components/lab/vector/use-vector-lab.test.ts`:
 
 ```tsx
 import { describe, it, expect } from 'vitest';
@@ -5313,7 +5314,7 @@ describe('useVectorLab with an index option', () => {
 
 - [ ] **Step 2: Run test to verify it fails**
 
-Run: `npx vitest run components/lab/vector/use-vector-lab.test.tsx`
+Run: `npx vitest run components/lab/vector/use-vector-lab.test.ts`
 
 Expected: FAIL — `DEFAULT_IVF` is not exported, and `replayLog` is called with an
 `index` field its params type does not have.
@@ -5679,14 +5680,14 @@ export function useVectorLab(options: UseVectorLabOptions = {}): VectorLab {
 
 - [ ] **Step 4: Run tests**
 
-Run: `npx vitest run components/lab/vector/use-vector-lab.test.tsx`
+Run: `npx vitest run components/lab/vector/use-vector-lab.test.ts`
 
 Expected: PASS, including PR 1's existing flat assertions.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add components/lab/vector/use-vector-lab.ts components/lab/vector/use-vector-lab.test.tsx
+git add components/lab/vector/use-vector-lab.ts components/lab/vector/use-vector-lab.test.ts
 git commit -m "feat: fold the operation log through a selectable index"
 ```
 
@@ -7707,7 +7708,7 @@ and adds the quantisation underlay, a reconstruction-error health row and the ra
 - Modify: `app/lab/vector-index/params.test.ts`
 - Modify: `app/lab/vector-index/page.tsx`
 - Modify: `README.md`
-- Test: `components/lab/vector/use-vector-lab.test.tsx` (appended block)
+- Test: `components/lab/vector/use-vector-lab.test.ts` (appended block)
 - Test: `components/lab/vector/vector-lab.test.tsx` (appended block)
 
 **Also required in this task — widen the deep link**, exactly as Task 28 did for IVF.
@@ -7733,7 +7734,7 @@ the companion plan lands — still falls back rather than throwing.
 
 - [ ] **Step 1: Write the failing tests**
 
-Append to `components/lab/vector/use-vector-lab.test.tsx`:
+Append to `components/lab/vector/use-vector-lab.test.ts`:
 
 ```tsx
 describe('replayLog on ivf-pq', () => {
