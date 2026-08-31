@@ -88,3 +88,48 @@ describe('voronoiCells', () => {
     expect(voronoiCells([], viewport)).toEqual([]);
   });
 });
+
+describe('voronoiCells — real app viewport', () => {
+  // Every fixture above is square (400x400), so an axis asymmetry — padding
+  // applied to only one axis, x/y swapped, a width used where a height
+  // belongs — would pass all of them undetected. This is the rectangular
+  // shape the app actually renders at, so it is the one fixture that can
+  // catch that class of bug.
+  const realViewport: Viewport = { width: 720, height: 520, padding: 28 };
+
+  function realBoardArea(): number {
+    const min = toScreen([0, 0], realViewport);
+    const max = toScreen([1, 1], realViewport);
+    return Math.abs(max.x - min.x) * Math.abs(max.y - min.y);
+  }
+
+  function realNearestSite(point: PolygonPoint, centroids: number[][]): number {
+    const sites = centroids.map((c) => toScreen(c, realViewport));
+    let best = 0;
+    let bestDistance = Infinity;
+    sites.forEach((site, i) => {
+      const d = (site.x - point.x) ** 2 + (site.y - point.y) ** 2;
+      if (d < bestDistance) {
+        bestDistance = d;
+        best = i;
+      }
+    });
+    return best;
+  }
+
+  it('partitions the rectangular board — the polygons tile it with no gap or overlap', () => {
+    const rng = mulberry32(19);
+    const centroids = Array.from({ length: 6 }, () => [rng(), rng()]);
+    const total = voronoiCells(centroids, realViewport).reduce((sum, cell) => sum + area(cell.polygon), 0);
+    expect(total).toBeCloseTo(realBoardArea(), 6);
+  });
+
+  it('puts every polygon on the side of its own centroid', () => {
+    const rng = mulberry32(19);
+    const centroids = Array.from({ length: 6 }, () => [rng(), rng()]);
+    voronoiCells(centroids, realViewport).forEach((cell) => {
+      expect(cell.polygon.length, `cell ${cell.cell}`).toBeGreaterThan(2);
+      expect(realNearestSite(centre(cell.polygon), centroids), `cell ${cell.cell}`).toBe(cell.cell);
+    });
+  });
+});
