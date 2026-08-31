@@ -3517,8 +3517,12 @@ function first(value: string | string[] | undefined): string | undefined {
  * survive a typo and a name that has not shipped yet without failing the page.
  */
 export function parseLabParams(raw: Record<string, string | string[] | undefined> | undefined): LabParams {
-  const rawK = Number(first(raw?.k));
-  const k = Number.isFinite(rawK) && rawK > 0 ? Math.min(Math.max(Math.round(rawK), MIN_K), MAX_K) : DEFAULT_LAB_PARAMS.k;
+  // Absent and empty are rejected before the parse, because Number('') and
+  // Number('0') are both 0 — a `> 0` guard cannot tell "no k given" from an
+  // explicit ?k=0, and would send the latter to the default instead of MIN_K.
+  const rawKText = first(raw?.k);
+  const rawK = rawKText === undefined || rawKText.trim() === '' ? NaN : Number(rawKText);
+  const k = Number.isFinite(rawK) ? Math.min(Math.max(Math.round(rawK), MIN_K), MAX_K) : DEFAULT_LAB_PARAMS.k;
 
   const rawIndex = first(raw?.index);
   const index = LAB_INDEXES.find((name) => name === rawIndex) ?? DEFAULT_LAB_PARAMS.index;
