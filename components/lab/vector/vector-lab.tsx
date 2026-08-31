@@ -4,7 +4,7 @@ import { useCallback, useId, useMemo, useState } from 'react';
 import { PointCanvas, type PointTone } from './point-canvas';
 import { Scrubber } from './scrubber';
 import { Scoreboard } from './scoreboard';
-import { HealthReadout } from './health-readout';
+import { formatRecall, HealthReadout, type HealthRow } from './health-readout';
 import { DEFAULT_K, useVectorLab } from './use-vector-lab';
 import type { FlatStep } from '@/lib/lab/vector/flat';
 import { hitTest, layoutPoints, toScreen, type Viewport } from '@/lib/lab/vector/layout';
@@ -73,6 +73,16 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
   const ranks = useMemo(
     () => new Map(lab.results.map((result, rank) => [result.id, rank])),
     [lab.results],
+  );
+  // Only the caller knows a count from a ratio; HealthReadout just renders
+  // whatever named rows it is handed. testId keeps `lab-point-count` stable
+  // for vector-lab.test.tsx, which locates it by DOM hook rather than label.
+  const healthRows = useMemo<readonly HealthRow[]>(
+    () => [
+      { label: 'Points', value: String(lab.points.length), testId: 'lab-point-count' },
+      { label: `recall@${lab.k}`, value: formatRecall(lab.recall) },
+    ],
+    [lab.points.length, lab.k, lab.recall],
   );
 
   const handlePick = useCallback(
@@ -158,7 +168,7 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
         </div>
 
         <Scoreboard counters={lab.counters} previous={lab.previousCounters ?? undefined} />
-        <HealthReadout pointCount={lab.points.length} k={lab.k} recall={lab.recall} />
+        <HealthReadout rows={healthRows} />
 
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={lab.undo} disabled={!lab.canUndo} className={buttonClasses}>
