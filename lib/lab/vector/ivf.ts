@@ -153,3 +153,29 @@ export function ivfInsert(state: IvfState, vec: Vec): OpResult<IvfState, PointId
     counters: ivfCounters(state.centroids.length, 0, 0),
   };
 }
+
+/**
+ * Hard removal from one posting list. No tombstone, no relinking, no retrain.
+ *
+ * IVF gets away with this because a posting list is a bag: pulling an element
+ * out cannot disconnect anything. The bill arrives later and elsewhere — the
+ * centroid now sits at the mean of points that are no longer there. Contrast
+ * HNSW, where the same operation would risk cutting the graph in two.
+ */
+export function ivfDelete(state: IvfState, id: PointId): OpResult<IvfState, boolean, IvfStep> {
+  const cell = state.cells.findIndex((ids) => ids.includes(id));
+  if (cell === -1) {
+    return { state, result: false, steps: [], counters: ivfCounters(0, 0, 0) };
+  }
+
+  const cells = state.cells.map((ids, i) => (i === cell ? ids.filter((other) => other !== id) : ids));
+  const points = new Map(state.points);
+  points.delete(id);
+
+  return {
+    state: { ...state, cells, points },
+    result: true,
+    steps: [{ kind: 'remove', id, cell }],
+    counters: ivfCounters(0, 0, 0),
+  };
+}

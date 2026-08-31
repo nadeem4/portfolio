@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeDataset } from './dataset';
-import { trainIvf, ivfInsert } from './ivf';
+import { trainIvf, ivfInsert, ivfDelete } from './ivf';
 
 const points = makeDataset({ seed: 7, clusters: 4, perCluster: 40, spread: 0.04, straddlers: 12 });
 const params = { cells: 4, maxIterations: 100, seed: 7 };
@@ -133,5 +133,57 @@ describe('ivfInsert', () => {
     const { state: next, result: id } = ivfInsert(state, vec);
     vec[0] = 0.9;
     expect(next.points.get(id)?.vec).toEqual([0.5, 0.5]);
+  });
+});
+
+describe('ivfDelete', () => {
+  it('drops the id from its posting list and from the point map', () => {
+    const { state } = trainIvf(points, params);
+    const cell = state.cells.findIndex((ids) => ids.length > 0);
+    const victim = state.cells[cell][0];
+    const { state: next, result, steps } = ivfDelete(state, victim);
+
+    expect(result).toBe(true);
+    expect(next.cells[cell]).not.toContain(victim);
+    expect(next.points.has(victim)).toBe(false);
+    expect(steps).toEqual([{ kind: 'remove', id: victim, cell }]);
+  });
+
+  it('touches no other cell', () => {
+    const { state } = trainIvf(points, params);
+    const cell = state.cells.findIndex((ids) => ids.length > 0);
+    const { state: next } = ivfDelete(state, state.cells[cell][0]);
+    next.cells.forEach((ids, i) => {
+      if (i !== cell) expect(ids, `cell ${i}`).toEqual(state.cells[i]);
+    });
+  });
+
+  it('costs nothing — no centroid is recomputed, which is why they go stale', () => {
+    const { state } = trainIvf(points, params);
+    const { state: next, counters } = ivfDelete(state, state.cells.flat()[0]);
+    expect(counters).toEqual({ distanceComputations: 0, cellsProbed: 0, pointsScanned: 0 });
+    expect(next.centroids).toEqual(state.centroids);
+  });
+
+  it('reports false for an id the index never held', () => {
+    const { state } = trainIvf(points, params);
+    const { state: next, result, steps } = ivfDelete(state, 99999);
+    expect(result).toBe(false);
+    expect(steps).toEqual([]);
+    expect(next).toEqual(state);
+  });
+
+  it('is idempotent — deleting twice is not an error', () => {
+    const { state } = trainIvf(points, params);
+    const victim = state.cells.flat()[0];
+    const once = ivfDelete(state, victim).state;
+    expect(ivfDelete(once, victim).result).toBe(false);
+  });
+
+  it('leaves the input state unchanged', () => {
+    const { state } = trainIvf(points, params);
+    const snapshot = structuredClone(state);
+    ivfDelete(state, state.cells.flat()[0]);
+    expect(state).toEqual(snapshot);
   });
 });
