@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeDataset } from './dataset';
-import { trainIvf } from './ivf';
+import { trainIvf, ivfInsert } from './ivf';
 
 const points = makeDataset({ seed: 7, clusters: 4, perCluster: 40, spread: 0.04, straddlers: 12 });
 const params = { cells: 4, maxIterations: 100, seed: 7 };
@@ -80,5 +80,58 @@ describe('trainIvf', () => {
 
   it('refuses to seed more centroids than there are points', () => {
     expect(() => trainIvf(points.slice(0, 3), params)).toThrow(/at least 4 points/);
+  });
+});
+
+describe('ivfInsert', () => {
+  it('appends the point to the posting list of the nearest centroid', () => {
+    const { state } = trainIvf(points, params);
+    const target = state.centroids[2];
+    const { state: next, result: id, steps } = ivfInsert(state, [...target]);
+    expect(next.cells[2]).toContain(id);
+    expect(steps).toEqual([{ kind: 'assign', id, cell: 2 }]);
+  });
+
+  it('hands out a fresh id and stores the point', () => {
+    const { state } = trainIvf(points, params);
+    const { state: next, result: id } = ivfInsert(state, [0.5, 0.5]);
+    expect(id).toBe(state.nextId);
+    expect(next.nextId).toBe(state.nextId + 1);
+    expect(next.points.get(id)).toEqual({ id, vec: [0.5, 0.5] });
+  });
+
+  it('does not retrain — the centroids are exactly the ones it was given', () => {
+    const { state } = trainIvf(points, params);
+    let current = state;
+    for (let i = 0; i < 50; i += 1) current = ivfInsert(current, [0.02 + i * 0.0001, 0.02]).state;
+    expect(current.centroids).toEqual(state.centroids);
+  });
+
+  it('counts the drift so the readout can warn about it', () => {
+    const { state } = trainIvf(points, params);
+    const once = ivfInsert(state, [0.5, 0.5]).state;
+    expect(once.insertsSinceTrain).toBe(1);
+    expect(ivfInsert(once, [0.4, 0.4]).state.insertsSinceTrain).toBe(2);
+  });
+
+  it('charges one distance computation per centroid and scans nothing', () => {
+    const { state } = trainIvf(points, params);
+    const { counters } = ivfInsert(state, [0.5, 0.5]);
+    expect(counters).toEqual({ distanceComputations: params.cells, cellsProbed: 0, pointsScanned: 0 });
+  });
+
+  it('leaves the input state unchanged', () => {
+    const { state } = trainIvf(points, params);
+    const snapshot = structuredClone(state);
+    ivfInsert(state, [0.5, 0.5]);
+    expect(state).toEqual(snapshot);
+  });
+
+  it('copies the vector, so a later mutation of the caller\'s array cannot reach the index', () => {
+    const { state } = trainIvf(points, params);
+    const vec = [0.5, 0.5];
+    const { state: next, result: id } = ivfInsert(state, vec);
+    vec[0] = 0.9;
+    expect(next.points.get(id)?.vec).toEqual([0.5, 0.5]);
   });
 });

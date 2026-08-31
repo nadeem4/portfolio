@@ -124,3 +124,32 @@ export function trainIvf(points: readonly Point[], params: IvfParams): OpResult<
     counters: ivfCounters(distanceComputations, 0, points.length),
   };
 }
+
+/**
+ * Files a new point into the nearest existing cell.
+ *
+ * It deliberately does NOT retrain. That is the whole IVF lesson: inserts are
+ * cheap because the partition is frozen, and the price is a partition that
+ * slowly stops describing the data. `insertsSinceTrain` is what the health
+ * readout turns into a visible warning.
+ */
+export function ivfInsert(state: IvfState, vec: Vec): OpResult<IvfState, PointId, IvfStep> {
+  const cell = nearestCentroid(vec, state.centroids);
+  const id = state.nextId;
+  const cells = state.cells.map((ids, i) => (i === cell ? [...ids, id] : ids));
+  const points = new Map(state.points);
+  points.set(id, { id, vec: [...vec] });
+
+  return {
+    state: {
+      centroids: state.centroids,
+      cells,
+      points,
+      nextId: id + 1,
+      insertsSinceTrain: state.insertsSinceTrain + 1,
+    },
+    result: id,
+    steps: [{ kind: 'assign', id, cell }],
+    counters: ivfCounters(state.centroids.length, 0, 0),
+  };
+}
