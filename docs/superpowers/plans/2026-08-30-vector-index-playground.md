@@ -2663,8 +2663,13 @@ describe('replayLog', () => {
   });
 
   it('keeps only the last operation trace, not a concatenation of all of them', () => {
+    // The first op is a delete rather than a second insert: flatInsert's id is
+    // state.nextId, which is history-dependent by design (ids are never
+    // reused), so a second insert-after-insert would legitimately get a
+    // different id when replayed alone vs. within the full log. A delete
+    // leaves nextId untouched, isolating what this test actually checks.
     const log: readonly LabOp[] = [
-      { kind: 'insert', vec: [0.2, 0.3] },
+      { kind: 'delete', id: seed[0].id },
       { kind: 'insert', vec: [0.8, 0.1] },
     ];
     expect(replayLog(seed, log, params).steps).toEqual(replayLog(seed, log.slice(1), params).steps);
