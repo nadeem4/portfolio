@@ -75,8 +75,10 @@ import { describe, it, expect } from 'vitest';
 import type { Counters, Metric, OpResult, Point, Ranked, SearchParams, Vec } from './types';
 
 // These types are locked across four PRs, so this file exists to make a rename or a
-// restructure fail somewhere rather than nowhere: `npx tsc --noEmit` rejects the
-// annotations below, and vitest rejects the module going missing entirely.
+// restructure fail somewhere rather than nowhere. `npx tsc --noEmit` is the guard:
+// it rejects the annotations below. The runtime assertions only exercise the local
+// usage pattern — the import here is type-only and elided before vitest ever runs,
+// so vitest alone would not notice this module going missing.
 
 interface ToyState {
   readonly points: readonly Point[];
