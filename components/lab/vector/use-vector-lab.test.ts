@@ -1,6 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { act, renderHook } from '@testing-library/react';
-import { DEFAULT_K, describeStep, replayLog, useVectorLab, type LabOp } from './use-vector-lab';
+import {
+  DEFAULT_IVF,
+  DEFAULT_K,
+  describeStep,
+  replayLog,
+  useVectorLab,
+  type IndexKind,
+  type LabOp,
+  type LabParams as WideLabParams,
+} from './use-vector-lab';
 import { DEFAULT_DATASET, makeDataset } from '@/lib/lab/vector/dataset';
 import type { SearchParams } from '@/lib/lab/vector/types';
 
@@ -28,7 +37,7 @@ describe('describeStep', () => {
 describe('replayLog', () => {
   it('returns the seeded index for an empty log', () => {
     const snapshot = replayLog(seed, [], params);
-    expect(snapshot.state.points).toHaveLength(seed.length);
+    expect(snapshot.points).toHaveLength(seed.length);
     expect(snapshot.steps).toEqual([]);
     expect(snapshot.results).toEqual([]);
     expect(snapshot.recall).toBeNull();
@@ -50,7 +59,7 @@ describe('replayLog', () => {
       { kind: 'insert', vec: [0.8, 0.1] },
     ];
     const undone = replayLog(seed, log.slice(0, -1), params);
-    expect(undone.state.points).toHaveLength(seed.length + 1);
+    expect(undone.points).toHaveLength(seed.length + 1);
   });
 
   it('keeps only the last operation trace, not a concatenation of all of them', () => {
@@ -220,5 +229,157 @@ describe('replayLog previousCounters', () => {
       { kind: 'insert', vec: [0.2, 0.3] },
     ];
     expect(replayLog(seed, log, params).previousCounters).toBeNull();
+  });
+});
+
+// --- Task 26: widen replayLog/useVectorLab with a selectable index ---------
+
+function wideParams(overrides: Partial<WideLabParams> = {}): WideLabParams {
+  return {
+    k: DEFAULT_K,
+    metric: 'euclidean',
+    index: 'flat' as IndexKind,
+    nprobe: 1,
+    ivf: DEFAULT_IVF,
+    ...overrides,
+  };
+}
+
+describe('replayLog across index kinds', () => {
+  it('reports cell geometry for ivf and none for flat', () => {
+    const flat = replayLog(seed, [], wideParams());
+    const ivf = replayLog(seed, [], wideParams({ index: 'ivf' }));
+    expect(flat.centroids).toBeNull();
+    expect(flat.cellBalance).toBeNull();
+    expect(ivf.centroids).toHaveLength(DEFAULT_IVF.cells);
+    expect(typeof ivf.cellBalance).toBe('number');
+  });
+
+  it('folds the same log through either index and reaches the same point set', () => {
+    // One log, one undo stack. If this drifts, the index select silently
+    // changes the reader's data underneath them.
+    const log: readonly LabOp[] = [
+      { kind: 'insert', vec: [0.5, 0.5] },
+      { kind: 'delete', id: seed[0].id },
+    ];
+    const flat = replayLog(seed, log, wideParams());
+    const ivf = replayLog(seed, log, wideParams({ index: 'ivf' }));
+    expect(ivf.points.map((p) => p.id)).toEqual(flat.points.map((p) => p.id));
+  });
+
+  it('lands on the k-means training trace before any operation is logged', () => {
+    // Building the index is half of what IVF teaches, so the scrubber has
+    // something to walk the moment the reader picks it.
+    const ivf = replayLog(seed, [], wideParams({ index: 'ivf' }));
+    expect(ivf.steps.some((step) => step.kind === 'trainIteration')).toBe(true);
+  });
+
+  it('answers the last query against the final state, not the state at the time', () => {
+    const target = seed[0];
+    const withLaterDelete: readonly LabOp[] = [
+      { kind: 'search', query: target.vec },
+      { kind: 'delete', id: target.id },
+    ];
+    const snapshot = replayLog(seed, withLaterDelete, wideParams());
+    expect(snapshot.results.map((r) => r.id)).not.toContain(target.id);
+  });
+
+  it('matches flat exactly once nprobe covers every cell', () => {
+    const log: readonly LabOp[] = [{ kind: 'search', query: [0.5, 0.5] }];
+    const flat = replayLog(seed, log, wideParams());
+    const ivf = replayLog(seed, log, wideParams({ index: 'ivf', nprobe: DEFAULT_IVF.cells }));
+    expect(ivf.results.map((r) => r.id)).toEqual(flat.results.map((r) => r.id));
+    expect(ivf.recall).toBe(1);
+  });
+
+  it('counts inserts since the last train and clears them on rebuild', () => {
+    const inserted: readonly LabOp[] = [{ kind: 'insert', vec: [0.5, 0.5] }];
+    expect(replayLog(seed, inserted, wideParams({ index: 'ivf' })).insertsSinceTrain).toBe(1);
+    expect(
+      replayLog(seed, [...inserted, { kind: 'rebuild' }], wideParams({ index: 'ivf' })).insertsSinceTrain,
+    ).toBe(0);
+  });
+
+  it('treats rebuild as a no-op on flat, which has nothing to retrain', () => {
+    const before = replayLog(seed, [], wideParams());
+    const after = replayLog(seed, [{ kind: 'rebuild' }], wideParams());
+    expect(after.points.map((p) => p.id)).toEqual(before.points.map((p) => p.id));
+  });
+
+  it('records ivf costs into lastByKind exactly as the flat branch does, so deltas keep working', () => {
+    // The one thing the drift notice flags as the likeliest thing to break
+    // silently: an insert-then-insert on ivf must show a comparable delta,
+    // just like it already does on flat.
+    const log: readonly LabOp[] = [
+      { kind: 'insert', vec: [0.1, 0.1] },
+      { kind: 'insert', vec: [0.9, 0.9] },
+    ];
+    const snapshot = replayLog(seed, log, wideParams({ index: 'ivf' }));
+    expect(snapshot.previousCounters).not.toBeNull();
+  });
+});
+
+describe('describeStep for the ivf vocabulary', () => {
+  it('words a training iteration', () => {
+    expect(describeStep({ kind: 'trainIteration', iteration: 2, centroids: [], shift: 0.125 })).toBe(
+      'Training iteration 2: centroids moved 0.125',
+    );
+  });
+
+  it('distinguishes a probed cell from a skipped one', () => {
+    expect(describeStep({ kind: 'probeCell', cell: 3, distance: 0.2 })).toMatch(/^Probed cell 3/);
+    expect(describeStep({ kind: 'skipCell', cell: 4, distance: 0.9 })).toMatch(/^Skipped cell 4/);
+  });
+
+  it('names the cell a point was removed from, when the step carries one', () => {
+    expect(describeStep({ kind: 'remove', id: 7, cell: 2 })).toBe('Removed point 7 from cell 2');
+  });
+
+  it('keeps PR 1s flat wording for a remove step with no cell', () => {
+    // Flat's own remove step never carries a cell, and that wording is
+    // asserted verbatim by the "describeStep" block above -- it must not
+    // change just because the type widened to include IVF's remove.
+    expect(describeStep({ kind: 'remove', id: 7 })).toBe('removing point 7');
+  });
+});
+
+describe('useVectorLab with an index option', () => {
+  it('re-derives results when nprobe changes, with no effect involved', () => {
+    const { result, rerender } = renderHook(
+      ({ nprobe }: { nprobe: number }) => useVectorLab({ index: 'ivf', nprobe }),
+      { initialProps: { nprobe: 1 } },
+    );
+    act(() => result.current.search([0.5, 0.5]));
+    const narrow = result.current.counters.cellsProbed;
+    rerender({ nprobe: DEFAULT_IVF.cells });
+    expect(result.current.counters.cellsProbed).toBeGreaterThan(narrow);
+    expect(result.current.recall).toBe(1);
+  });
+
+  it('collapses consecutive query moves into one undo step', () => {
+    // Dragging the query fires per pointer move; without this, undo becomes a
+    // frame-by-frame rewind of a mouse gesture.
+    const { result } = renderHook(() => useVectorLab({ index: 'ivf' }));
+    act(() => result.current.search([0.2, 0.2]));
+    act(() => result.current.search([0.8, 0.8]));
+    expect(result.current.log).toHaveLength(1);
+    expect(result.current.query).toEqual([0.8, 0.8]);
+  });
+
+  it('logs a rebuild so undo can step back over it', () => {
+    const { result } = renderHook(() => useVectorLab({ index: 'ivf' }));
+    act(() => result.current.insert([0.5, 0.5]));
+    act(() => result.current.rebuild());
+    expect(result.current.insertsSinceTrain).toBe(0);
+    act(() => result.current.undo());
+    expect(result.current.insertsSinceTrain).toBe(1);
+    expect(result.current.canUndo).toBe(true);
+  });
+
+  it('exposes no cell geometry on flat', () => {
+    const { result } = renderHook(() => useVectorLab());
+    expect(result.current.centroids).toBeNull();
+    expect(result.current.cellBalance).toBeNull();
+    expect(result.current.insertsSinceTrain).toBeNull();
   });
 });
