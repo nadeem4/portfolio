@@ -1,5 +1,5 @@
 import type { Counters, OpResult, Point, PointId, Ranked, SearchParams, Vec } from './types';
-import { euclidean } from './metrics';
+import { distance, euclidean } from './metrics';
 import { mulberry32 } from './random';
 
 export interface IvfState {
@@ -177,5 +177,62 @@ export function ivfDelete(state: IvfState, id: PointId): OpResult<IvfState, bool
     result: true,
     steps: [{ kind: 'remove', id, cell }],
     counters: ivfCounters(0, 0, 0),
+  };
+}
+
+/**
+ * Probe the `nprobe` cells nearest the query, scan only their posting lists,
+ * and rank the union under the same total order flat search uses.
+ *
+ * Cells are ranked under the query's own metric, unlike `nearestCentroid`
+ * (always Euclidean, for training): this is a ranking question, not a means
+ * question, so it must agree with the scan that follows. When `nprobe` covers
+ * every cell, the union of posting lists is every point, so the result is
+ * bit-identical to flat search — same distances, same id tiebreak.
+ */
+export function ivfSearch(
+  state: IvfState,
+  query: Vec,
+  params: IvfSearchParams,
+): OpResult<IvfState, readonly Ranked[], IvfStep> {
+  const steps: IvfStep[] = [];
+
+  const ranked = state.centroids
+    .map((centroid, cell) => ({ cell, distance: distance(query, centroid, params.metric) }))
+    .sort((a, b) => a.distance - b.distance || a.cell - b.cell);
+  let distanceComputations = state.centroids.length;
+
+  const probe = Math.max(1, Math.min(params.nprobe, state.centroids.length));
+  const candidates: Ranked[] = [];
+  let pointsScanned = 0;
+
+  ranked.forEach((entry, rank) => {
+    if (rank >= probe) {
+      steps.push({ kind: 'skipCell', cell: entry.cell, distance: entry.distance });
+      return;
+    }
+    steps.push({ kind: 'probeCell', cell: entry.cell, distance: entry.distance });
+    state.cells[entry.cell].forEach((id) => {
+      const point = state.points.get(id);
+      // Cells and `points` are written by the same ops, so a gap is corruption.
+      if (point === undefined) return;
+      const d = distance(query, point.vec, params.metric);
+      distanceComputations += 1;
+      pointsScanned += 1;
+      steps.push({ kind: 'scan', id, distance: d });
+      candidates.push({ id, distance: d });
+    });
+  });
+
+  // Tie-break by id so the ordering is total, and therefore reproducible and
+  // directly comparable with flat search.
+  const top = candidates.sort((a, b) => a.distance - b.distance || a.id - b.id).slice(0, params.k);
+  top.forEach((entry, rank) => steps.push({ kind: 'admit', id: entry.id, distance: entry.distance, rank }));
+
+  return {
+    state,
+    result: top,
+    steps,
+    counters: ivfCounters(distanceComputations, probe, pointsScanned),
   };
 }
