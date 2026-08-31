@@ -73,3 +73,20 @@ describe('VectorIndexLabPage', () => {
     expect(metadata.description).toBeTruthy();
   });
 });
+
+describe('VectorIndexLabPage layout', () => {
+  it('lets the lab break the shared prose column', async () => {
+    // The site keeps one content width across pages, and prose should keep it.
+    // An instrument is not an article: the canvas needs room the reading column
+    // cannot give it, so the lab alone opts out, bounded rather than full-bleed.
+    const { container } = render(await VectorIndexLabPage(search()));
+    const lab = container.querySelector('[data-testid="lab-region"]');
+    expect(lab).toBeInTheDocument();
+    expect(lab?.className).toMatch(/max-w-\[/);
+  });
+
+  it('keeps the prose at reading width', async () => {
+    const { container } = render(await VectorIndexLabPage(search()));
+    expect(container.querySelector('main > div')).toHaveClass('max-w-2xl', 'lg:max-w-3xl');
+  });
+});

@@ -79,11 +79,12 @@ describe('VectorLab', () => {
 
   it('runs a search in query mode instead of editing', async () => {
     // A mode toggle rather than a drag handle: a drag surface on a canvas is
-    // where touch scrolling and keyboard access both go to die.
+    // where touch scrolling and keyboard access both go to die. Segmented
+    // buttons rather than radios, so the control reads at canvas scale.
     const user = userEvent.setup();
     render(<VectorLab />);
     const before = pointCount();
-    await user.click(screen.getByRole('radio', { name: /move the query/i }));
+    await user.click(screen.getByRole('button', { name: /move the query/i }));
     fireEvent.click(canvas(), { clientX: 240, clientY: 180 });
     expect(pointCount()).toBe(before);
     expect(screen.getByText('100%')).toBeInTheDocument();
@@ -93,7 +94,7 @@ describe('VectorLab', () => {
     const user = userEvent.setup();
     const { container } = render(<VectorLab />);
     expect(container.querySelector('[data-testid="lab-query"]')).toBeNull();
-    await user.click(screen.getByRole('radio', { name: /move the query/i }));
+    await user.click(screen.getByRole('button', { name: /move the query/i }));
     fireEvent.click(canvas(), { clientX: 240, clientY: 180 });
     expect(container.querySelector('[data-testid="lab-query"]')).toBeInTheDocument();
   });
@@ -152,8 +153,47 @@ describe('VectorLab', () => {
     const user = userEvent.setup();
     render(<VectorLab initialK={3} />);
     expect(screen.getByText('recall@3')).toBeInTheDocument();
-    await user.click(screen.getByRole('radio', { name: /move the query/i }));
+    await user.click(screen.getByRole('button', { name: /move the query/i }));
     fireEvent.click(canvas(), { clientX: 240, clientY: 180 });
     expect(screen.getByText('100%')).toBeInTheDocument();
+  });
+});
+
+describe('VectorLab layout', () => {
+  it('puts the controls in a rail beside the canvas, not stacked under it', () => {
+    // The canvas is a spatial instrument; stacking the readouts underneath it is
+    // what forced it down to prose-column width. The rail collapses to stacked
+    // on narrow viewports, which is the phone layout.
+    const { container } = render(<VectorLab />);
+    const shell = container.querySelector('[data-testid="lab-shell"]');
+    expect(shell).toBeInTheDocument();
+    expect(shell?.className).toMatch(/lg:grid-cols-/);
+  });
+
+  it('renders the step description at readable size, not as slider caption text', () => {
+    render(<VectorLab />);
+    fireEvent.click(canvas(), { clientX: 5, clientY: 5 });
+    const narration = screen.getByTestId('lab-narration');
+    expect(narration).toHaveTextContent(/appending point/);
+    expect(narration.className).not.toMatch(/text-\[0\.6/);
+  });
+
+  it('offers the canvas mode as segmented buttons with pressed state', () => {
+    // Two small radios above a large canvas are easy to miss entirely.
+    render(<VectorLab />);
+    const edit = screen.getByRole('button', { name: /add or remove points/i });
+    const query = screen.getByRole('button', { name: /move the query/i });
+    expect(edit).toHaveAttribute('aria-pressed', 'true');
+    expect(query).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('switches mode when the segmented button is pressed', async () => {
+    const user = userEvent.setup();
+    render(<VectorLab />);
+    const before = pointCount();
+    await user.click(screen.getByRole('button', { name: /move the query/i }));
+    expect(screen.getByRole('button', { name: /move the query/i })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(canvas(), { clientX: 240, clientY: 180 });
+    expect(pointCount()).toBe(before);
   });
 });
