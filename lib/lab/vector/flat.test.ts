@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createFlat, flatInsert } from './flat';
+import { createFlat, flatInsert, flatDelete } from './flat';
 import { makeDataset, DEFAULT_DATASET } from './dataset';
 import type { Point } from './types';
 
@@ -111,5 +111,63 @@ describe('flatInsert', () => {
     vec[0] = 0.9;
 
     expect(next.points[0].vec).toEqual([0.5, 0.5]);
+  });
+});
+
+describe('flatDelete', () => {
+  it('removes the point outright, leaving no tombstone behind', () => {
+    // The contrast with HNSW's forced tombstoning is a teaching point. Flat has
+    // no graph to disconnect, so the point simply goes.
+    const state = createFlat(pointsOf([0, 0], [1, 1], [0.5, 0.5]));
+
+    const { state: next } = flatDelete(state, 1);
+
+    expect(next.points.map((point) => point.id)).toEqual([0, 2]);
+  });
+
+  it('reports that it removed something', () => {
+    expect(flatDelete(createFlat(pointsOf([0, 0])), 0).result).toBe(true);
+  });
+
+  it('traces one remove', () => {
+    const { steps } = flatDelete(createFlat(pointsOf([0, 0], [1, 1])), 1);
+    expect(steps).toEqual([{ kind: 'remove', id: 1 }]);
+  });
+
+  it('costs nothing', () => {
+    const { counters } = flatDelete(createFlat(makeDataset(DEFAULT_DATASET)), 4);
+    expect(counters).toEqual({ distanceComputations: 0, pointsScanned: 0 });
+  });
+
+  it('reports a miss for an id it does not hold', () => {
+    const state = createFlat(pointsOf([0, 0], [1, 1]));
+
+    const outcome = flatDelete(state, 99);
+
+    expect(outcome.result).toBe(false);
+    expect(outcome.state).toEqual(state);
+    expect(outcome.steps).toEqual([]);
+  });
+
+  it('reports a miss for an id already deleted', () => {
+    const once = flatDelete(createFlat(pointsOf([0, 0], [1, 1])), 0);
+    expect(flatDelete(once.state, 0).result).toBe(false);
+  });
+
+  it('never recycles the deleted id', () => {
+    const seeded = createFlat(pointsOf([0, 0], [1, 1]));
+    const deleted = flatDelete(seeded, 1);
+
+    expect(deleted.state.nextId).toBe(seeded.nextId);
+    expect(flatInsert(deleted.state, [0.5, 0.5]).result).toBe(2);
+  });
+
+  it('leaves the input state unchanged', () => {
+    const state = createFlat(makeDataset(DEFAULT_DATASET));
+    const before = snapshot(state);
+
+    flatDelete(state, 4);
+
+    expect(state).toEqual(before);
   });
 });

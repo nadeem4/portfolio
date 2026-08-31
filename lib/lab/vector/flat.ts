@@ -48,3 +48,33 @@ export function flatInsert(state: FlatState, vec: Vec): OpResult<FlatState, Poin
     counters: { distanceComputations: 0, pointsScanned: 0 },
   };
 }
+
+/**
+ * Remove a point outright.
+ *
+ * Deliberately a HARD removal, not a tombstone. Flat has no proximity graph to
+ * disconnect, so nothing forces a deferred delete here — and the contrast with
+ * HNSW, which cannot do this, is one of the things the playground exists to
+ * show. Tombstoning flat "for consistency" would erase that lesson.
+ *
+ * `nextId` survives the delete: ids are never reused, or an undo replay would
+ * put a different point under an id the reader has already seen.
+ */
+export function flatDelete(state: FlatState, id: PointId): OpResult<FlatState, boolean, FlatStep> {
+  const index = state.points.findIndex((point) => point.id === id);
+  const counters = { distanceComputations: 0, pointsScanned: 0 };
+
+  if (index === -1) {
+    return { state, result: false, steps: [], counters };
+  }
+
+  return {
+    state: {
+      points: [...state.points.slice(0, index), ...state.points.slice(index + 1)],
+      nextId: state.nextId,
+    },
+    result: true,
+    steps: [{ kind: 'remove', id }],
+    counters,
+  };
+}
