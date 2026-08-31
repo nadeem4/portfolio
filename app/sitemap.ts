@@ -29,6 +29,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.7,
     },
+    // The lab is a real, finished page rather than a placeholder, so unlike
+    // /live-projects it is advertised from the start.
+    {
+      url: `${baseUrl}/lab/vector-index`,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
     // One entry per category page. Derived from the catalog rather than listed
     // by hand, so a category added in Notion becomes crawlable on the next sync.
     // Ranked below /blog: the hub is the entry point, a topic page a slice of it.

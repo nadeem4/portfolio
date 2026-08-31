@@ -57,7 +57,7 @@ Every operation is pure and threads its state — `op(state, args) → { state, 
 
 - **`/lab/vector-index`** — the vector index playground. A live flat index: click the canvas to insert a point, click a point to remove it, switch modes to move the query. The scrubber replays the trace of the last operation step by step, the scoreboard counts what it cost, and the health readout carries recall against brute-force ground truth. Deep-linkable with `?index=` and `?k=` (read once, on the server; there is no URL-state syncing). Serves the Vector Databases series.
 
-Nothing is wired into the nav, sitemap, or command palette yet, and `config/labs.ts` does not exist. Both arrive with the second lab: a registry with one entry is a list wearing a costume, and a nav item is worth adding once there is a section behind it rather than a page.
+The lab is linked from the header nav, the sitemap and the command palette. `config/labs.ts` does not exist yet. Both arrive with the second lab: a registry with one entry is a list wearing a costume, and a nav item is worth adding once there is a section behind it rather than a page.
 
 See `docs/superpowers/specs/2026-08-30-interactive-labs-design.md` for the full design, including which labs are planned and which were deliberately cut.
 

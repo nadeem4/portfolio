@@ -35,6 +35,14 @@ describe('site config', () => {
   });
 });
 
+describe('command palette', () => {
+  it('offers the lab as a destination', async () => {
+    const { commands } = await import('../components/command-palette/commands');
+    const lab = commands.find((command) => command.id === 'lab');
+    expect(lab?.href).toBe('/lab/vector-index');
+  });
+});
+
 describe('README', () => {
   it('documents the labs section that ships with the first lab', () => {
     const __dirname = dirname(fileURLToPath(import.meta.url));

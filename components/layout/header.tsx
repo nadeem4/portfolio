@@ -23,6 +23,11 @@ export function Header() {
         <Link href="/projects" className={navLinkClasses}>
           Projects
         </Link>
+        {/* Linked unconditionally, unlike Live Projects below: there is a real
+            page behind it, so the "advertises an absence" rule does not apply. */}
+        <Link href="/lab/vector-index" className={navLinkClasses}>
+          Lab
+        </Link>
         {/* Only linked once something is actually deployed. A nav item leading
             to a "COMING SOON" page advertises an absence. */}
         {hasLiveProjects && (
