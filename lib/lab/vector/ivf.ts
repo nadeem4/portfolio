@@ -236,3 +236,35 @@ export function ivfSearch(
     counters: ivfCounters(distanceComputations, probe, pointsScanned),
   };
 }
+
+/**
+ * Coefficient of variation of the posting-list sizes: 0 when every cell holds
+ * the same count, rising without bound as one cell swallows the index.
+ *
+ * Scale-free on purpose. A raw spread would climb simply because the reader
+ * kept inserting, and the readout has to mean "lopsided", not "large".
+ */
+export function cellBalance(state: IvfState): number {
+  const sizes = state.cells.map((ids) => ids.length);
+  if (sizes.length === 0) return 0;
+  const mean = sizes.reduce((total, size) => total + size, 0) / sizes.length;
+  if (mean === 0) return 0;
+  const variance = sizes.reduce((total, size) => total + (size - mean) ** 2, 0) / sizes.length;
+  return Math.sqrt(variance) / mean;
+}
+
+/**
+ * Retrains the centroids on the points the index actually holds now, and
+ * reassigns every one of them. This is the operation that pays off the debt
+ * that `ivfInsert` and `ivfDelete` have been quietly running up.
+ */
+export function rebuildIvf(state: IvfState, params: IvfParams): OpResult<IvfState, void, IvfStep> {
+  const points = [...state.points.values()].sort((a, b) => a.id - b.id);
+  const trained = trainIvf(points, params);
+  return {
+    ...trained,
+    // A from-scratch train derives nextId from the ids present, which would
+    // rewind the counter after deletes and hand out an id twice.
+    state: { ...trained.state, nextId: Math.max(state.nextId, trained.state.nextId) },
+  };
+}

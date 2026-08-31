@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { makeDataset } from './dataset';
-import { trainIvf, ivfInsert, ivfDelete, ivfSearch } from './ivf';
+import { trainIvf, ivfInsert, ivfDelete, ivfSearch, cellBalance, rebuildIvf } from './ivf';
 import { createFlat, flatSearch } from './flat';
 import { recallAtK } from './recall';
 import { mulberry32 } from './random';
@@ -302,5 +302,113 @@ describe('ivfSearch', () => {
     const { state: after } = ivfSearch(state, [0.3, 0.3], { k: 10, metric: 'euclidean', nprobe: 2 });
     expect(after).toBe(state);
     expect(state).toEqual(snapshot);
+  });
+});
+
+/** Points dropped into a tight blob, which is how a real index goes lopsided. */
+function blobInserts(state: ReturnType<typeof trainIvf>['state'], count: number) {
+  const rng = mulberry32(3);
+  let current = state;
+  for (let i = 0; i < count; i += 1) {
+    current = ivfInsert(current, [0.05 + rng() * 0.02, 0.05 + rng() * 0.02]).state;
+  }
+  return current;
+}
+
+describe('cellBalance', () => {
+  it('is zero when every cell holds the same number of points', () => {
+    const state = {
+      centroids: [[0, 0], [1, 1]],
+      cells: [[1, 2], [3, 4]],
+      points: new Map(),
+      nextId: 5,
+      insertsSinceTrain: 0,
+    };
+    expect(cellBalance(state)).toBe(0);
+  });
+
+  it('is the coefficient of variation of the posting-list sizes', () => {
+    const state = {
+      centroids: [[0, 0], [1, 1]],
+      cells: [[1], [2, 3, 4]],
+      points: new Map(),
+      nextId: 5,
+      insertsSinceTrain: 0,
+    };
+    // sizes [1, 3]: mean 2, standard deviation 1.
+    expect(cellBalance(state)).toBeCloseTo(0.5, 12);
+  });
+
+  it('is zero for an empty index rather than NaN', () => {
+    const state = {
+      centroids: [[0, 0], [1, 1]],
+      cells: [[], []],
+      points: new Map(),
+      nextId: 0,
+      insertsSinceTrain: 0,
+    };
+    expect(cellBalance(state)).toBe(0);
+  });
+});
+
+describe('rebuildIvf', () => {
+  it('drift worsens balance and rebuild restores it', () => {
+    const { state } = trainIvf(points, params);
+    const trained = cellBalance(state);
+    const drifted = blobInserts(state, 120);
+    const afterInserts = cellBalance(drifted);
+    const rebuilt = rebuildIvf(drifted, params).state;
+    const afterRebuild = cellBalance(rebuilt);
+
+    expect(afterInserts, 'inserting without retraining must visibly unbalance the cells').toBeGreaterThan(trained);
+    expect(afterRebuild, 'rebuild must pull the cells back towards balance').toBeLessThan(afterInserts);
+  });
+
+  it('clears the drift counter', () => {
+    const { state } = trainIvf(points, params);
+    const drifted = blobInserts(state, 20);
+    expect(drifted.insertsSinceTrain).toBe(20);
+    expect(rebuildIvf(drifted, params).state.insertsSinceTrain).toBe(0);
+  });
+
+  it('keeps exactly the points it had', () => {
+    const { state } = trainIvf(points, params);
+    const drifted = blobInserts(state, 20);
+    const rebuilt = rebuildIvf(drifted, params).state;
+    expect(new Set(rebuilt.cells.flat())).toEqual(new Set([...drifted.points.keys()]));
+    expect(rebuilt.points).toEqual(drifted.points);
+  });
+
+  it('never rewinds the id counter, because ids are never reused', () => {
+    const { state } = trainIvf(points, params);
+    const drifted = blobInserts(state, 20);
+    const deleted = ivfDelete(drifted, drifted.cells.flat()[0]).state;
+    expect(rebuildIvf(deleted, params).state.nextId).toBe(deleted.nextId);
+  });
+
+  it('moves the centroids, and search still answers correctly afterwards', () => {
+    const { state } = trainIvf(points, params);
+    const drifted = blobInserts(state, 120);
+    const rebuilt = rebuildIvf(drifted, params).state;
+    expect(rebuilt.centroids).not.toEqual(drifted.centroids);
+
+    const flat = createFlat([...rebuilt.points.values()]);
+    const truth = flatSearch(flat, [0.3, 0.3], { k: 10, metric: 'euclidean' }).result;
+    const got = ivfSearch(rebuilt, [0.3, 0.3], { k: 10, metric: 'euclidean', nprobe: params.cells }).result;
+    expect(got).toEqual(truth);
+  });
+
+  it('replays the training animation, so the reader can watch it resolve', () => {
+    const { state } = trainIvf(points, params);
+    const { steps } = rebuildIvf(blobInserts(state, 20), params);
+    expect(steps.filter((step) => step.kind === 'trainIteration').length).toBeGreaterThan(1);
+  });
+
+  it('leaves the input state unchanged', () => {
+    const { state } = trainIvf(points, params);
+    const drifted = blobInserts(state, 20);
+    const snapshot = structuredClone(drifted);
+    rebuildIvf(drifted, params);
+    expect(drifted).toEqual(snapshot);
   });
 });
