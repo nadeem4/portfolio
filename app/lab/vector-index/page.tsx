@@ -118,7 +118,21 @@ export default async function VectorIndexLabPage({ searchParams }: LabPageProps)
           </p>
         </section>
 
-        <VectorLab initialK={k} />
+        {/* The lab alone opts out of the shared content column. Prose keeps the
+            reading width above and below; an instrument needs room a reading
+            column cannot give it. Bounded rather than full-bleed, so the page
+            still reads as part of the site on a wide monitor. The negative
+            box is widened, then re-centred on the viewport with a half-parent
+            margin and a half-self translate — capping width after positioning
+            with negative margins leaves it off-centre. 84rem is chosen from a
+            measurement, not a sketch: at 72rem the rail and gap left the canvas
+            at 876px, barely wider than the 768px prose column it came from. */}
+        <div
+          data-testid="lab-region"
+          className="w-[calc(100vw-3rem)] max-w-[84rem] ml-[50%] -translate-x-1/2"
+        >
+          <VectorLab initialK={k} />
+        </div>
 
         <section className="space-y-3 border-t border-border pt-8">
           <h2 className="text-sm font-bold uppercase tracking-[0.18em]">The posts this illustrates</h2>

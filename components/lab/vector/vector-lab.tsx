@@ -10,11 +10,18 @@ import type { FlatStep } from '@/lib/lab/vector/flat';
 import { hitTest, layoutPoints, toScreen, type Viewport } from '@/lib/lab/vector/layout';
 import type { PointId, Ranked, Vec } from '@/lib/lab/vector/types';
 
-const VIEWPORT: Viewport = { width: 480, height: 360, padding: 24 };
+// Sized for the wide layout: the canvas is the instrument, and a spatial view
+// needs room. The rail beside it is a fixed 16rem rather than a fraction --
+// readouts do not get more useful when stretched, and every pixel the rail
+// does not take is canvas. It collapses underneath on narrow viewports.
+const VIEWPORT: Viewport = { width: 720, height: 520, padding: 28 };
 /** Generous enough for a fingertip; the canvas is tap-to-act on a phone. */
 const HIT_RADIUS = 12;
 
 type ClickMode = 'edit' | 'query';
+
+const modeButtonBase =
+  'rounded-sm border px-2.5 py-1.5 text-xs font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2';
 
 const buttonClasses =
   'rounded-sm border border-border bg-background-raised px-3 py-1.5 text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent disabled:opacity-40 disabled:hover:text-foreground-dim focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2';
@@ -83,60 +90,79 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
     (mode === 'query' ? '. Tap to move the query.' : '. Tap empty space to insert, tap a point to remove it.');
 
   return (
-    <div className="space-y-4">
-      {/* A mode toggle rather than a drag handle. Dragging the marker would
-          need pointer capture on a scrollable page, and would leave the query
-          unreachable by keyboard; two radios cost neither. */}
-      <fieldset className="flex flex-wrap items-center gap-4">
-        <legend className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">Tapping the canvas</legend>
-        {(
-          [
-            ['edit', 'Add or remove points'],
-            ['query', 'Move the query'],
-          ] as const
-        ).map(([value, text]) => (
-          <label key={value} className="flex items-center gap-2 text-sm text-foreground-dim">
-            <input
-              type="radio"
-              name={modeName}
-              value={value}
-              checked={mode === value}
-              onChange={() => setMode(value)}
-              className="accent-accent rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
-            />
-            {text}
-          </label>
-        ))}
-      </fieldset>
+    <div data-testid="lab-shell" className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_16rem]">
+      <div className="space-y-3">
+        <PointCanvas
+          screenPoints={screenPoints}
+          viewport={VIEWPORT}
+          tones={tones}
+          query={queryPoint}
+          label={label}
+          onPick={handlePick}
+        />
 
-      <PointCanvas
-        screenPoints={screenPoints}
-        viewport={VIEWPORT}
-        tones={tones}
-        query={queryPoint}
-        label={label}
-        onPick={handlePick}
-      />
+        <Scrubber
+          index={lab.stepIndex}
+          count={lab.steps.length}
+          description={lab.stepDescription}
+          onChange={lab.setStepIndex}
+        />
 
-      <Scrubber
-        index={lab.stepIndex}
-        count={lab.steps.length}
-        description={lab.stepDescription}
-        onChange={lab.setStepIndex}
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Scoreboard counters={lab.counters} />
-        <HealthReadout pointCount={lab.points.length} k={lab.k} recall={lab.recall} />
+        {/* The narration is the teaching mechanism, so it is set at reading size
+            directly under the canvas rather than as a caption on the slider. */}
+        <p data-testid="lab-narration" className="text-sm leading-relaxed text-foreground">
+          {lab.steps.length === 0 ? (
+            <span className="text-foreground-dim">
+              Switch to <strong className="text-foreground">Move the query</strong> and tap the canvas to run a search.
+            </span>
+          ) : (
+            lab.stepDescription
+          )}
+        </p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={lab.undo} disabled={!lab.canUndo} className={buttonClasses}>
-          Undo
-        </button>
-        <button type="button" onClick={lab.reset} className={buttonClasses}>
-          Reset
-        </button>
+      <div className="space-y-4">
+        {/* Segmented buttons rather than radios: two small radios above a large
+            canvas are easy to miss, and the pressed state reads at a glance. */}
+        <div>
+          <p id={modeName} className="mb-2 text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
+            Tapping the canvas
+          </p>
+          <div role="group" aria-labelledby={modeName} className="flex flex-wrap gap-1.5">
+            {(
+              [
+                ['edit', 'Add or remove points'],
+                ['query', 'Move the query'],
+              ] as const
+            ).map(([value, text]) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={mode === value}
+                onClick={() => setMode(value)}
+                className={
+                  mode === value
+                    ? `${modeButtonBase} border-accent bg-accent text-background`
+                    : `${modeButtonBase} border-border bg-background-raised text-foreground-dim hover:text-accent`
+                }
+              >
+                {text}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <Scoreboard counters={lab.counters} />
+        <HealthReadout pointCount={lab.points.length} k={lab.k} recall={lab.recall} />
+
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={lab.undo} disabled={!lab.canUndo} className={buttonClasses}>
+            Undo
+          </button>
+          <button type="button" onClick={lab.reset} className={buttonClasses}>
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   );
