@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { createFlat, flatInsert, flatDelete } from './flat';
+import { createFlat, flatInsert, flatDelete, flatSearch } from './flat';
+import { euclidean } from './metrics';
 import { makeDataset, DEFAULT_DATASET } from './dataset';
-import type { Point } from './types';
+import type { Point, Ranked, SearchParams } from './types';
 
 /**
  * Deep copy taken before an operation, so the purity assertion compares against
@@ -169,5 +170,170 @@ describe('flatDelete', () => {
     flatDelete(state, 4);
 
     expect(state).toEqual(before);
+  });
+});
+
+const EUCLIDEAN_3: SearchParams = { k: 3, metric: 'euclidean' };
+
+describe('flatSearch', () => {
+  it('returns the exact nearest neighbours of a hand-computed fixture', () => {
+    // Distances from [0, 0] are 0, 0.1, 0.3, 1 and sqrt(0.5); the top three are
+    // therefore ids 0, 1 and 2 in that order.
+    const state = createFlat(pointsOf([0, 0], [0.1, 0], [0.3, 0], [1, 0], [0.5, 0.5]));
+
+    const { result } = flatSearch(state, [0, 0], EUCLIDEAN_3);
+
+    expect(result.map((ranked) => ranked.id)).toEqual([0, 1, 2]);
+    expect(result[0].distance).toBeCloseTo(0, 10);
+    expect(result[1].distance).toBeCloseTo(0.1, 10);
+    expect(result[2].distance).toBeCloseTo(0.3, 10);
+  });
+
+  it('scans every point exactly once, in index order', () => {
+    const state = createFlat(pointsOf([0, 0], [0.1, 0], [0.3, 0], [1, 0], [0.5, 0.5]));
+
+    const { steps } = flatSearch(state, [0, 0], EUCLIDEAN_3);
+
+    expect(steps.filter((step) => step.kind === 'scan').map((step) => step.id)).toEqual([0, 1, 2, 3, 4]);
+  });
+
+  it('admits nothing once the top k is full of nearer points', () => {
+    const state = createFlat(pointsOf([0, 0], [0.1, 0], [0.3, 0], [1, 0], [0.5, 0.5]));
+
+    const { steps } = flatSearch(state, [0, 0], EUCLIDEAN_3);
+
+    expect(steps.filter((step) => step.kind === 'admit').map((step) => step.id)).toEqual([0, 1, 2]);
+    expect(steps.filter((step) => step.kind === 'evict')).toEqual([]);
+  });
+
+  it('evicts the running worst when a nearer point arrives later', () => {
+    // Scanned worst-first, so the reader watches the shortlist churn.
+    const state = createFlat(pointsOf([1, 0], [0.5, 0], [0.2, 0]));
+
+    const { steps, result } = flatSearch(state, [0, 0], { k: 2, metric: 'euclidean' });
+
+    expect(steps.map((step) => step.kind)).toEqual(['scan', 'admit', 'scan', 'admit', 'scan', 'admit', 'evict']);
+    expect(steps.filter((step) => step.kind === 'evict')).toEqual([{ kind: 'evict', id: 0 }]);
+    expect(result.map((ranked) => ranked.id)).toEqual([2, 1]);
+  });
+
+  it('records the rank a point was admitted at', () => {
+    const state = createFlat(pointsOf([1, 0], [0.5, 0]));
+
+    const { steps } = flatSearch(state, [0, 0], { k: 2, metric: 'euclidean' });
+
+    expect(steps.filter((step) => step.kind === 'admit')).toEqual([
+      { kind: 'admit', id: 0, distance: 1, rank: 0 },
+      { kind: 'admit', id: 1, distance: 0.5, rank: 0 },
+    ]);
+  });
+
+  it('breaks distance ties by id, whatever order the points are held in', () => {
+    // Ground truth has to be a total order, or every other index's recall would
+    // wobble for reasons that have nothing to do with the index under test.
+    const forward = createFlat([
+      { id: 5, vec: [0, 1] },
+      { id: 2, vec: [1, 0] },
+    ]);
+    const reversed = createFlat([
+      { id: 2, vec: [1, 0] },
+      { id: 5, vec: [0, 1] },
+    ]);
+    const params: SearchParams = { k: 1, metric: 'euclidean' };
+
+    expect(flatSearch(forward, [0, 0], params).result.map((ranked) => ranked.id)).toEqual([2]);
+    expect(flatSearch(reversed, [0, 0], params).result.map((ranked) => ranked.id)).toEqual([2]);
+  });
+
+  it('agrees with an independent full sort over the seeded dataset', () => {
+    const points = makeDataset(DEFAULT_DATASET);
+    const state = createFlat(points);
+    const query: readonly number[] = [0.5, 0.5];
+
+    const expected = [...points]
+      .map((point): Ranked => ({ id: point.id, distance: euclidean(query, point.vec) }))
+      .sort((a, b) => a.distance - b.distance || a.id - b.id)
+      .slice(0, 10);
+
+    const { result } = flatSearch(state, query, { k: 10, metric: 'euclidean' });
+
+    expect(result.map((ranked) => ranked.id)).toEqual(expected.map((ranked) => ranked.id));
+    result.forEach((ranked, index) => {
+      expect(ranked.distance).toBeCloseTo(expected[index].distance, 12);
+    });
+  });
+
+  it('returns every point when k exceeds the index size', () => {
+    const state = createFlat(pointsOf([0.3, 0], [0.1, 0]));
+
+    const { result } = flatSearch(state, [0, 0], { k: 10, metric: 'euclidean' });
+
+    expect(result.map((ranked) => ranked.id)).toEqual([1, 0]);
+  });
+
+  it('returns nothing from an empty index', () => {
+    const outcome = flatSearch(createFlat([]), [0, 0], EUCLIDEAN_3);
+
+    expect(outcome.result).toEqual([]);
+    expect(outcome.steps).toEqual([]);
+  });
+
+  it('ranks by the requested metric', () => {
+    const state = createFlat(pointsOf([5, 0], [0.1, 0.1]));
+    const query: readonly number[] = [1, 0];
+
+    // Euclidean prefers the near point; dot prefers the long one.
+    expect(flatSearch(state, query, { k: 1, metric: 'euclidean' }).result[0].id).toBe(1);
+    expect(flatSearch(state, query, { k: 1, metric: 'dot' }).result[0].id).toBe(0);
+  });
+
+  it('charges one distance computation per point, whatever k is', () => {
+    const points = makeDataset(DEFAULT_DATASET);
+    const state = createFlat(points);
+
+    expect(flatSearch(state, [0.5, 0.5], { k: 1, metric: 'euclidean' }).counters).toEqual({
+      distanceComputations: points.length,
+      pointsScanned: points.length,
+    });
+    expect(flatSearch(state, [0.5, 0.5], { k: 50, metric: 'euclidean' }).counters).toEqual({
+      distanceComputations: points.length,
+      pointsScanned: points.length,
+    });
+  });
+
+  it('still scans everything when nothing is asked for', () => {
+    const state = createFlat(pointsOf([0, 0], [1, 1]));
+
+    const outcome = flatSearch(state, [0, 0], { k: 0, metric: 'euclidean' });
+
+    expect(outcome.result).toEqual([]);
+    expect(outcome.counters.distanceComputations).toBe(2);
+  });
+
+  it('never returns a deleted point', () => {
+    const seeded = createFlat(pointsOf([0, 0], [0.1, 0], [0.3, 0]));
+    const { state } = flatDelete(seeded, 0);
+
+    const { result } = flatSearch(state, [0, 0], EUCLIDEAN_3);
+
+    expect(result.map((ranked) => ranked.id)).toEqual([1, 2]);
+  });
+
+  it('returns a point inserted a moment ago', () => {
+    const inserted = flatInsert(createFlat(pointsOf([1, 1])), [0, 0]);
+
+    const { result } = flatSearch(inserted.state, [0, 0], { k: 1, metric: 'euclidean' });
+
+    expect(result.map((ranked) => ranked.id)).toEqual([inserted.result]);
+  });
+
+  it('leaves the input state unchanged and hands it straight back', () => {
+    const state = createFlat(makeDataset(DEFAULT_DATASET));
+    const before = snapshot(state);
+
+    const outcome = flatSearch(state, [0.5, 0.5], { k: 10, metric: 'euclidean' });
+
+    expect(state).toEqual(before);
+    expect(outcome.state).toBe(state);
   });
 });
