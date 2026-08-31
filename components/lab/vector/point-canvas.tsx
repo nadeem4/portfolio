@@ -13,8 +13,12 @@ const TONE_CLASS: Record<PointTone, string> = {
   current: 'fill-accent stroke-foreground',
 };
 
-const POINT_RADIUS = 4;
-const QUERY_RADIUS = 9;
+// Sized against the 720x520 viewBox. The wider layout enlarged the canvas
+// without enlarging these, which left the points proportionally smaller than
+// they were in the narrow column — the opposite of the intended effect.
+const POINT_RADIUS = 6;
+const QUERY_RADIUS = 14;
+const RANK_OFFSET = 11;
 
 export interface PointCanvasProps {
   /** Already positioned by `layoutPoints`. This file does no geometry. */
@@ -22,6 +26,8 @@ export interface PointCanvasProps {
   viewport: Viewport;
   /** id → tone. Anything absent is idle. Classification happens upstream. */
   tones?: ReadonlyMap<PointId, PointTone>;
+  /** id → zero-based rank among the current results. Drawn as 1-based labels. */
+  ranks?: ReadonlyMap<PointId, number>;
   query: { x: number; y: number } | null;
   /** Describes what is drawn, for a reader who cannot see it. */
   label: string;
@@ -46,7 +52,7 @@ export function toSvgCoords(
   return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
 }
 
-export function PointCanvas({ screenPoints, viewport, tones, query, label, onPick }: PointCanvasProps) {
+export function PointCanvas({ screenPoints, viewport, tones, ranks, query, label, onPick }: PointCanvasProps) {
   const shouldReduceMotion = useReducedMotion();
 
   function handleClick(event: MouseEvent<SVGSVGElement>) {
@@ -82,6 +88,26 @@ export function PointCanvas({ screenPoints, viewport, tones, query, label, onPic
         );
       })}
 
+      {/* Rank is the product of a nearest-neighbour search, and ten identical
+          dots hide it entirely. Numbering also makes an eviction legible while
+          scrubbing: a label vanishing is the shortlist changing its mind. */}
+      {ranks &&
+        screenPoints.map((point) => {
+          const rank = ranks.get(point.id);
+          if (rank === undefined) return null;
+          return (
+            <text
+              key={`rank-${point.id}`}
+              data-testid="lab-rank"
+              x={point.x + RANK_OFFSET}
+              y={point.y - RANK_OFFSET / 2}
+              className="fill-accent text-[11px] font-semibold"
+            >
+              {rank + 1}
+            </text>
+          );
+        })}
+
       {query && (
         <motion.g
           data-testid="lab-query"
@@ -90,8 +116,13 @@ export function PointCanvas({ screenPoints, viewport, tones, query, label, onPic
           animate={{ x: query.x, y: query.y }}
           transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 300, damping: 30 }}
         >
+          {/* A crosshair, not another dot: the query and the results were both
+              amber circles and ring-versus-dot did not separate them. */}
           <circle r={QUERY_RADIUS} strokeWidth={2} className="fill-none stroke-accent" />
-          <circle r={2} className="fill-accent" />
+          <line x1={-QUERY_RADIUS - 6} y1={0} x2={-4} y2={0} strokeWidth={1.5} className="stroke-accent" />
+          <line x1={4} y1={0} x2={QUERY_RADIUS + 6} y2={0} strokeWidth={1.5} className="stroke-accent" />
+          <line x1={0} y1={-QUERY_RADIUS - 6} x2={0} y2={-4} strokeWidth={1.5} className="stroke-accent" />
+          <line x1={0} y1={4} x2={0} y2={QUERY_RADIUS + 6} strokeWidth={1.5} className="stroke-accent" />
         </motion.g>
       )}
     </svg>

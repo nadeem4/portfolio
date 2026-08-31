@@ -125,3 +125,39 @@ describe('PointCanvas', () => {
     expect(container.querySelector('svg')).toBeInTheDocument();
   });
 });
+
+describe('PointCanvas legibility', () => {
+  it('numbers the ranked results on the canvas', () => {
+    // Rank is what a nearest-neighbour search produces. Ten identical dots
+    // hide it; the numbers are what make an eviction legible while scrubbing.
+    const ranks = new Map([[2, 0], [3, 1]]);
+    const { container } = render(
+      <PointCanvas screenPoints={screenPoints} viewport={viewport} ranks={ranks} query={null} label="points" />,
+    );
+    const labels = [...container.querySelectorAll('[data-testid="lab-rank"]')].map((n) => n.textContent);
+    expect(labels).toEqual(['1', '2']);
+  });
+
+  it('counts ranks from one, not zero', () => {
+    const { container } = render(
+      <PointCanvas screenPoints={screenPoints} viewport={viewport} ranks={new Map([[1, 0]])} query={null} label="points" />,
+    );
+    expect(container.querySelector('[data-testid="lab-rank"]')).toHaveTextContent('1');
+  });
+
+  it('draws no rank labels when nothing is ranked', () => {
+    const { container } = render(
+      <PointCanvas screenPoints={screenPoints} viewport={viewport} query={null} label="points" />,
+    );
+    expect(container.querySelectorAll('[data-testid="lab-rank"]')).toHaveLength(0);
+  });
+
+  it('gives the query a crosshair so it never reads as one of the answers', () => {
+    // Query and results were both amber circles; ring-versus-dot was too subtle.
+    const { container } = render(
+      <PointCanvas screenPoints={screenPoints} viewport={viewport} query={{ x: 120, y: 90 }} label="points" />,
+    );
+    const marker = container.querySelector('[data-testid="lab-query"]');
+    expect(marker?.querySelectorAll('line')).toHaveLength(4);
+  });
+});

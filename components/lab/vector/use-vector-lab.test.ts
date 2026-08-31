@@ -181,3 +181,44 @@ describe('useVectorLab', () => {
     expect(result.current.results).toHaveLength(3);
   });
 });
+
+describe('replayLog previousCounters', () => {
+  it('carries the operation before last, so the scoreboard can show movement', () => {
+    const log: readonly LabOp[] = [
+      { kind: 'search', query: [0.5, 0.5] },
+      { kind: 'insert', vec: [0.2, 0.3] },
+    ];
+    const snapshot = replayLog(seed, log, params);
+    // Last op is the insert; the search before it was a different kind, so
+    // there is nothing comparable to show.
+    expect(snapshot.counters.distanceComputations).toBe(0);
+    expect(snapshot.previousCounters).toBeNull();
+  });
+
+  it('has no previous counters until two operations have run', () => {
+    expect(replayLog(seed, [], params).previousCounters).toBeNull();
+    expect(replayLog(seed, [{ kind: 'insert', vec: [0.2, 0.3] }], params).previousCounters).toBeNull();
+  });
+
+  it('compares like with like — the previous op of the SAME kind', () => {
+    // A search costs a full scan and an insert costs nothing, so comparing a
+    // search against the insert before it always reads "+128" and teaches
+    // nothing. The lesson is search-to-search: add ten points, pay ten more.
+    const log: readonly LabOp[] = [
+      { kind: 'search', query: [0.5, 0.5] },
+      { kind: 'insert', vec: [0.2, 0.3] },
+      { kind: 'search', query: [0.5, 0.5] },
+    ];
+    const snapshot = replayLog(seed, log, params);
+    expect(snapshot.counters.distanceComputations).toBe(seed.length + 1);
+    expect(snapshot.previousCounters?.distanceComputations).toBe(seed.length);
+  });
+
+  it('offers no comparison when this kind of operation has not run before', () => {
+    const log: readonly LabOp[] = [
+      { kind: 'search', query: [0.5, 0.5] },
+      { kind: 'insert', vec: [0.2, 0.3] },
+    ];
+    expect(replayLog(seed, log, params).previousCounters).toBeNull();
+  });
+});

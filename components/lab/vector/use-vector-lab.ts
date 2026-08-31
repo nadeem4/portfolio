@@ -19,6 +19,8 @@ export interface LabSnapshot {
   /** The trace of the LAST operation only — what the scrubber walks. */
   readonly steps: readonly FlatStep[];
   readonly counters: Counters;
+  /** The operation before last, or null. Lets the scoreboard show movement. */
+  readonly previousCounters: Counters | null;
   readonly results: readonly Ranked[];
   readonly query: Vec | null;
   readonly recall: number | null;
@@ -52,9 +54,19 @@ export function replayLog(seed: readonly Point[], log: readonly LabOp[], params:
   let state = createFlat(seed);
   let steps: readonly FlatStep[] = [];
   let counters: Counters = EMPTY_COUNTERS;
+  let previousCounters: Counters | null = null;
+  // Keyed by operation kind. A search costs a full scan and an insert costs
+  // nothing, so comparing a search against whatever happened to precede it
+  // always reads as the whole scan appearing from nowhere. Like against like
+  // is the comparison that carries the lesson: ten more points, ten more
+  // distance computations on the next search.
+  const lastByKind = new Map<LabOp['kind'], Counters>();
   let query: Vec | null = null;
 
   for (const op of log) {
+    // Captured before this op overwrites `counters`, so it is genuinely the
+    // earlier run rather than a copy of the current one.
+    previousCounters = lastByKind.get(op.kind) ?? null;
     if (op.kind === 'insert') {
       const next = flatInsert(state, op.vec);
       state = next.state;
@@ -72,6 +84,7 @@ export function replayLog(seed: readonly Point[], log: readonly LabOp[], params:
       counters = next.counters;
       query = op.query;
     }
+    lastByKind.set(op.kind, counters);
   }
 
   // The standing query is re-answered against whatever the log left behind, so
@@ -84,6 +97,7 @@ export function replayLog(seed: readonly Point[], log: readonly LabOp[], params:
     state,
     steps,
     counters,
+    previousCounters,
     results: answered ? answered.result : [],
     query,
     // Ground truth is brute force over the same live points, and for the flat

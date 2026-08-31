@@ -70,6 +70,10 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
     [lab.steps, lab.stepIndex, lab.results],
   );
   const queryPoint = lab.query ? toScreen(lab.query, VIEWPORT) : null;
+  const ranks = useMemo(
+    () => new Map(lab.results.map((result, rank) => [result.id, rank])),
+    [lab.results],
+  );
 
   const handlePick = useCallback(
     (x: number, y: number) => {
@@ -96,6 +100,7 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
           screenPoints={screenPoints}
           viewport={VIEWPORT}
           tones={tones}
+          ranks={ranks}
           query={queryPoint}
           label={label}
           onPick={handlePick}
@@ -152,7 +157,7 @@ export function VectorLab({ initialK = DEFAULT_K }: VectorLabProps) {
           </div>
         </div>
 
-        <Scoreboard counters={lab.counters} />
+        <Scoreboard counters={lab.counters} previous={lab.previousCounters ?? undefined} />
         <HealthReadout pointCount={lab.points.length} k={lab.k} recall={lab.recall} />
 
         <div className="flex flex-wrap gap-2">
