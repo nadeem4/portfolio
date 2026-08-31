@@ -124,10 +124,12 @@ export default async function VectorIndexLabPage({ searchParams }: LabPageProps)
             still reads as part of the site on a wide monitor. The negative
             box is widened, then re-centred on the viewport with a half-parent
             margin and a half-self translate — capping width after positioning
-            with negative margins leaves it off-centre. */}
+            with negative margins leaves it off-centre. 84rem is chosen from a
+            measurement, not a sketch: at 72rem the rail and gap left the canvas
+            at 876px, barely wider than the 768px prose column it came from. */}
         <div
           data-testid="lab-region"
-          className="w-[calc(100vw-3rem)] max-w-[72rem] ml-[50%] -translate-x-1/2"
+          className="w-[calc(100vw-3rem)] max-w-[84rem] ml-[50%] -translate-x-1/2"
         >
           <VectorLab initialK={k} />
         </div>
