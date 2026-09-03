@@ -1,5 +1,13 @@
 [
   {
+    "id": "cb4b462527b5",
+    "title": "Evaluating LLM Systems: Offline Evals, Online Evals, LLM-as-Judge",
+    "subtitle": "The three pillars of a mature evaluation stack: offline evals that gate deployments, online evals that watch live traffic, and LLM-as-judge, which powers both.",
+    "url": "https://medium.com/learnwithnk/evaluating-llm-systems-offline-evals-online-evals-llm-as-judge-cb4b462527b5",
+    "date": "2026-09-03",
+    "category": "AI System Design"
+  },
+  {
     "id": "5a8c6f11b571",
     "title": "pgvector Internals Overview: How Postgres Learned to Speak Vector",
     "subtitle": "Choosing between IVFFlat and HNSW, and the MVCC filtering problem both index types have to solve.",
