@@ -1,5 +1,21 @@
 [
   {
+    "id": "031aaff465cf",
+    "title": "Reliability & Fault Tolerance in LLM Systems: Fallbacks & Guardrails",
+    "subtitle": "Keeping an LLM system healthy once it is live and something breaks: provider outages, rate limits, token limits, dropped streams.",
+    "url": "https://medium.com/learnwithnk/reliability-fault-tolerance-in-llm-systems-fallbacks-guardrails-031aaff465cf",
+    "date": "2026-09-05",
+    "category": "AI System Design"
+  },
+  {
+    "id": "c97374cf489f",
+    "title": "Reliability for Model-Locked Systems: When Cross-Model Fallback Isn't an Option",
+    "subtitle": "The fallback chain assumes a portable prompt; that breaks the moment a prompt is tuned for one model in particular.",
+    "url": "https://medium.com/learnwithnk/reliability-for-model-locked-systems-when-cross-model-fallback-isnt-an-option-c97374cf489f",
+    "date": "2026-09-05",
+    "category": "AI System Design"
+  },
+  {
     "id": "cb4b462527b5",
     "title": "Evaluating LLM Systems: Offline Evals, Online Evals, LLM-as-Judge",
     "subtitle": "The three pillars of a mature evaluation stack: offline evals that gate deployments, online evals that watch live traffic, and LLM-as-judge, which powers both.",
