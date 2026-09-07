@@ -1,5 +1,13 @@
 [
   {
+    "id": "7334ee93d69f",
+    "title": "How Dropbox Dash Grounds Its Agents Against Hallucination",
+    "subtitle": "When Dropbox set out to build Dash, a universal search product for businesses, the hardest problem had nothing to do with model quality.",
+    "url": "https://medium.com/learnwithnk/how-dropbox-dash-grounds-its-agents-against-hallucination-7334ee93d69f",
+    "date": "2026-09-07",
+    "category": "LLM-Era System Design Case Studies"
+  },
+  {
     "id": "031aaff465cf",
     "title": "Reliability & Fault Tolerance in LLM Systems: Fallbacks & Guardrails",
     "subtitle": "Keeping an LLM system healthy once it is live and something breaks: provider outages, rate limits, token limits, dropped streams.",
