@@ -1,5 +1,13 @@
 [
   {
+    "id": "e95975146c90",
+    "title": "Uber's GenAI Gateway: One Control Point for Company-Wide LLM Access",
+    "subtitle": "How Uber's GenAI Gateway centralizes LLM access for nearly 30 teams: OpenAI-compatible routing, cost attribution, audit logs, and PII redaction trade-offs.",
+    "url": "https://medium.com/learnwithnk/ubers-genai-gateway-one-control-point-for-company-wide-llm-access-e95975146c90",
+    "date": "2026-09-09",
+    "category": "LLM-Era System Design Case Studies"
+  },
+  {
     "id": "7334ee93d69f",
     "title": "How Dropbox Dash Grounds Its Agents Against Hallucination",
     "subtitle": "When Dropbox set out to build Dash, a universal search product for businesses, the hardest problem had nothing to do with model quality.",
