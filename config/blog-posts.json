@@ -1,5 +1,21 @@
 [
   {
+    "id": "a78a33a59d7a",
+    "title": "Caching for LLM Systems: Exact, Semantic, and Provider Prefix Caches",
+    "subtitle": "Three caches, three keys: the request bytes, the longest identical prefix of the rendered prompt, and the meaning of one field.",
+    "url": "https://medium.com/learnwithnk/caching-for-llm-systems-exact-semantic-and-provider-prefix-caches-a78a33a59d7a",
+    "date": "2026-09-12",
+    "category": "AI System Design"
+  },
+  {
+    "id": "15d53c6742df",
+    "title": "How Netflix Runs Its Own LLM Serving Stack",
+    "subtitle": "A model that answers in 400 milliseconds on a workstation can still be unservable in production.",
+    "url": "https://medium.com/learnwithnk/how-netflix-runs-its-own-llm-serving-stack-15d53c6742df",
+    "date": "2026-09-11",
+    "category": "LLM-Era System Design Case Studies"
+  },
+  {
     "id": "e95975146c90",
     "title": "Uber's GenAI Gateway: One Control Point for Company-Wide LLM Access",
     "subtitle": "How Uber's GenAI Gateway centralizes LLM access for nearly 30 teams: OpenAI-compatible routing, cost attribution, audit logs, and PII redaction trade-offs.",
