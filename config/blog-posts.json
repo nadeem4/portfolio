@@ -1,5 +1,13 @@
 [
   {
+    "id": "af3b5595d5da",
+    "title": "A Framework for Deciding Where Retrieval Work Happens",
+    "subtitle": "Decide when to parse, chunk, and embed documents before designing any of those stages: ahead of time, per request, or never.",
+    "url": "https://medium.com/learnwithnk/a-framework-for-deciding-where-retrieval-work-happens-af3b5595d5da",
+    "date": "2026-09-15",
+    "category": "AI System Design"
+  },
+  {
     "id": "a78a33a59d7a",
     "title": "Caching for LLM Systems: Exact, Semantic, and Provider Prefix Caches",
     "subtitle": "Three caches, three keys: the request bytes, the longest identical prefix of the rendered prompt, and the meaning of one field.",
