@@ -1,5 +1,29 @@
 [
   {
+    "id": "ed227b608b68",
+    "title": "The Ingestion Pipeline: What You Ingest, What You Store, and What Starts the Rest",
+    "subtitle": "Ingestion takes many kinds of sources and produces one kind of thing, so everything downstream is written once only because the sources converge first.",
+    "url": "https://medium.com/learnwithnk/the-ingestion-pipeline-what-you-ingest-what-you-store-and-what-starts-the-rest-ed227b608b68",
+    "date": "2026-09-19",
+    "category": "AI System Design"
+  },
+  {
+    "id": "c0c45de5847b",
+    "title": "A Baseline RAG and a Golden Set Before Any Optimisation",
+    "subtitle": "Compare two runs question by question, since a change that repairs six answers and breaks three arrives as \"+3\" and the three breakages ship unseen.",
+    "url": "https://medium.com/learnwithnk/a-baseline-rag-and-a-golden-set-before-any-optimisation-c0c45de5847b",
+    "date": "2026-09-18",
+    "category": "AI System Design"
+  },
+  {
+    "id": "2cae16e3a91c",
+    "title": "The RAG Pipeline as Building Blocks: Seven Ways an Answer Goes Wrong",
+    "subtitle": "A wrong RAG answer broke at one of seven points, and the point decides which stage to change.",
+    "url": "https://medium.com/learnwithnk/the-rag-pipeline-as-building-blocks-seven-ways-an-answer-goes-wrong-2cae16e3a91c",
+    "date": "2026-09-16",
+    "category": "AI System Design"
+  },
+  {
     "id": "af3b5595d5da",
     "title": "A Framework for Deciding Where Retrieval Work Happens",
     "subtitle": "Decide when to parse, chunk, and embed documents before designing any of those stages: ahead of time, per request, or never.",
