@@ -1,5 +1,13 @@
 [
   {
+    "id": "b7b2beca4f4a",
+    "title": "Shapes, FLOPs, and Memory: Sizing a Transformer Before You Run It",
+    "subtitle": "Work out from a config alone whether a model will run, how long one batch takes, and what it costs in memory.",
+    "url": "https://medium.com/learnwithnk/shapes-flops-and-memory-sizing-a-transformer-before-you-run-it-b7b2beca4f4a",
+    "date": "2026-09-20",
+    "category": "LLM Architectures"
+  },
+  {
     "id": "ed227b608b68",
     "title": "The Ingestion Pipeline: What You Ingest, What You Store, and What Starts the Rest",
     "subtitle": "Ingestion takes many kinds of sources and produces one kind of thing, so everything downstream is written once only because the sources converge first.",
