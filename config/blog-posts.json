@@ -1,5 +1,21 @@
 [
   {
+    "id": "d839992b75c0",
+    "title": "I Tested Jev and Laya, Two New AI Decision Models, on Games They Were Never Trained For",
+    "subtitle": "A decision model is not a chatbot.",
+    "url": "https://medium.com/learnwithnk/i-tested-jev-and-laya-two-new-ai-decision-models-on-games-they-were-never-trained-for-d839992b75c0",
+    "date": "2026-09-24",
+    "category": "LLM Architectures"
+  },
+  {
+    "id": "df1cbe852aa1",
+    "title": "Decision Models: How Jev and Laya Decide Without Writing Text",
+    "subtitle": "Most systems that use a large language model to make a choice do it the same way.",
+    "url": "https://medium.com/learnwithnk/decision-models-how-jev-and-laya-decide-without-writing-text-df1cbe852aa1",
+    "date": "2026-09-24",
+    "category": "LLM Architectures"
+  },
+  {
     "id": "b7b2beca4f4a",
     "title": "Shapes, FLOPs, and Memory: Sizing a Transformer Before You Run It",
     "subtitle": "Work out from a config alone whether a model will run, how long one batch takes, and what it costs in memory.",
