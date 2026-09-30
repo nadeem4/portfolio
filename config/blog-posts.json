@@ -1,5 +1,21 @@
 [
   {
+    "id": "949363696e17",
+    "title": "Parsing Documents: PDFs, Tables, Scans and Layout",
+    "subtitle": "Parsing sets the ceiling for everything after it, so a table that lost its column headers stays unlabelled through chunking, embedding and retrieval.",
+    "url": "https://medium.com/learnwithnk/parsing-documents-pdfs-tables-scans-and-layout-949363696e17",
+    "date": "2026-09-28",
+    "category": "AI System Design"
+  },
+  {
+    "id": "f331e53c5162",
+    "title": "Cleaning and Deduplication Before Anything Is Embedded",
+    "subtitle": "Cleaning records a decision for every block and edits nothing, so a wrong call is undone by changing the decision rather than re-ingesting.",
+    "url": "https://medium.com/learnwithnk/cleaning-and-deduplication-before-anything-is-embedded-f331e53c5162",
+    "date": "2026-09-28",
+    "category": "AI System Design"
+  },
+  {
     "id": "d839992b75c0",
     "title": "I Tested Jev and Laya, Two New AI Decision Models, on Games They Were Never Trained For",
     "subtitle": "A decision model is not a chatbot.",
