@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { PostList } from '@/components/blog/post-list';
+import { YearGroupedPosts } from '@/components/blog/year-grouped-posts';
 import { getBlogPosts } from '@/lib/blog';
 
 export const metadata: Metadata = {
@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * The complete run, newest first.
+ * The complete run, newest first, grouped by year.
  *
  * Kept as its own page so the hub does not have to be both a launchpad and a
  * hundred-item list. Anyone who wants the whole thing in one scroll still has
@@ -19,22 +19,22 @@ export default function ArchivePage() {
   const posts = getBlogPosts();
 
   return (
-    <main className="px-6 py-12">
-      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-8">
-        <header className="space-y-3">
+    <main className="mx-auto max-w-page px-6 py-16 sm:px-10 sm:py-20">
+      <div className="max-w-3xl">
+        <header className="rise-in">
           <Link
             href="/blog"
-            className="inline-block text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
+            className="link-underline -mt-3 inline-flex min-h-11 items-center font-mono text-sm text-foreground-dim hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             ← Blog
           </Link>
-          <h1 className="text-2xl font-bold tracking-tight">Archive</h1>
-          <p className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
-            {posts.length} posts, newest first
-          </p>
+          <h1 className="mt-4 text-5xl font-semibold tracking-tight">Archive</h1>
+          <p className="mt-4 font-mono text-sm text-foreground-dim">{posts.length} posts, newest first</p>
         </header>
 
-        <PostList heading="All posts" posts={posts} />
+        <div className="mt-14">
+          <YearGroupedPosts posts={posts} />
+        </div>
       </div>
     </main>
   );

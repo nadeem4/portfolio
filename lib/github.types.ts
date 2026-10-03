@@ -7,4 +7,6 @@ export interface GithubRepo {
   language: string | null;
   updatedAt: string;
   license: string | null;
+  /** The repo's website field: a live demo or docs site, or null when unset. */
+  homepage: string | null;
 }

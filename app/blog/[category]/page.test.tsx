@@ -37,13 +37,26 @@ describe('CategoryPage', () => {
     const { container } = render(await CategoryPage(params(categorySlug('Postgres Series'))));
     expect(container.querySelector('img')).toBeNull();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Postgres Series');
-    expect(screen.getByText(/blog --category/)).toBeInTheDocument();
   });
 
-  it('states the post count and year range under the title', async () => {
+  it('drops the fake terminal prompt from the header', async () => {
+    render(await CategoryPage(params(categorySlug('Postgres Series'))));
+    expect(screen.queryByText(/blog --category/)).toBeNull();
+  });
+
+  it('states the post count and year range in a mono line, with no dashes', async () => {
     render(await CategoryPage(params(categorySlug('Python Logging'))));
-    const expected = posts.filter((p) => p.category === 'Python Logging').length;
-    expect(screen.getByText(new RegExp(`${expected} posts`))).toBeInTheDocument();
+    const mine = posts.filter((p) => p.category === 'Python Logging');
+    const line = screen.getByText(new RegExp(`${mine.length} posts`));
+    expect(line).toHaveClass('font-mono');
+    expect(line.textContent).not.toMatch(/[–—]/);
+    expect(line.textContent).toMatch(/\d{4} to \d{4}|^\d+ posts?, \d{4}$/);
+  });
+
+  it('groups the posts under year headings', async () => {
+    render(await CategoryPage(params(categorySlug('Vector Databases'))));
+    const years = [...new Set(posts.filter((p) => p.category === 'Vector Databases').map((p) => p.date.slice(0, 4)))];
+    expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual(years);
   });
 
   it('renders every category without throwing', async () => {

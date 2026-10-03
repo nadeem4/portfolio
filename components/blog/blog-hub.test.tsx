@@ -60,9 +60,30 @@ describe('BlogHub', () => {
     expect(screen.getByText('browse view')).toBeInTheDocument();
   });
 
-  it('labels the field for assistive technology', () => {
+  it('labels the field with a visible Search label', () => {
     render(<BlogHub posts={posts}>{browse}</BlogHub>);
-    expect(screen.getByRole('searchbox')).toHaveAccessibleName(/search/i);
+    expect(screen.getByLabelText('Search')).toBe(screen.getByRole('searchbox'));
+  });
+
+  it('describes what the field searches, including the catalog size', () => {
+    render(<BlogHub posts={posts}>{browse}</BlogHub>);
+    expect(screen.getByRole('searchbox')).toHaveAccessibleDescription(/2 posts/);
+  });
+
+  it('drops the fake terminal prompt', () => {
+    const { container } = render(<BlogHub posts={posts}>{browse}</BlogHub>);
+    expect(container.textContent).not.toContain('>');
+  });
+
+  it('renders the sidebar beside the browse view, and keeps it while searching', () => {
+    render(
+      <BlogHub posts={posts} sidebar={<p>topic list</p>}>
+        {browse}
+      </BlogHub>,
+    );
+    expect(screen.getByText('topic list')).toBeInTheDocument();
+    type('kafka');
+    expect(screen.getByText('topic list')).toBeInTheDocument();
   });
 
   it('announces result counts politely as they change', () => {

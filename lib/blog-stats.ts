@@ -24,6 +24,46 @@ export function formatPostDate(iso: string): string {
   return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
 }
 
+/** "Aug 27": for rows that already sit under a year heading. Built from the string, like formatPostDate. */
+export function formatShortDate(iso: string): string {
+  const [, month, day] = iso.split('-');
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
+
+/** "Mar 2026": for rows that carry no year heading. */
+export function formatMonthYear(iso: string): string {
+  const [year, month] = iso.split('-');
+  return `${MONTHS[Number(month) - 1]} ${year}`;
+}
+
+/** "2024 to 2026", or a single year when both ends share it. Words, not a dash. */
+export function formatYearRange(earliest: string, latest: string): string {
+  const [from, to] = [earliest.slice(0, 4), latest.slice(0, 4)];
+  return from === to ? from : `${from} to ${to}`;
+}
+
+export interface YearGroup {
+  year: string;
+  posts: BlogPost[];
+}
+
+/**
+ * Splits a list into runs by year, keeping the order given.
+ *
+ * Assumes the input is already date-ordered, as the catalog is; it groups
+ * consecutive posts rather than re-sorting, so callers keep control of order.
+ */
+export function groupByYear(posts: BlogPost[]): YearGroup[] {
+  const groups: YearGroup[] = [];
+  for (const post of posts) {
+    const year = post.date.slice(0, 4);
+    const last = groups[groups.length - 1];
+    if (last?.year === year) last.posts.push(post);
+    else groups.push({ year, posts: [post] });
+  }
+  return groups;
+}
+
 export interface CatalogStats {
   total: number;
   categoryCount: number;
@@ -73,7 +113,7 @@ export function categoryStats(posts: BlogPost[]): CategoryStat[] {
  * Whole-catalog totals for the masthead.
  *
  * Returns null for an empty catalog so the masthead can render nothing rather
- * than claiming "0 POSTS · 0 DOMAINS".
+ * than claiming "0 posts".
  */
 export function catalogStats(posts: BlogPost[]): CatalogStats | null {
   if (posts.length === 0) return null;

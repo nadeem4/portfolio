@@ -6,17 +6,15 @@ import Link from 'next/link';
  * Points at /blog/archive rather than /blog: the hub shows only the latest ten,
  * so a control labelled "All posts" that landed there would be a lie.
  *
- * Carries no count. The total is already stated in the activity line under the
- * hero and in the /blog masthead; a third copy beside the heading was
- * repetition. It previously also carried the newest post's date, which made the
- * whole element one link to /blog — so clicking a date that named a specific
- * post landed you on a list instead.
+ * Carries no count or date. The total is already stated elsewhere, and a date
+ * here once made the whole element one link to a list rather than to the post
+ * it named.
  */
 export function ArchiveLink() {
   return (
     <Link
       href="/blog/archive"
-      className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      className="link-underline inline-flex min-h-11 items-center font-mono text-sm text-foreground-dim hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
     >
       All posts
     </Link>

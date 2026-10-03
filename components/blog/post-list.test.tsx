@@ -55,9 +55,23 @@ describe('PostList', () => {
     expect(link).toHaveAttribute('target', '_blank');
   });
 
-  it('renders an identicon per post', () => {
+  it('renders no identicons, keeping rows calm', () => {
     const { container } = render(<PostList heading="Latest" posts={posts} />);
-    expect(container.querySelectorAll('svg')).toHaveLength(posts.length);
+    expect(container.querySelectorAll('svg')).toHaveLength(0);
+  });
+
+  it('dates each row as month and year', () => {
+    const { container } = render(<PostList heading="Latest" posts={posts} />);
+    const times = [...container.querySelectorAll('time')];
+    expect(times.map((t) => t.textContent)).toEqual(['Feb 2026', 'Feb 2026']);
+    expect(times[0]).toHaveAttribute('dateTime', '2026-02-06');
+  });
+
+  it('styles the heading as a quiet mono label, not uppercase', () => {
+    render(<PostList heading="Latest" posts={posts} />);
+    const heading = screen.getByRole('heading', { name: 'Latest' });
+    expect(heading).toHaveClass('font-mono');
+    expect(heading.className).not.toMatch(/uppercase|tracking-/);
   });
 
   it('renders the action opposite the heading when given', () => {
@@ -84,7 +98,7 @@ describe('PostList', () => {
     // On a category page the label is identical on every row and says nothing.
     render(<PostList heading="Latest" posts={posts} showCategory={false} />);
     expect(screen.queryByText('Backend & Infra')).toBeNull();
-    expect(screen.getAllByText('2026-02-06')).toHaveLength(posts.length);
+    expect(screen.getAllByText('Feb 2026')).toHaveLength(posts.length);
   });
 
   it('shows the topic label by default, since most lists mix topics', () => {
@@ -97,14 +111,13 @@ describe('PostList', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it('drops the identicon and subtitle in compact mode, keeping title and meta', () => {
+  it('drops the subtitle in compact mode, keeping title and meta', () => {
     // The homepage Latest block sits directly under Selected writing in the
     // same format; compact rows are what keep it from reading as a duplicate.
-    const { container } = render(<PostList heading="Latest" posts={posts} compact />);
-    expect(container.querySelectorAll('svg')).toHaveLength(0);
+    render(<PostList heading="Latest" posts={posts} compact />);
     expect(screen.queryByText('Understanding Kafka through real production experience')).toBeNull();
     expect(screen.getByText('Kafka at 60M events a day')).toBeInTheDocument();
-    expect(screen.getAllByText('2026-02-06')).toHaveLength(posts.length);
+    expect(screen.getAllByText('Feb 2026')).toHaveLength(posts.length);
   });
 });
 
@@ -118,5 +131,12 @@ describe('ArchiveLink', () => {
     expect(link).toHaveAttribute('href', '/blog/archive');
     expect(link.textContent).not.toMatch(/latest/i);
     expect(link.textContent).not.toMatch(/\d/);
+  });
+
+  it('is a 44px target in quiet mono, not an uppercase label', () => {
+    render(<ArchiveLink />);
+    const link = screen.getByRole('link', { name: /All posts/ });
+    expect(link).toHaveClass('min-h-11', 'font-mono');
+    expect(link.className).not.toMatch(/uppercase|tracking-/);
   });
 });

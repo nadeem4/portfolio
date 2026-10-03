@@ -43,7 +43,7 @@ export function CommandPalette() {
       label="Command palette"
       shouldFilter={false}
       overlayClassName="fixed inset-0 z-40 bg-black/60"
-      contentClassName="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-lg border border-accent/50 bg-background-raised shadow-2xl"
+      contentClassName="fixed left-1/2 top-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md border border-border-strong bg-background shadow-2xl"
     >
       <div className="flex items-center gap-2 border-b border-border px-4 py-3">
         <span aria-hidden="true" className="text-accent">
@@ -65,7 +65,7 @@ export function CommandPalette() {
               window.location.href = command.href;
               setOpen(false);
             }}
-            className="cursor-pointer rounded px-3 py-2 text-sm text-foreground transition-colors data-[selected=true]:bg-accent/10 data-[selected=true]:text-accent"
+            className="cursor-pointer flex min-h-11 items-center rounded px-3 text-[15px] text-foreground transition-colors data-[selected=true]:bg-background-raised data-[selected=true]:text-accent"
           >
             {command.label}
           </Command.Item>

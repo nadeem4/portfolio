@@ -3,53 +3,63 @@ import { render, screen } from '@testing-library/react';
 import HomePage from './page';
 import type { GithubRepo } from '@/lib/github.types';
 
-const repos: GithubRepo[] = [
+const pinned: GithubRepo[] = [
   {
     slug: 'nadeem4/nl2sql',
     name: 'nl2sql',
-    description: 'Multi-agent NL to SQL system',
+    description: 'Ask your database questions in English.',
     url: 'https://github.com/nadeem4/nl2sql',
     stars: 4,
     language: 'Python',
     updatedAt: '2026-08-01T00:00:00Z',
     license: null,
+    homepage: 'https://nadeem4nk-nl2sql-demo.hf.space/',
   },
 ];
 
 vi.mock('@/lib/projects', () => ({
-  getGithubRepos: vi.fn(async () => repos),
+  getProjects: vi.fn(async () => ({ pinned, others: [] })),
 }));
 
+function h2Texts() {
+  return screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent ?? '');
+}
+
 describe('HomePage', () => {
-  it('shows selected projects between experience and the writing blocks', async () => {
-    // The homepage argument is claim → context → evidence. The projects are
-    // evidence too, and previously appeared nowhere on the page at all.
+  it('leads with the name and a working search over the writing', async () => {
     render(await HomePage());
-    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
-    const experience = headings.findIndex((text) => /experience/i.test(text ?? ''));
-    const projects = headings.findIndex((text) => /selected projects/i.test(text ?? ''));
-    const writing = headings.findIndex((text) => /selected writing/i.test(text ?? ''));
-    expect(experience).toBeGreaterThanOrEqual(0);
-    expect(projects).toBeGreaterThan(experience);
-    expect(writing).toBeGreaterThan(projects);
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: /search my writing/i })).toBeInTheDocument();
   });
 
-  it('renders the featured repo by name', async () => {
+  it('runs experience, then projects, then writing, then tools, as separate sections', async () => {
     render(await HomePage());
-    expect(screen.getByText('nl2sql')).toBeInTheDocument();
+    const headings = h2Texts();
+    const order = ['Experience', 'Projects', 'Writing', 'Tools I use'].map((name) => headings.indexOf(name));
+    expect(order.every((index) => index >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
-  it('keeps the Latest block, in compact rows without subtitles', async () => {
+  it('features the pinned repos', async () => {
     render(await HomePage());
-    const latest = screen.getByRole('heading', { name: 'Latest' });
-    expect(latest).toBeInTheDocument();
+    expect(screen.getAllByText(/nl2sql/).length).toBeGreaterThan(0);
   });
 
-  it('widens the content column on large screens, matching every other page', async () => {
-    // All pages share one wrapper (max-w-2xl, lg:max-w-3xl) so the column
-    // stops changing width as a visitor navigates between them.
+  it('shows selected and latest writing side by side rather than behind tabs', async () => {
+    render(await HomePage());
+    expect(screen.getByRole('heading', { name: 'Selected' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Latest' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+  });
+
+  it('has no sales devices: no contact pitch section and no numbers strip', async () => {
+    render(await HomePage());
+    expect(h2Texts()).not.toContain('Contact');
+    expect(screen.queryByText(/posts .* domains/i)).not.toBeInTheDocument();
+  });
+
+  it('uses the shared page width', async () => {
     const { container } = render(await HomePage());
-    const column = container.querySelector('main > div');
-    expect(column).toHaveClass('max-w-2xl', 'lg:max-w-3xl');
+    expect(container.querySelector('main > div')).toHaveClass('max-w-page');
   });
 });

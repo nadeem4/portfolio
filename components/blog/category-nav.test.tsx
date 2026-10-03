@@ -8,17 +8,26 @@ function post(id: string, category: string, date: string): BlogPost {
 }
 
 const posts: BlogPost[] = [
-  post('aaaaaa', 'Zebra Topic', '2026-08-01'),
-  post('bbbbbb', 'Zebra Topic', '2026-07-01'),
-  post('cccccc', 'Zebra Topic', '2026-06-01'),
-  post('dddddd', 'Alpha & Beta', '2020-01-01'),
+  post('aaaaaa', 'Zebra Topic', '2020-08-01'),
+  post('bbbbbb', 'Zebra Topic', '2020-07-01'),
+  post('cccccc', 'Zebra Topic', '2020-06-01'),
+  post('dddddd', 'Mid Topic', '2026-01-01'),
+  post('eeeeee', 'Alpha & Beta', '2024-01-01'),
 ];
 
 describe('CategoryNav', () => {
-  it('renders one chip per topic', () => {
+  it('is a navigation landmark named by its visible Topics heading', () => {
     render(<CategoryNav posts={posts} />);
-    expect(screen.getByRole('link', { name: /Zebra Topic/ })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Alpha & Beta/ })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Topics' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Topics' })).toBeInTheDocument();
+  });
+
+  it('leads with All posts, linking the archive with the total', () => {
+    render(<CategoryNav posts={posts} />);
+    const all = screen.getAllByRole('link')[0];
+    expect(all).toHaveTextContent('All posts');
+    expect(all).toHaveTextContent(String(posts.length));
+    expect(all).toHaveAttribute('href', '/blog/archive');
   });
 
   it('shows each topic post count', () => {
@@ -27,20 +36,18 @@ describe('CategoryNav', () => {
     expect(screen.getByRole('link', { name: /Alpha & Beta/ })).toHaveTextContent('1');
   });
 
-  it('links each chip to its topic page, slugified', () => {
+  it('links each topic to its page, slugified', () => {
     render(<CategoryNav posts={posts} />);
     expect(screen.getByRole('link', { name: /Zebra Topic/ })).toHaveAttribute('href', '/blog/zebra-topic');
     expect(screen.getByRole('link', { name: /Alpha & Beta/ })).toHaveAttribute('href', '/blog/alpha-beta');
   });
 
-  it('orders topics alphabetically, so publishing never moves them', () => {
-    // Regression: ordering by recency reshuffled the whole row on every post,
-    // which makes the nav unlearnable. Zebra is the most recent here and must
-    // still come last.
+  it('orders topics by post count, breaking ties by name', () => {
+    // Biggest topics first, since that is where most of the writing is. The
+    // name tie-break keeps equal-sized topics from swapping between builds.
     render(<CategoryNav posts={posts} />);
     const names = screen.getAllByRole('link').map((a) => a.textContent);
-    expect(names[0]).toContain('Alpha & Beta');
-    expect(names[1]).toContain('Zebra Topic');
+    expect(names.slice(1)).toEqual(['Zebra Topic3', 'Alpha & Beta1', 'Mid Topic1']);
   });
 
   it('marks the active topic as the current page', () => {

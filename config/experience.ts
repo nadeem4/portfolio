@@ -1,7 +1,7 @@
 export interface Role {
   company: string;
   title: string;
-  /** Display period, e.g. "Jan 2022 — Mar 2026". */
+  /** Display period, e.g. "Jan 2022 to Mar 2026". */
   period: string;
   location: string;
   /** One line of scope. Numbers belong here, where an employer and a date make them checkable. */
@@ -24,31 +24,31 @@ export const roles: Role[] = [
   {
     company: 'EvolutionIQ',
     title: 'Senior Software Engineer',
-    period: 'Mar 2026 — Present',
+    period: 'Mar 2026 to now',
     location: 'New York, US',
     scope:
-      'Shipped a product extension surfacing critical claim data directly to adjusters, removing manual parsing of demand packages. Led a cross-stack refactor and introduced SQL query tagging for end-to-end performance visibility across jobs and routes.',
+      'Moved document ingestion from a 30-minute scheduled scan to Pub/Sub events feeding Postgres-backed job queues, so documents become searchable as they land. Own the embedding pipeline, and rebuilt tracing that took a slow endpoint from about 2 minutes to under one at p95.',
   },
   {
     company: 'Crowe',
     title: 'Senior Software Engineer, previously Cloud Senior Engineer',
-    period: 'Jan 2022 — Mar 2026',
+    period: 'Jan 2022 to Mar 2026',
     location: 'Chicago, US',
     scope:
-      'Owned a distributed SQL execution platform and the CDC pipelines behind it — 60M+ Postgres change events and 10TB+ of batch data per day, at 99%+ reliability. Cut ETL runtime from 8 hours to 2.5 and cloud costs by roughly 40%.',
+      'Architected a real-time CDC integration from Postgres to Salesforce on Debezium and Kafka, carrying 60M+ row changes a day, and led a SQL execution platform with planning, validation and sandboxed runs across four databases.',
   },
   {
     company: 'Boston University',
-    title: 'MSc Computer Science · Research & Teaching',
-    period: 'Jan 2021 — Feb 2022',
+    title: 'MSc Computer Science, research and teaching',
+    period: 'Jan 2021 to Feb 2022',
     location: 'Boston, US',
     scope:
       'Led product development for a public data-visualisation platform on US racial disparities at the Center for Antiracist Research (React, D3). Teaching assistant for MET CS 677, Data Science with Python.',
   },
   {
     company: 'Crowe',
-    title: 'Senior Cloud Software Engineer · Backend Team Lead',
-    period: 'Mar 2018 — Dec 2020',
+    title: 'Backend Team Lead',
+    period: 'Mar 2018 to Dec 2020',
     location: 'India',
     scope:
       'Led a team of five building a horizontally scalable microservice platform for a SaaS product on Spring, Docker and Kubernetes, with autoscaling tuned to 70% average CPU.',

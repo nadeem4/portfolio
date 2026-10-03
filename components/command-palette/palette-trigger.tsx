@@ -6,9 +6,10 @@ export function PaletteTrigger() {
       type="button"
       onClick={() => window.dispatchEvent(new CustomEvent('command-palette:toggle'))}
       aria-label="Open command palette"
-      className="rounded border border-border px-2 py-1 text-xs uppercase tracking-widest font-medium text-foreground-dim transition-colors hover:border-accent hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+      className="hidden h-11 items-center gap-2 rounded border border-border px-3 text-sm text-foreground-dim transition-colors hover:border-border-strong hover:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 sm:inline-flex"
     >
-      ⌘K
+      Jump to
+      <kbd className="font-mono text-xs text-foreground-soft">Ctrl K</kbd>
     </button>
   );
 }
