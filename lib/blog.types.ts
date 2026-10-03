@@ -1,5 +1,5 @@
 export interface BlogPost {
-  /** Trailing hex id from the Medium URL. Stable across slug rewrites; seeds the identicon. */
+  /** Trailing hex id from the Medium URL. Stable across slug rewrites. */
   id: string;
   title: string;
   subtitle: string;

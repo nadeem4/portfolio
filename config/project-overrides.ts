@@ -12,16 +12,14 @@
  * in either list is inert until that repo is made public.
  */
 
-/** Pinned to the top of the default view, in this order. */
-export const featured: string[] = [
-  'nl2sql',
-  'medalflow',
-  'aurora',
-  'mini-gpt',
-  'ai_logger',
-  'microservice_demo',
-  'spring_boot_multi_module_framework',
-];
+/**
+ * Fallback for the GitHub profile pins, in pin order.
+ *
+ * The site reads pins live from GitHub when `GITHUB_TOKEN` is set. Without a
+ * token GraphQL is unavailable, and this list is used instead, so keep it in
+ * step with the profile.
+ */
+export const featured: string[] = ['nl2sql', 'post_training', 'logscribe', 'medalflow', 'jev-demo', 'rag-playground'];
 
 /**
  * Removed from every view.

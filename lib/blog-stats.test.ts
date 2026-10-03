@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { catalogStats, categoryStats } from './blog-stats';
+import { catalogStats, categoryStats, formatMonthYear, formatShortDate, formatYearRange, groupByYear } from './blog-stats';
 import { getBlogPosts } from './blog';
 import type { BlogPost } from './blog.types';
 
@@ -90,5 +90,45 @@ describe('against the real catalog', () => {
   it('leads with a more recently active category than it ends with', () => {
     const stats = categoryStats(posts);
     expect(stats[0].latest > stats[stats.length - 1].latest).toBe(true);
+  });
+});
+
+describe('formatShortDate', () => {
+  it('formats as month and unpadded day, for rows already grouped under a year', () => {
+    expect(formatShortDate('2026-08-27')).toBe('Aug 27');
+    expect(formatShortDate('2026-02-06')).toBe('Feb 6');
+  });
+});
+
+describe('formatMonthYear', () => {
+  it('formats as month and year', () => {
+    expect(formatMonthYear('2026-03-19')).toBe('Mar 2026');
+    expect(formatMonthYear('2020-12-01')).toBe('Dec 2020');
+  });
+});
+
+describe('groupByYear', () => {
+  it('groups posts by year, keeping the order given', () => {
+    const a = post('aaaaaa', 'Data', '2026-08-01');
+    const b = post('bbbbbb', 'Data', '2026-02-01');
+    const c = post('cccccc', 'AI', '2025-11-01');
+    expect(groupByYear([a, b, c])).toEqual([
+      { year: '2026', posts: [a, b] },
+      { year: '2025', posts: [c] },
+    ]);
+  });
+
+  it('returns an empty array for no posts', () => {
+    expect(groupByYear([])).toEqual([]);
+  });
+});
+
+describe('formatYearRange', () => {
+  it('joins two different years with "to", never a dash', () => {
+    expect(formatYearRange('2020-02-08', '2026-08-12')).toBe('2020 to 2026');
+  });
+
+  it('collapses to one year when both ends share it', () => {
+    expect(formatYearRange('2026-01-01', '2026-08-12')).toBe('2026');
   });
 });

@@ -10,14 +10,14 @@ export const metadata: Metadata = {
 
 export default function LiveProjectsPage() {
   return (
-    <main className="px-6 py-12">
-      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-12">
-        <h1 className="text-2xl font-bold tracking-tight">Live Projects</h1>
+    <main className="pb-24 pt-16">
+      <div className="mx-auto max-w-page space-y-10 px-6 sm:px-10">
+        <h1 className="text-5xl font-semibold tracking-tight">Live Projects</h1>
         <ul className="divide-y divide-border">
           {liveProjects.map((project) => (
             <li key={project.name} className="flex items-center justify-between py-4">
               <span>{project.name}</span>
-              <span className="inline-block rounded border border-accent/50 px-2 py-0.5 text-xs uppercase tracking-widest font-medium text-accent">
+              <span className="font-mono text-[13px] text-foreground-dim">
                 Coming soon
               </span>
             </li>

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Identicon } from './identicon';
+import { formatMonthYear } from '@/lib/blog-stats';
 import type { BlogPost } from '@/lib/blog.types';
 
 interface PostListProps {
@@ -10,10 +10,9 @@ interface PostListProps {
   /**
    * Hide the heading visually, keeping it for assistive technology.
    *
-   * For a page that already names the list directly above it — a category page
-   * states its topic in the h1 — where a visible heading would just repeat it.
-   * The section still needs an accessible name, so the heading stays in the
-   * tree rather than being dropped.
+   * For a page that already names the list directly above it, where a visible
+   * heading would just repeat it. The section still needs an accessible name,
+   * so the heading stays in the tree rather than being dropped.
    */
   headingHidden?: boolean;
   /**
@@ -23,21 +22,20 @@ interface PostListProps {
    */
   showCategory?: boolean;
   /**
-   * Drop the identicon and subtitle, leaving title and meta only.
+   * Drop the subtitle, leaving title and meta only.
    *
-   * For a list that sits directly under another full-format one — the homepage
-   * Latest block under Selected writing — where a second run of identical rows
-   * reads as a duplicate rather than a second answer.
+   * For a list that sits directly under another full-format one, where a
+   * second run of identical rows reads as a duplicate rather than a second
+   * answer.
    */
   compact?: boolean;
 }
 
 /**
- * A headed list of posts.
+ * A headed list of posts in hairline rows: title, optional subtitle, and a mono
+ * meta line reading "Category, Mon YYYY".
  *
- * Used for the homepage blocks, the search results, the archive and each
- * category page, which differ only in their heading, contents, and how much
- * context each row still needs.
+ * Used for the homepage blocks and the hub's search results.
  *
  * Context lines come from each post's own subtitle rather than a parallel set of
  * hand-written blurbs, so they cannot drift out of sync with the catalog.
@@ -54,49 +52,38 @@ export function PostList({
 
   return (
     <section>
-      <div className="flex items-baseline justify-between gap-4">
-        <h2 className={headingHidden ? 'sr-only' : 'text-sm font-bold uppercase tracking-[0.18em]'}>{heading}</h2>
+      <div className="flex items-center justify-between gap-4">
+        <h2 className={headingHidden ? 'sr-only' : 'font-mono text-sm font-medium text-foreground-dim'}>{heading}</h2>
         {action}
       </div>
 
-      <ul className={headingHidden ? 'divide-y divide-border' : 'mt-4 divide-y divide-border'}>
+      <ul className={headingHidden ? 'border-b border-border' : 'mt-3 border-b border-border'}>
         {posts.map((post) => (
-          <li key={post.id} className="flex items-start gap-3 py-3">
-            {!compact && (
-              <Identicon
-                id={post.id}
-                className="h-8 w-8 shrink-0 rounded border border-border bg-background-raised p-1 text-accent"
-              />
-            )}
-            <div>
-              {/* Every post lives on Medium, so each of these leaves the site.
-                  The arrow says so before the click; the hidden text says so to
-                  a screen reader, which otherwise gets no warning at all. */}
-              <a
-                href={post.url}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium leading-snug transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
-              >
-                {post.title}
-                <span aria-hidden="true" className="ml-1 text-foreground-dim">
-                  ↗
-                </span>
-                <span className="sr-only"> (opens on Medium)</span>
-              </a>
-              {!compact && <p className="mt-1 text-sm leading-relaxed text-foreground-dim">{post.subtitle}</p>}
-              <p className="mt-1.5 text-[0.6rem] uppercase tracking-[0.14em] text-foreground-dim">
-                {showCategory && (
-                  <>
-                    <span className="text-accent">{post.category}</span>
-                    <span aria-hidden="true" className="mx-1.5 opacity-50">
-                      ·
-                    </span>
-                  </>
-                )}
-                <time dateTime={post.date}>{post.date}</time>
-              </p>
-            </div>
+          <li key={post.id} className="border-t border-border py-4">
+            {/* Every post lives on Medium, so each of these leaves the site.
+                The arrow says so before the click; the hidden text says so to
+                a screen reader, which otherwise gets no warning at all. */}
+            <a
+              href={post.url}
+              target="_blank"
+              rel="noreferrer"
+              className="-my-3 block rounded py-3 text-base font-medium leading-snug text-foreground transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              {post.title}
+              <span aria-hidden="true" className="ml-1 text-foreground-dim">
+                ↗
+              </span>
+              <span className="sr-only"> (opens on Medium)</span>
+            </a>
+            {!compact && <p className="mt-1 text-sm leading-relaxed text-foreground-dim">{post.subtitle}</p>}
+            <p className="mt-1.5 font-mono text-xs text-foreground-dim">
+              {showCategory && (
+                <>
+                  <span>{post.category}</span>,{' '}
+                </>
+              )}
+              <time dateTime={post.date}>{formatMonthYear(post.date)}</time>
+            </p>
           </li>
         ))}
       </ul>

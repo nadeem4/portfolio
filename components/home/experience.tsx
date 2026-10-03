@@ -3,38 +3,36 @@ import { roles } from '@/config/experience';
 /**
  * Work history on the homepage.
  *
- * Deliberately terse — company, title, dates, location, and a single line of
- * scope. Its job is to let a reader establish level and anchor the numbers in
- * the hero, not to reproduce a résumé.
+ * Deliberately terse: company, title, dates, location, and one line of scope.
+ * Its job is to let a reader establish level and anchor the numbers, not to
+ * reproduce a résumé. Dates sit in their own column so the eye can run down
+ * them; only the current role's date is in the accent colour.
  */
 export function Experience() {
   if (roles.length === 0) return null;
 
   return (
-    <section>
-      <h2 className="text-sm font-bold uppercase tracking-[0.18em]">Experience</h2>
+    <section aria-labelledby="experience-heading">
+      <h2 id="experience-heading" className="mb-8 text-[28px] font-semibold tracking-tight">
+        Experience
+      </h2>
 
-      <ul className="mt-4 divide-y divide-border">
-        {roles.map((role) => (
-          <li key={`${role.company}-${role.period}`} className="py-4">
-            {/* Stacked rather than justified: role titles vary enough in length
-                that a right-aligned date sits inline on some rows and wraps
-                below on others, which reads as a layout bug. */}
-            <p className="font-medium">
-              {role.company}
-              <span aria-hidden="true" className="mx-1.5 text-foreground-dim opacity-50">
-                ·
-              </span>
-              <span className="text-foreground-dim">{role.title}</span>
+      <ul>
+        {roles.map((role, index) => (
+          <li
+            key={`${role.company}-${role.period}`}
+            className="flex flex-wrap gap-x-10 gap-y-1.5 border-t border-border py-6"
+          >
+            <p className="w-44 shrink-0 pt-0.5 font-mono text-[13px] text-foreground-dim">
+              <span className={index === 0 ? 'text-accent' : undefined}>{role.period}</span>
+              <span className="block">{role.location}</span>
             </p>
-            <p className="mt-1 text-[0.6rem] uppercase tracking-[0.14em] text-foreground-dim">
-              <span className="text-accent">{role.period}</span>
-              <span aria-hidden="true" className="mx-1.5 opacity-50">
-                ·
-              </span>
-              {role.location}
-            </p>
-            <p className="mt-1.5 text-sm leading-relaxed text-foreground-dim">{role.scope}</p>
+            <div className="min-w-0 flex-[1_1_480px]">
+              <h3 className="text-lg font-semibold">
+                {role.company} <span className="font-normal text-foreground-dim">{role.title}</span>
+              </h3>
+              <p className="mt-2 max-w-[64ch] text-base text-foreground-soft">{role.scope}</p>
+            </div>
           </li>
         ))}
       </ul>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchGithubRepos } from './github';
+import { fetchGithubRepos, fetchPinnedNames } from './github';
 
 function reposResponse(body: unknown, ok = true) {
   return { ok, json: () => Promise.resolve(body) } as Response;
@@ -22,6 +22,7 @@ function makeRepo(overrides: Partial<Record<string, unknown>> = {}) {
     pushed_at: '2026-01-01T00:00:00Z',
     fork: false,
     license: null,
+    homepage: null,
     ...overrides,
   };
 }
@@ -180,5 +181,74 @@ describe('fetchGithubRepos', () => {
       expect((init?.headers as Record<string, string> | undefined)?.Authorization).toBeUndefined();
     }
     expect(repos.map((r) => r.slug)).toEqual(['nadeem4/repo']);
+  });
+});
+
+describe('fetchGithubRepos homepage', () => {
+  beforeEach(() => vi.stubGlobal('fetch', vi.fn()));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('maps a non-empty homepage to the live-site URL', async () => {
+    setupFetchMock([makeRepo({ homepage: 'https://arena.codewithnk.com/' })]);
+    const [repo] = await fetchGithubRepos('nadeem4');
+    expect(repo.homepage).toBe('https://arena.codewithnk.com/');
+  });
+
+  it('maps an empty or missing homepage to null', async () => {
+    setupFetchMock([makeRepo({ homepage: '' }), makeRepo({ full_name: 'nadeem4/b', name: 'b', homepage: null })]);
+    const repos = await fetchGithubRepos('nadeem4');
+    expect(repos.map((r) => r.homepage)).toEqual([null, null]);
+  });
+});
+
+describe('fetchPinnedNames', () => {
+  const originalToken = process.env.GITHUB_TOKEN;
+
+  function graphqlResponse(body: unknown, ok = true) {
+    return { ok, json: () => Promise.resolve(body) } as Response;
+  }
+
+  beforeEach(() => vi.stubGlobal('fetch', vi.fn()));
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    if (originalToken === undefined) delete process.env.GITHUB_TOKEN;
+    else process.env.GITHUB_TOKEN = originalToken;
+  });
+
+  it('returns null without calling GitHub when no token is set, since GraphQL requires one', async () => {
+    delete process.env.GITHUB_TOKEN;
+    expect(await fetchPinnedNames('nadeem4')).toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it('returns pinned repo names in profile order', async () => {
+    process.env.GITHUB_TOKEN = 'token';
+    vi.mocked(fetch).mockResolvedValue(
+      graphqlResponse({
+        data: { user: { pinnedItems: { nodes: [{ name: 'nl2sql' }, { name: 'post_training' }, {}] } } },
+      }),
+    );
+    expect(await fetchPinnedNames('nadeem4')).toEqual(['nl2sql', 'post_training']);
+    const [url, init] = vi.mocked(fetch).mock.calls[0];
+    expect(url).toBe('https://api.github.com/graphql');
+    expect((init?.headers as Record<string, string>).Authorization).toBe('Bearer token');
+  });
+
+  it('returns null on a non-ok response', async () => {
+    process.env.GITHUB_TOKEN = 'token';
+    vi.mocked(fetch).mockResolvedValue(graphqlResponse({}, false));
+    expect(await fetchPinnedNames('nadeem4')).toBeNull();
+  });
+
+  it('returns null when the body carries errors instead of data', async () => {
+    process.env.GITHUB_TOKEN = 'token';
+    vi.mocked(fetch).mockResolvedValue(graphqlResponse({ errors: [{ message: 'Bad credentials' }] }));
+    expect(await fetchPinnedNames('nadeem4')).toBeNull();
+  });
+
+  it('returns null when the fetch throws', async () => {
+    process.env.GITHUB_TOKEN = 'token';
+    vi.mocked(fetch).mockRejectedValue(new Error('network'));
+    expect(await fetchPinnedNames('nadeem4')).toBeNull();
   });
 });

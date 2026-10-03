@@ -11,6 +11,7 @@ interface GithubApiRepo {
   pushed_at: string;
   fork: boolean;
   license: { name: string } | null;
+  homepage: string | null;
 }
 
 function authHeaders(): Record<string, string> {
@@ -67,9 +68,48 @@ export async function fetchGithubRepos(username: string): Promise<GithubRepo[]> 
           language: item.language,
           updatedAt: item.pushed_at,
           license: item.license?.name ?? null,
+          homepage: item.homepage?.trim() || null,
         }),
       );
   } catch {
     return [];
+  }
+}
+
+const PINNED_QUERY = `query($login: String!) {
+  user(login: $login) {
+    pinnedItems(first: 6, types: REPOSITORY) { nodes { ... on Repository { name } } }
+  }
+}`;
+
+/**
+ * The repo names pinned on the GitHub profile, in profile order.
+ *
+ * Pins are the owner's own curation, so they decide what the site features.
+ * They are only exposed through GraphQL, which requires a token even for
+ * public data; without `GITHUB_TOKEN`, or on any failure, this returns null and
+ * the caller falls back to the configured list.
+ */
+export async function fetchPinnedNames(username: string): Promise<string[] | null> {
+  if (!process.env.GITHUB_TOKEN) return null;
+  try {
+    const res = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      next: { revalidate: 21600 },
+      headers: { 'Content-Type': 'application/json', ...authHeaders() },
+      body: JSON.stringify({ query: PINNED_QUERY, variables: { login: username } }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return null;
+
+    const body = await res.json();
+    const nodes = body?.data?.user?.pinnedItems?.nodes;
+    if (!Array.isArray(nodes)) return null;
+
+    return nodes
+      .map((node: { name?: unknown }) => node?.name)
+      .filter((name: unknown): name is string => typeof name === 'string');
+  } catch {
+    return null;
   }
 }

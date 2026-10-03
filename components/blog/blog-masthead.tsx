@@ -6,30 +6,19 @@ interface BlogMastheadProps {
 }
 
 /**
- * States the scale of the catalog in one line.
+ * The one-sentence intro under the /blog heading.
  *
- * Always describes the whole catalog, never the active filter — its job is
- * stating total scale, and recomputing it on filter would undercut that.
+ * The total and first year are derived from the catalog, so the sentence stays
+ * true as the sync job adds posts. Always describes the whole catalog.
  */
 export function BlogMasthead({ posts }: BlogMastheadProps) {
   const stats = catalogStats(posts);
   if (!stats) return null;
 
   return (
-    <p className="text-xs uppercase tracking-[0.18em] text-foreground-dim">
-      <span className="font-bold text-accent">{stats.total}</span> posts
-      <span aria-hidden="true" className="mx-2 opacity-50">
-        ·
-      </span>
-      <span className="font-bold text-accent">{stats.categoryCount}</span> domains
-      <span aria-hidden="true" className="mx-2 opacity-50">
-        ·
-      </span>
-      <span className="font-bold text-accent">{stats.firstYear}</span>
-      <span aria-hidden="true" className="mx-1.5 opacity-50">
-        —
-      </span>
-      <span className="font-bold text-accent">{stats.lastYear}</span>
+    <p className="max-w-[56ch] text-lg text-foreground-dim">
+      {stats.total} posts since {stats.firstYear}, mostly on Postgres, Kafka, vector databases and the systems around
+      LLMs. Each one opens on Medium.
     </p>
   );
 }

@@ -2,13 +2,24 @@
 
 Personal portfolio built with Next.js (App Router). Blog posts come from a committed catalog generated from Notion; GitHub repos are pulled live from the GitHub API. No traditional database — see `docs/superpowers/specs/2026-08-11-portfolio-website-design.md` for the original design, and `docs/superpowers/specs/2026-08-13-blog-catalog-from-notion-design.md` for the blog catalog that replaced the Medium RSS feed.
 
+## Design
+
+The look is deliberately plain so the work carries it. Rules the components follow:
+
+- **Colour:** white page (`#ffffff`) with cool grey panels in light mode, neutral near-black (`#111213`) in dark mode, ink text and one deep green accent. No tinted "paper" backgrounds, glows or gradients. Tokens live in `app/globals.css` and are exposed to Tailwind in `tailwind.config.ts`; every text pair passes WCAG AA.
+- **Theme:** follows the visitor's system setting (`defaultTheme="system"`); the header toggle overrides it.
+- **Type:** IBM Plex Sans for reading, IBM Plex Mono for dates, counts and small labels. Nothing under 12px and no all-caps labels.
+- **Shape and targets:** 4px corners on controls, 6px on panels; every interactive target is at least 44px tall.
+- **Motion:** a one-time `rise-in` entrance, search results arriving in rank order, a drawn underline on links (`link-underline`) and a press on buttons. Nothing slides or lifts on hover, and all of it stops under `prefers-reduced-motion`.
+
+The homepage runs: name, one line on the work and a "Now" line beside a working search over every post (`components/hero/hero-search.tsx`, the same `searchPosts` the blog uses); experience; pinned projects; selected and latest writing side by side; tools. Contact lives in the hero links and footer rather than a sales section.
+
 ## Before deploying
 
 1. Replace the placeholder values in `config/site.ts` with your real name, email, and socials.
 2. Replace `public/resume.pdf` with your real resume.
 3. Update `config/live-projects.ts` as you ship real live projects.
-4. Optionally add pipeline-diagram overrides per repo in `config/project-pipelines.ts`.
-5. Optionally set `GITHUB_TOKEN` to a fine-grained PAT scoped to "Public Repositories (read-only)" to raise the GitHub API rate limit. This matters much less than it used to: `/projects` now makes a single API call per revalidation rather than one per repo, so the unauthenticated 60 req/hour limit is ample.
+4. Set `GITHUB_TOKEN` (recommended) so `/projects` and the homepage read your GitHub profile pins live. A fine-grained PAT with public repositories read-only access is enough. See [Which repos appear on /projects](#which-repos-appear-on-projects).
 
 ## Blog catalog
 
@@ -35,9 +46,13 @@ The upstream source of truth is a Notion database, which a scheduled job reads t
 
 Because the catalog is imported at build time, a malformed file fails the build rather than silently rendering an empty blog page.
 
-### Post artwork
+### Blog pages
 
-Blog cards show a generated identicon rather than a cover image. `lib/identicon.ts` turns a post's hex id into a deterministic 7×7 symmetric grid, and `components/blog/identicon.tsx` renders it as inline SVG using `currentColor`, so it picks up the accent colour and adapts to the light theme. The same post always produces the same mark, and a golden test locks the output so a refactor cannot silently change every mark on the site.
+- **`/blog`** is a launchpad, not the archive. A sidebar holds the search field and every topic as a list ordered by post count, led by "All posts". The main column shows the featured series as tiles, then the ten newest posts grouped by year, then a link to the full archive. Typing in the search replaces the main column with results. The intro sentence is computed from the catalog.
+- **Series tiles** come from `config/series.ts`: each entry names a catalog category and a one-line description. The tile links to that category's page and its post count is read from the catalog, so only the description is hand-kept. A test fails if a series names a category the catalog no longer has.
+- **`/blog/archive`** lists every post grouped by year. **`/blog/[category]`** lists one topic's posts the same way, under its name and a mono count line.
+
+Post rows carry no artwork: a mono date, the title, and the topic. Every title opens on Medium.
 
 ## Which repos appear on /projects
 
@@ -47,12 +62,18 @@ Public matters: `GET /users/{username}/repos` returns public repositories only, 
 
 The description is the curation mechanism: writing one is how you surface a repo, and removing one is how you hide it. That replaced a minimum-commit-count filter, which measured how you worked rather than whether the work was good — it hid a from-scratch transformer squashed into a single commit while showing a folder of contest solutions with seven.
 
+### Pinned repos and screenshots
+
+`/projects` leads with the repos pinned on the GitHub profile, in pin order. With `GITHUB_TOKEN` set they are read live through the GraphQL API (pins are not exposed over REST, and GraphQL needs a token), so changing a pin on GitHub updates the site at the next revalidation. Without a token, `featured` in `config/project-overrides.ts` is used instead, so keep it in step with the profile.
+
+A pinned repo shows as a screenshot card when it has a GitHub website (`homepage`) **and** an entry in `config/project-media.ts` (screenshot path, alt text, link label, optional display title). Screenshots live in `public/projects/<repo-name>.png`, taken at a 1280x800 viewport. Any other pinned repo shows as a plain row.
+
+Below the pins, every other shown repo pushed in 2024 or later is listed under "Other repositories", and older ones sit in a collapsed "Earlier work, before 2024" section. Star counts are not shown anywhere.
+
 `config/project-overrides.ts` holds the exceptions:
 
-- `featured` — pinned to the top of the default view, in the order listed.
-- `hidden` — removed from every view. Only repos that pass the description gate need listing here.
-
-Featured pinning applies to the default view only. `Most Starred` sorts strictly by star count, because a sort control that doesn't sort is worse than none. `DEFAULT_VISIBLE_COUNT` in `project-list.tsx` should stay at least as large as the `featured` list, or a pinned repo ends up behind "Load more".
+- `featured` - the fallback for the profile pins when no token is set, in pin order.
+- `hidden` - removed from every view, pinned or not. Only repos that pass the description gate need listing here.
 
 ## Development
 
@@ -78,7 +99,7 @@ Once the Git integration is connected, pushes to `main` deploy to production and
 
 ### Environment variables
 
-**None are required.** `GITHUB_TOKEN` is optional and raises the GitHub API rate limit; `/projects` makes a single API call per six-hour revalidation, which is comfortably inside the unauthenticated 60 requests/hour limit, so it is not needed at this scale.
+**None are required, but `GITHUB_TOKEN` is recommended.** Without it the GitHub GraphQL API is unavailable, so the profile pins on `/projects` and the homepage fall back to `featured` in `config/project-overrides.ts` and drift whenever the pins change on GitHub. A fine-grained PAT scoped to public repositories, read-only, is enough; it also raises the REST rate limit, though `/projects` only makes a couple of API calls per six-hour revalidation.
 
 `VERCEL_PROJECT_PRODUCTION_URL` and `VERCEL_URL` are injected by Vercel automatically. `lib/site-url.ts` reads them to build `metadataBase`, the sitemap, `robots.txt`, and the OpenGraph image URL, so those resolve to the real domain with no configuration. Locally they are absent and it falls back to `http://localhost:3000`, which is why local builds show localhost in `og:image` — expected, not a bug.
 

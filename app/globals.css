@@ -2,26 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Light is the default and dark is opt-in by class; next-themes sets the class
+ * from the visitor's system setting unless they choose one with the toggle.
+ * Plain white and a neutral near-black: no tinted "paper", no blue cast.
+ * Every text pair here passes WCAG AA (meta grey is 6.4:1 on white, 7.2:1 on dark).
+ */
 :root {
-  --background: #0b0f14;
-  --background-raised: #12171d;
-  --foreground: #e4e7eb;
-  --foreground-dim: #8b93a0;
-  --accent: #e8a33d;
-  --border: #1f2630;
+  --background: #ffffff;
+  --background-raised: #f4f5f6;
+  --foreground: #15181a;
+  --foreground-soft: #2b3034;
+  --foreground-dim: #5a6066;
+  --accent: #0c6a4c;
+  --accent-strong: #0a573f;
+  --border: #e1e3e6;
+  --border-strong: #c6cad0;
+  color-scheme: light;
 }
 
-.light {
-  --background: #f4f5f7;
-  --background-raised: #ffffff;
-  --foreground: #12151a;
-  --foreground-dim: #5b6472;
-  --accent: #9c6a1a;
-  --border: #dfe2e6;
+.dark {
+  --background: #111213;
+  --background-raised: #1a1b1d;
+  --foreground: #e8e9eb;
+  --foreground-soft: #d2d4d8;
+  --foreground-dim: #9da1a7;
+  --accent: #6cc59d;
+  --accent-strong: #8fd4b4;
+  --border: #2c2e31;
+  --border-strong: #3c3f43;
+  color-scheme: dark;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-mono), ui-monospace, SFMono-Regular, 'JetBrains Mono', monospace;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+@layer components {
+  /* Text link whose underline draws in on hover. */
+  .link-underline {
+    text-decoration: none;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition:
+      background-size 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+      color 0.2s;
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise-in {
+  animation: rise-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+  }
+  .link-underline {
+    transition: none;
+  }
 }

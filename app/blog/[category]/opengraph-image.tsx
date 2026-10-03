@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 import { getBlogPosts } from '@/lib/blog';
 import { categoryFromSlug, categorySlugs } from '@/lib/categories';
-import { categoryStats } from '@/lib/blog-stats';
+import { categoryStats, formatYearRange } from '@/lib/blog-stats';
 
 export const size = {
   width: 1200,
@@ -16,16 +16,16 @@ export function generateStaticParams() {
   return categorySlugs().map((category) => ({ category }));
 }
 
-const AMBER = '#e8a33d';
-const GROUND = '#0b0f14';
-const TEXT = '#e6edf3';
-const DIM = '#8b93a0';
-const RULE = '#1c2530';
+const ACCENT = '#0c6a4c';
+const GROUND = '#ffffff';
+const TEXT = '#15181a';
+const DIM = '#5a6066';
+const RULE = '#e1e3e6';
 
 /**
  * The category's social card.
  *
- * Type only, matching the page header it accompanies — a link shared to
+ * Type only, matching the page header it accompanies: a link shared to
  * LinkedIn should look like the page it opens. Earlier versions gave each
  * category a generated colour and glyph; the colours fought the one accent the
  * site has, and the glyphs were decoration rather than information.
@@ -38,10 +38,7 @@ export default async function CategoryImage({ params }: { params: Promise<{ cate
   const category = categoryFromSlug(slug) ?? 'Writing';
   const stat = categoryStats(getBlogPosts()).find((s) => s.category === category);
   const count = stat?.count ?? 0;
-  const years =
-    stat && stat.earliest.slice(0, 4) !== stat.latest.slice(0, 4)
-      ? `${stat.earliest.slice(0, 4)}–${stat.latest.slice(0, 4)}`
-      : (stat?.latest.slice(0, 4) ?? '');
+  const years = stat ? formatYearRange(stat.earliest, stat.latest) : '';
 
   return new ImageResponse(
     (
@@ -66,11 +63,11 @@ export default async function CategoryImage({ params }: { params: Promise<{ cate
             top: 0,
             width: '100%',
             height: 10,
-            backgroundColor: AMBER,
+            backgroundColor: ACCENT,
           }}
         />
 
-        <div style={{ display: 'flex', color: AMBER, fontSize: 34 }}>&gt; blog --category</div>
+        <div style={{ display: 'flex', color: ACCENT, fontSize: 34 }}>Writing</div>
         <div
           style={{
             display: 'flex',

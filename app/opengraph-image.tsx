@@ -19,26 +19,27 @@ export default function OpengraphImage() {
           flexDirection: 'column',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          backgroundColor: '#0b0f14',
+          backgroundColor: '#ffffff',
           padding: '80px',
-          fontFamily: 'monospace',
+          fontFamily: 'sans-serif',
         }}
       >
         <div
           style={{
             display: 'flex',
-            color: '#e8a33d',
-            fontSize: 40,
+            color: '#5a6066',
+            fontSize: 32,
+            fontFamily: 'monospace',
           }}
         >
-          &gt; whoami
+          {siteConfig.role}
         </div>
         <div
           style={{
             display: 'flex',
-            color: '#e8a33d',
-            fontSize: 72,
-            fontWeight: 700,
+            color: '#15181a',
+            fontSize: 88,
+            fontWeight: 600,
             marginTop: 24,
           }}
         >
@@ -47,12 +48,13 @@ export default function OpengraphImage() {
         <div
           style={{
             display: 'flex',
-            color: '#8b93a0',
-            fontSize: 32,
-            marginTop: 20,
+            color: '#0c6a4c',
+            fontSize: 34,
+            marginTop: 28,
+            maxWidth: 900,
           }}
         >
-          {siteConfig.role}
+          {siteConfig.pitch}
         </div>
       </div>
     ),

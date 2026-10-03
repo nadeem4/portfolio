@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { applyOverrides, getGithubRepos } from './projects';
+import { applyOverrides, getGithubRepos, getProjects } from './projects';
 import * as github from './github';
 import type { GithubRepo } from './github.types';
 
@@ -13,6 +13,7 @@ function repo(name: string, stars = 0): GithubRepo {
     language: 'Python',
     updatedAt: '2026-01-01T00:00:00Z',
     license: null,
+    homepage: null,
   };
 }
 
@@ -79,5 +80,43 @@ describe('getGithubRepos', () => {
     const repos = await getGithubRepos();
 
     expect(repos.map((r) => r.name)).toEqual(['nl2sql', 'other']);
+  });
+});
+
+describe('getProjects', () => {
+  beforeEach(() => {
+    vi.spyOn(github, 'fetchGithubRepos');
+    vi.spyOn(github, 'fetchPinnedNames');
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it('splits repos into pinned (in pin order) and others (in recency order)', async () => {
+    vi.mocked(github.fetchGithubRepos).mockResolvedValue([repo('a'), repo('b'), repo('c'), repo('d')]);
+    vi.mocked(github.fetchPinnedNames).mockResolvedValue(['c', 'a']);
+
+    const { pinned, others } = await getProjects();
+
+    expect(pinned.map((r) => r.name)).toEqual(['c', 'a']);
+    expect(others.map((r) => r.name)).toEqual(['b', 'd']);
+  });
+
+  it('falls back to the configured pin list when GitHub pins are unavailable', async () => {
+    vi.mocked(github.fetchGithubRepos).mockResolvedValue([repo('other'), repo('nl2sql')]);
+    vi.mocked(github.fetchPinnedNames).mockResolvedValue(null);
+
+    const { pinned, others } = await getProjects();
+
+    expect(pinned.map((r) => r.name)).toEqual(['nl2sql']);
+    expect(others.map((r) => r.name)).toEqual(['other']);
+  });
+
+  it('never shows a hidden repo, even when it is pinned', async () => {
+    vi.mocked(github.fetchGithubRepos).mockResolvedValue([repo('portfolio'), repo('a')]);
+    vi.mocked(github.fetchPinnedNames).mockResolvedValue(['portfolio', 'a']);
+
+    const { pinned, others } = await getProjects();
+
+    expect(pinned.map((r) => r.name)).toEqual(['a']);
+    expect(others).toEqual([]);
   });
 });

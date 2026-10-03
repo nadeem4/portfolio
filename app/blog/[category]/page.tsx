@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { PostList } from '@/components/blog/post-list';
+import { YearGroupedPosts } from '@/components/blog/year-grouped-posts';
 import { filterPostsByCategory } from '@/components/blog/filter-posts';
 import { getBlogPosts } from '@/lib/blog';
 import { categoryFromSlug, categorySlugs } from '@/lib/categories';
-import { categoryStats } from '@/lib/blog-stats';
+import { categoryStats, formatYearRange } from '@/lib/blog-stats';
 
 interface CategoryPageProps {
   params: Promise<{ category: string }>;
@@ -48,44 +48,33 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const stat = statFor(category);
 
   return (
-    <main className="px-6 py-12">
-      <div className="max-w-2xl lg:max-w-3xl mx-auto space-y-8">
+    <main className="mx-auto max-w-page px-6 py-16 sm:px-10 sm:py-20">
+      <div className="max-w-3xl">
         {/* Set in type rather than as a banner image. A generated PNG had to be
             fetched through the image optimizer to appear, which is a request
-            that can fail — and did, in dev. Type cannot fail, stays sharp at
-            any width, and costs nothing to load. The social card is still a
-            PNG, because a crawler has no other way to read one. */}
-        <header className="space-y-3">
+            that can fail. Type cannot fail, stays sharp at any width, and costs
+            nothing to load. The social card is still a PNG, because a crawler
+            has no other way to read one. */}
+        <header className="rise-in">
           <Link
             href="/blog"
-            className="inline-block text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim transition-colors hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 rounded-sm"
+            className="link-underline -mt-3 inline-flex min-h-11 items-center font-mono text-sm text-foreground-dim hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             ← All writing
           </Link>
-          <div aria-hidden="true" className="h-0.5 w-full rounded-sm bg-accent" />
-          <p className="font-mono text-[0.7rem] tracking-[0.12em] text-accent">&gt; blog --category</p>
-          <h1 className="text-2xl font-bold tracking-tight">{category}</h1>
+          <h1 className="mt-4 text-5xl font-semibold tracking-tight">{category}</h1>
           {stat && (
-            <>
-              <div aria-hidden="true" className="h-px w-full bg-border" />
-              <p className="text-[0.65rem] uppercase tracking-[0.18em] text-foreground-dim">
-                {stat.count} {stat.count === 1 ? 'post' : 'posts'}
-                <span aria-hidden="true" className="mx-1.5 opacity-50">
-                  ·
-                </span>
-                {stat.earliest.slice(0, 4)}
-                {stat.earliest.slice(0, 4) !== stat.latest.slice(0, 4) && `–${stat.latest.slice(0, 4)}`}
-              </p>
-            </>
+            <p className="mt-4 font-mono text-sm text-foreground-dim">
+              {stat.count} {stat.count === 1 ? 'post' : 'posts'}, {formatYearRange(stat.earliest, stat.latest)}
+            </p>
           )}
         </header>
 
-        {/* The h1 above already names the topic, and every post on this page
-            carries it — so the list heading and the per-row topic label would
-            both be the same words repeated. The heading stays in the tree for
-            assistive technology; the row label goes entirely, leaving the date,
-            which is the part that actually differs. */}
-        <PostList heading={category} posts={posts} headingHidden showCategory={false} />
+        {/* The h1 already names the topic and every post here carries it, so
+            the per-row topic label is dropped, leaving the date and title. */}
+        <div className="mt-14">
+          <YearGroupedPosts posts={posts} showCategory={false} />
+        </div>
       </div>
     </main>
   );

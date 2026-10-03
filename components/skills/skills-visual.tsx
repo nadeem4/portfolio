@@ -1,18 +1,24 @@
 import { skillGroups } from '@/config/skills';
 
+/**
+ * The tools behind the work, as plain grouped text.
+ *
+ * Deliberately quieter than the sections above it: a smaller heading and no
+ * chips. A tag cloud gives every tool equal visual weight and says nothing.
+ */
 export function SkillsVisual() {
   return (
-    <section aria-label="Skills" className="space-y-6">
-      <h2 className="text-xs uppercase tracking-widest font-medium text-foreground-dim">Skills</h2>
-      <div className="grid gap-6 sm:grid-cols-2">
+    <section aria-labelledby="tools-heading">
+      <h2 id="tools-heading" className="mb-5 text-xl font-semibold">
+        Tools I use
+      </h2>
+      <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
         {skillGroups.map((group) => (
           <div key={group.category}>
-            <h3 className="text-xs uppercase tracking-widest font-medium text-foreground-dim mb-2">{group.category}</h3>
-            <ul className="flex flex-wrap gap-2">
+            <h3 className="mb-1 font-mono text-xs font-normal text-foreground-dim">{group.category}</h3>
+            <ul className="text-[15px] text-foreground-soft">
               {group.items.map((item) => (
-                <li key={item} className="rounded border border-border px-2 py-1 text-xs text-foreground-dim">
-                  {item}
-                </li>
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>

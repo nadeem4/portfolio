@@ -17,14 +17,14 @@ export default function Icon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundColor: '#0b0f14',
-          color: '#e8a33d',
-          fontSize: 22,
+          backgroundColor: '#0c6a4c',
+          color: '#ffffff',
+          fontSize: 16,
           fontWeight: 700,
-          fontFamily: 'monospace',
+          fontFamily: 'sans-serif',
         }}
       >
-        &gt;_
+        NK
       </div>
     ),
     { ...size }
