@@ -36,7 +36,7 @@ describe('legacy Medium custom-domain redirects', () => {
 
   it('leaves the portfolio\'s own routes alone', () => {
     const sources = mediumPostRedirects.map((r) => r.source);
-    ['/', '/blog', '/projects', '/live-projects', '/api/blog'].forEach((route) => {
+    ['/', '/blog', '/projects', '/api/blog'].forEach((route) => {
       expect(sources).not.toContain(route);
     });
   });

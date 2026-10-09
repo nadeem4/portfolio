@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import HomePage from './page';
 import type { GithubRepo } from '@/lib/github.types';
 
@@ -15,6 +15,17 @@ const pinned: GithubRepo[] = [
     license: null,
     homepage: 'https://nadeem4nk-nl2sql-demo.hf.space/',
   },
+  {
+    slug: 'nadeem4/logscribe',
+    name: 'logscribe',
+    description: 'AI-powered log analysis for Python logging.',
+    url: 'https://github.com/nadeem4/logscribe',
+    stars: 0,
+    language: 'Python',
+    updatedAt: '2026-08-01T00:00:00Z',
+    license: null,
+    homepage: null,
+  },
 ];
 
 vi.mock('@/lib/projects', () => ({
@@ -26,23 +37,35 @@ function h2Texts() {
 }
 
 describe('HomePage', () => {
-  it('leads with the name and a working search over the writing', async () => {
+  it('leads with the name, then the CDC architecture diagram', async () => {
     render(await HomePage());
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('searchbox', { name: /search my writing/i })).toBeInTheDocument();
+    const diagram = screen.getByRole('figure', { name: /kafka cdc/i });
+    expect(diagram.querySelector('svg')).not.toBeNull();
   });
 
-  it('runs experience, then projects, then writing, then tools, as separate sections', async () => {
+  it('keeps the working search, now at the top of the writing section', async () => {
+    render(await HomePage());
+    const writing = screen.getByRole('region', { name: 'Writing' });
+    expect(within(writing).getByRole('searchbox', { name: /search my writing/i })).toBeInTheDocument();
+  });
+
+  it('runs experience, live systems, open source, writing, then tools, as separate sections', async () => {
     render(await HomePage());
     const headings = h2Texts();
-    const order = ['Experience', 'Projects', 'Writing', 'Tools I use'].map((name) => headings.indexOf(name));
+    const order = ['Experience', 'Live systems', 'Open source', 'Writing', 'Tools I use'].map((name) =>
+      headings.indexOf(name),
+    );
     expect(order.every((index) => index >= 0)).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
-  it('features the pinned repos', async () => {
+  it('shows live systems as cards and the other pinned repos as open-source rows', async () => {
     render(await HomePage());
-    expect(screen.getAllByText(/nl2sql/).length).toBeGreaterThan(0);
+    const live = screen.getByRole('region', { name: 'Live systems' });
+    expect(within(live).getByRole('heading', { name: 'nl2sql playground' })).toBeInTheDocument();
+    const open = screen.getByRole('region', { name: 'Open source' });
+    expect(within(open).getByRole('link', { name: /logscribe/ })).toBeInTheDocument();
   });
 
   it('shows selected and latest writing side by side rather than behind tabs', async () => {

@@ -3,8 +3,9 @@ export const siteConfig = {
   role: 'Senior software engineer at EvolutionIQ',
   // What the work is, in words a reader would use. Scale figures live in
   // config/experience.ts, attached to the job and dates that make them checkable.
-  pitch: 'I build data infrastructure: change data capture, Postgres pipelines, and the retrieval systems behind AI products.',
-  now: 'Real-time document retrieval at EvolutionIQ, where documents become searchable as they land.',
+  pitch:
+    'Backend and distributed systems engineer. I build platforms where correctness and reliability are not optional: change data capture from Postgres, event-driven pipelines, and the services that run AI workloads in production.',
+  now: 'At EvolutionIQ: the event-driven pipelines that make claim documents searchable as they land, and the worker pools behind our LLM calls.',
   email: 'nadeem4.nk13@gmail.com',
   githubUsername: 'nadeem4',
   socials: {

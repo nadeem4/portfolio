@@ -13,7 +13,7 @@ Most of this site is static and behaves identically everywhere. A handful of thi
 
 ## Shape of the site — read this before probing routes
 
-There are **exactly four pages**: `/`, `/blog`, `/projects`, `/live-projects`, plus `/api/blog`, `/api/github`, `/opengraph-image`, `/icon`, `/sitemap.xml`, `/robots.txt`.
+The pages are `/`, `/blog`, `/blog/archive`, `/blog/<category>`, `/projects`, plus `/api/blog`, `/api/github`, `/opengraph-image`, `/icon`, `/sitemap.xml`, `/robots.txt`.
 
 **There are no local post routes.** Every blog entry links out to `medium.com`. `/blog/<slug>` does not exist and never has.
 
@@ -54,7 +54,7 @@ curl -s -A "$UA" --max-time 25 "$URL/"
 U="https://<deployment>.vercel.app"
 UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36"
 
-for p in "" blog projects live-projects; do
+for p in "" blog blog/archive projects; do
   code=$(curl -s -o /dev/null -w "%{http_code}" -A "$UA" --max-time 25 "$U/$p")
   title=$(curl -s -A "$UA" --max-time 25 "$U/$p" | grep -o '<title>[^<]*</title>' | head -1)
   printf "  %-14s %s  %s\n" "/$p" "$code" "$title"

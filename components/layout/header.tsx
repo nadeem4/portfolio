@@ -1,16 +1,12 @@
 import Link from 'next/link';
 import { PaletteTrigger } from '@/components/command-palette/palette-trigger';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
-import { hasLiveProjects } from '@/config/live-projects';
 import { siteConfig } from '@/config/site';
 import { NavLinks, type NavItem } from './nav-links';
 
-// Live Projects is only linked once something is actually deployed. A nav item
-// leading to a "COMING SOON" page advertises an absence.
 const items: NavItem[] = [
   { href: '/blog', label: 'Blog' },
   { href: '/projects', label: 'Projects' },
-  ...(hasLiveProjects ? [{ href: '/live-projects', label: 'Live Projects' }] : []),
 ];
 
 export function Header() {

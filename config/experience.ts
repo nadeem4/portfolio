@@ -12,13 +12,18 @@ export interface Role {
  * Work history, newest first.
  *
  * The site previously carried no employer, title, or date anywhere, which left
- * its headline numbers unanchored — a reviewer's summary was "I can't pitch a
+ * its headline numbers unanchored: a reviewer's summary was "I can't pitch a
  * candidate whose level I can't establish". Scale claims live here rather than
  * in the hero for that reason: attached to a job and a date, they are checkable.
  *
  * Kept to four entries. The Boston University row sits between the two Crowe
  * stints because it explains the gap between them rather than leaving it to be
  * inferred. Roles before 2017 are omitted; a portfolio is not a résumé.
+ *
+ * Every claim is cut from the master resume (C:\Resume\source\master-resume.md)
+ * and takes the smaller of two phrasings: "re-architected an existing pattern",
+ * not "introduced"; 60M+ is a month-end peak, not a daily average. A merged
+ * same-employer block carries one title. No em dashes.
  */
 export const roles: Role[] = [
   {
@@ -27,15 +32,15 @@ export const roles: Role[] = [
     period: 'Mar 2026 to now',
     location: 'New York, US',
     scope:
-      'Moved document ingestion from a 30-minute scheduled scan to Pub/Sub events feeding Postgres-backed job queues, so documents become searchable as they land. Own the embedding pipeline, and rebuilt tracing that took a slow endpoint from about 2 minutes to under one at p95.',
+      'Re-architected an existing event-driven pattern for a CPU-bound embedding workload: Pub/Sub into Postgres-backed job queues, separate subscriber and worker pools, 100 in-flight messages as backpressure. Documents went from waiting up to 30 minutes to searchable on arrival. Replaced a deadline-bound RPC router with a worker pool scaled on queue depth, taking LLM fallbacks from about 2% to zero so the legacy path could be deleted.',
   },
   {
     company: 'Crowe',
-    title: 'Senior Software Engineer, previously Cloud Senior Engineer',
+    title: 'Senior Software Engineer',
     period: 'Jan 2022 to Mar 2026',
     location: 'Chicago, US',
     scope:
-      'Architected a real-time CDC integration from Postgres to Salesforce on Debezium and Kafka, carrying 60M+ row changes a day, and led a SQL execution platform with planning, validation and sandboxed runs across four databases.',
+      "Architected and built the first version of real-time CDC from a Postgres ERP into Salesforce, carrying 60M+ row changes a day at month-end peaks, then re-architected it onto Kafka when a second consumer arrived. Built a control loop that projects WAL growth against the primary's 50 GB slot budget and restarts the connector or resets the slot before it is reached, cutting manual-intervention incidents by about 70 to 80%. Led the SQL execution platform and its team of about ten.",
   },
   {
     company: 'Boston University',

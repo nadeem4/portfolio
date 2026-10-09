@@ -1,0 +1,22 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "IBM Plex Sans, system-ui, sans-serif",
+    "fontSize": "14px",
+    "primaryColor": "#ffffff",
+    "primaryTextColor": "#000000",
+    "primaryBorderColor": "#000000",
+    "lineColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "tertiaryColor": "#ffffff",
+    "edgeLabelBackground": "#ffffff"
+  },
+  "flowchart": {
+    "curve": "basis",
+    "padding": 10,
+    "nodeSpacing": 28,
+    "rankSpacing": 28,
+    "htmlLabels": false
+  },
+  "htmlLabels": false
+}

@@ -12,14 +12,21 @@ The look is deliberately plain so the work carries it. Rules the components foll
 - **Shape and targets:** 4px corners on controls, 6px on panels; every interactive target is at least 44px tall.
 - **Motion:** a one-time `rise-in` entrance, search results arriving in rank order, a drawn underline on links (`link-underline`) and a press on buttons. Nothing slides or lifts on hover, and all of it stops under `prefers-reduced-motion`.
 
-The homepage runs: name, one line on the work and a "Now" line beside a working search over every post (`components/hero/hero-search.tsx`, the same `searchPosts` the blog uses); experience; pinned projects; selected and latest writing side by side; tools. Contact lives in the hero links and footer rather than a sales section.
+The site is positioned for backend and distributed systems roles, with data and AI as the domains those systems serve. Copy is cut from the master resume and takes the smaller of two claims; config tests keep em dashes and stale skills (Kubernetes, PyTorch, D3, Angular, FastAPI) out.
+
+The homepage runs: name, pitch and a "Now" line, then the CDC architecture diagram; experience; live systems (screenshot cards); open source (rows); writing, led by a working search over every post (`components/hero/hero-search.tsx`, the same `searchPosts` the blog uses), then selected and latest posts side by side; tools. Experience leads the evidence because the distributed-systems work is in the jobs; the live systems are AI tools that corroborate it. Contact lives in the hero links and footer rather than a sales section.
+
+### The architecture diagram
+
+The hero's diagram is the Kafka CDC pipeline built at Crowe. Its source is Mermaid, black and white, in `diagrams/cdc-v2.mmd` (theme in `diagrams/mermaid.config.json`). `npm run diagrams` renders it once with mermaid-cli to `public/diagrams/cdc-v2.svg` and stamps the source's hash into it; a test fails if the committed SVG falls behind the source, so re-run the script after any edit. Rendering needs a headless browser, which is why it isn't part of the Vercel build.
+
+`components/hero/cdc-diagram.tsx` inlines the SVG (no Mermaid runtime on the page), makes each node focusable, and swaps the caption for that node's guarantee on hover or focus. The guarantees and caption live in `config/cdc-diagram.ts`, and a test checks they cover exactly the nodes in the source. The `.cdc-diagram` rules in `app/globals.css` put the SVG on the site's ink and background so it follows the theme; the active node gets a heavier stroke, never a colour. On narrow screens the diagram scrolls sideways rather than shrinking its text.
 
 ## Before deploying
 
 1. Replace the placeholder values in `config/site.ts` with your real name, email, and socials.
 2. Replace `public/resume.pdf` with your real resume.
-3. Update `config/live-projects.ts` as you ship real live projects.
-4. Set `GITHUB_TOKEN` (recommended) so `/projects` and the homepage read your GitHub profile pins live. A fine-grained PAT with public repositories read-only access is enough. See [Which repos appear on /projects](#which-repos-appear-on-projects).
+3. Set `GITHUB_TOKEN` (recommended) so `/projects` and the homepage read your GitHub profile pins live. A fine-grained PAT with public repositories read-only access is enough. See [Which repos appear on /projects](#which-repos-appear-on-projects).
 
 ## Blog catalog
 
@@ -66,7 +73,7 @@ The description is the curation mechanism: writing one is how you surface a repo
 
 `/projects` leads with the repos pinned on the GitHub profile, in pin order. With `GITHUB_TOKEN` set they are read live through the GraphQL API (pins are not exposed over REST, and GraphQL needs a token), so changing a pin on GitHub updates the site at the next revalidation. Without a token, `featured` in `config/project-overrides.ts` is used instead, so keep it in step with the profile.
 
-A pinned repo shows as a screenshot card when it has a GitHub website (`homepage`) **and** an entry in `config/project-media.ts` (screenshot path, alt text, link label, optional display title). Screenshots live in `public/projects/<repo-name>.png`, taken at a 1280x800 viewport. Any other pinned repo shows as a plain row.
+A pinned repo shows as a screenshot card when it has a GitHub website (`homepage`) **and** an entry in `config/project-media.ts` (screenshot path, alt text, link label, optional display title, plus `system`, the stages it runs through joined by arrows, and `guarantee`, one sentence on the property the design holds to). Screenshots live in `public/projects/<repo-name>.png`, taken at a 1280x800 viewport. Any other pinned repo shows as a plain row. On the homepage the cards sit under "Live systems" and the rows under "Open source"; `/projects` shows both together.
 
 Below the pins, every other shown repo pushed in 2024 or later is listed under "Other repositories", and older ones sit in a collapsed "Earlier work, before 2024" section. Star counts are not shown anywhere.
 
