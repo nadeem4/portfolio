@@ -9,6 +9,7 @@ describe('CommandPalette', () => {
     fireEvent.keyDown(document, { key: 'k', ctrlKey: true });
     expect(await screen.findByPlaceholderText('Jump to...')).toBeInTheDocument();
     expect(screen.getByText('Go to Blog')).toBeInTheDocument();
+    expect(screen.queryByText('Go to Live Projects')).not.toBeInTheDocument();
   });
 
   it('filters commands as the user types', async () => {

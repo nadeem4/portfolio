@@ -1,0 +1,19 @@
+flowchart LR
+  pg[("Postgres ERP")]
+  ps{{"Protection Service"}}
+  dbz["Debezium"]
+  kafka[["Kafka"]]
+  xf["Transformer"]
+  sf["Salesforce consumer"]
+  sfapi("Salesforce")
+  dl["Delta consumer"]
+  lake("Delta Bronze")
+
+  pg -- "1 logical slot" --> dbz
+  ps -.-> pg
+  dbz --> kafka
+  kafka --> xf
+  xf -- "sf.transformed" --> sf
+  sf --> sfapi
+  kafka --> dl
+  dl --> lake

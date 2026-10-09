@@ -6,7 +6,7 @@ import { searchPosts } from '@/lib/search';
 import type { BlogPost } from '@/lib/blog.types';
 
 const SUGGESTIONS = ['kafka', 'hnsw', 'replication slot'];
-/** Results shown before handing off to the blog, so the hero stays one screen tall. */
+/** Results shown before handing off to the blog, so the block stays compact. */
 const MAX_RESULTS = 5;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -18,12 +18,11 @@ function monthYear(iso: string): string {
 const focusRing = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2';
 
 /**
- * A working search over the post catalogue, in the hero.
+ * A working search over the post catalogue, at the top of the homepage's
+ * Writing section (the hero holds the partitions figure).
  *
- * It is the homepage's signature element because it is real: the same keyword
- * search the blog uses, run in the browser over every post. It answers the
- * question a visitor with a topic in mind actually has, and it looks like the
- * retrieval tools the owner builds rather than like a marketing banner.
+ * The same keyword search the blog uses, run in the browser over every post.
+ * It answers the question a visitor with a topic in mind actually has.
  */
 export function HeroSearch({ posts }: { posts: BlogPost[] }) {
   const [query, setQuery] = useState('');

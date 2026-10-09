@@ -4,8 +4,20 @@ import { join } from 'node:path';
 import { projectMedia } from './project-media';
 
 describe('projectMedia', () => {
-  it('covers the four pinned repos that have a live site', () => {
-    expect(Object.keys(projectMedia).sort()).toEqual(['jev-demo', 'nl2sql', 'post_training', 'rag-playground']);
+  it('covers every pinned repo that has a live site', () => {
+    expect(Object.keys(projectMedia).sort()).toEqual([
+      'ai-experiments',
+      'jev-demo',
+      'nl2sql',
+      'post_training',
+      'rag-playground',
+    ]);
+  });
+
+  it.each(Object.entries(projectMedia))('%s names the system behind it and one guarantee, without em dashes', (_, media) => {
+    expect(media.system).toContain('→');
+    expect(media.guarantee.length).toBeGreaterThan(20);
+    expect(`${media.system} ${media.guarantee}`).not.toMatch(/—/);
   });
 
   it.each(Object.entries(projectMedia))('%s points at a screenshot that exists under public/', (_, media) => {

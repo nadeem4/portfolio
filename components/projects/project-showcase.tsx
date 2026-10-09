@@ -27,6 +27,8 @@ function ProjectCard({ repo, media }: { repo: GithubRepo; media: ProjectMedia })
       <div className="flex flex-1 flex-col px-5 pb-3 pt-5">
         <h3 className="text-lg font-semibold">{media.title ?? repo.name}</h3>
         {repo.description && <p className="mt-1.5 text-[15px] text-foreground-soft">{repo.description}</p>}
+        <p className="mt-3 font-mono text-xs leading-relaxed text-foreground-dim">{media.system}</p>
+        <p className="mt-2 text-sm text-foreground-soft">{media.guarantee}</p>
         <p className="mt-auto flex gap-5 pt-2 text-sm">
           {repo.homepage && (
             <a href={repo.homepage} target="_blank" rel="noreferrer" className={`${linkClasses} font-medium`}>
@@ -72,23 +74,37 @@ export function RepoRows({ repos }: { repos: GithubRepo[] }) {
 }
 
 /**
- * The pinned repos: a screenshot card for each one with a live site and an
- * entry in `config/project-media.ts`, then rows for the rest. Carries no
- * heading of its own, so the homepage and /projects can each title it.
+ * Splits pinned repos into live systems (a live site plus an entry in
+ * `config/project-media.ts`) and the rest, each keeping pin order.
+ */
+export function splitShowcase(repos: GithubRepo[]): { cards: GithubRepo[]; rows: GithubRepo[] } {
+  const cards = repos.filter((repo) => repo.homepage && projectMedia[repo.name]);
+  return { cards, rows: repos.filter((repo) => !cards.includes(repo)) };
+}
+
+/** Screenshot cards for repos that already passed `splitShowcase` as cards. */
+export function ProjectCards({ repos }: { repos: GithubRepo[] }) {
+  if (repos.length === 0) return null;
+
+  return (
+    <ul aria-label="Live systems" className="grid gap-5 md:grid-cols-2">
+      {repos.map((repo) => (
+        <ProjectCard key={repo.slug} repo={repo} media={projectMedia[repo.name]} />
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * The pinned repos for /projects: cards, then rows. Carries no heading of its
+ * own; the homepage titles the two halves separately instead.
  */
 export function ProjectShowcase({ repos }: { repos: GithubRepo[] }) {
-  const cards = repos.filter((repo) => repo.homepage && projectMedia[repo.name]);
-  const rows = repos.filter((repo) => !cards.includes(repo));
+  const { cards, rows } = splitShowcase(repos);
 
   return (
     <div className="space-y-10">
-      {cards.length > 0 && (
-        <ul aria-label="Live projects" className="grid gap-5 md:grid-cols-2">
-          {cards.map((repo) => (
-            <ProjectCard key={repo.slug} repo={repo} media={projectMedia[repo.name]} />
-          ))}
-        </ul>
-      )}
+      <ProjectCards repos={cards} />
       <RepoRows repos={rows} />
     </div>
   );

@@ -56,9 +56,10 @@ describe('the configured history', () => {
     }
   });
 
-  it('keeps scope lines to a single readable line', () => {
+  it('keeps scope to a short paragraph of at most three sentences', () => {
     for (const role of roles) {
-      expect(role.scope.length, role.company).toBeLessThan(280);
+      expect(role.scope.length, role.company).toBeLessThan(500);
+      expect(role.scope.split('. ').length, role.company).toBeLessThanOrEqual(3);
     }
   });
 });

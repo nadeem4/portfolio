@@ -12,7 +12,7 @@ export function SkillsVisual() {
       <h2 id="tools-heading" className="mb-5 text-xl font-semibold">
         Tools I use
       </h2>
-      <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
         {skillGroups.map((group) => (
           <div key={group.category}>
             <h3 className="mb-1 font-mono text-xs font-normal text-foreground-dim">{group.category}</h3>

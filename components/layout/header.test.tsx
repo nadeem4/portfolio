@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Header } from './header';
-import { hasLiveProjects } from '@/config/live-projects';
 import { siteConfig } from '@/config/site';
 
 const pathname = vi.hoisted(() => ({ current: '/' }));
@@ -36,15 +35,8 @@ describe('Header', () => {
     expect(screen.getByRole('button', { name: 'Open command palette' })).toBeInTheDocument();
   });
 
-  it('links to live projects only once something is actually deployed', () => {
-    // A nav item leading to a page reading "COMING SOON" advertises an absence;
-    // the link appears on its own when a project's status turns 'live'.
+  it('has no Live Projects link: live systems are a homepage section, not a page', () => {
     render(<Header />);
-    const link = screen.queryByRole('link', { name: 'Live Projects' });
-    if (hasLiveProjects) {
-      expect(link).toHaveAttribute('href', '/live-projects');
-    } else {
-      expect(link).not.toBeInTheDocument();
-    }
+    expect(screen.queryByRole('link', { name: 'Live Projects' })).not.toBeInTheDocument();
   });
 });

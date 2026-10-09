@@ -93,3 +93,52 @@ p {
     transition: none;
   }
 }
+
+/*
+ * The hero's CDC diagram: Mermaid renders it black and white with its own
+ * stylesheet (id selectors), so these override with !important to put it on
+ * the site's ink and background and let it follow the theme. The node under
+ * the pointer or focus gets a heavier stroke, not a colour: the diagram stays
+ * black and white.
+ */
+.cdc-diagram svg .node :is(rect, path, polygon, circle, ellipse) {
+  fill: var(--background) !important;
+  stroke: var(--foreground-dim) !important;
+  stroke-width: 1px !important;
+  transition: stroke 160ms ease;
+}
+.cdc-diagram svg .node.is-active :is(rect, path, polygon, circle, ellipse) {
+  stroke: var(--foreground) !important;
+  stroke-width: 2px !important;
+}
+.cdc-diagram svg .node {
+  cursor: default;
+  outline: none;
+}
+.cdc-diagram svg .node:focus-visible :is(rect, path, polygon) {
+  stroke: var(--foreground) !important;
+  stroke-width: 2px !important;
+}
+.cdc-diagram svg :is(text, tspan) {
+  fill: var(--foreground) !important;
+}
+.cdc-diagram svg .edgeLabel text,
+.cdc-diagram svg .edgeLabel tspan {
+  fill: var(--foreground-dim) !important;
+}
+.cdc-diagram svg .edgeLabel rect {
+  fill: var(--background) !important;
+  opacity: 1 !important;
+}
+.cdc-diagram svg :is(.flowchart-link, .edgePath path) {
+  stroke: var(--foreground-dim) !important;
+}
+.cdc-diagram svg marker path {
+  fill: var(--foreground-dim) !important;
+  stroke: var(--foreground-dim) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cdc-diagram svg .node :is(rect, path, polygon, circle, ellipse) {
+    transition: none;
+  }
+}

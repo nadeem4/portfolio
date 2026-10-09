@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
-import { ProjectShowcase, RepoRows } from './project-showcase';
+import { ProjectCards, ProjectShowcase, RepoRows, splitShowcase } from './project-showcase';
+import { projectMedia } from '@/config/project-media';
 import type { GithubRepo } from '@/lib/github.types';
 
 function makeRepo(overrides: Partial<GithubRepo> & { name: string }): GithubRepo {
@@ -64,6 +65,28 @@ describe('ProjectShowcase', () => {
   it('never shows star counts', () => {
     const { container } = render(<ProjectShowcase repos={[nl2sql, logscribe]} />);
     expect(container.textContent).not.toMatch(/42|stars?/i);
+  });
+});
+
+describe('ProjectCards', () => {
+  it('shows the component chain and the guarantee under the description', () => {
+    render(<ProjectCards repos={[nl2sql]} />);
+
+    expect(screen.getByText(projectMedia.nl2sql.system)).toBeInTheDocument();
+    expect(screen.getByText(projectMedia.nl2sql.guarantee)).toBeInTheDocument();
+  });
+
+  it('renders nothing for an empty list', () => {
+    const { container } = render(<ProjectCards repos={[]} />);
+    expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe('splitShowcase', () => {
+  it('separates live systems from open-source rows, keeping pin order', () => {
+    const { cards, rows } = splitShowcase([logscribe, nl2sql, rag, postTraining]);
+    expect(cards.map((repo) => repo.name)).toEqual(['nl2sql', 'post_training']);
+    expect(rows.map((repo) => repo.name)).toEqual(['logscribe', 'rag-playground']);
   });
 });
 

@@ -19,7 +19,7 @@
  * token GraphQL is unavailable, and this list is used instead, so keep it in
  * step with the profile.
  */
-export const featured: string[] = ['nl2sql', 'post_training', 'logscribe', 'medalflow', 'jev-demo', 'rag-playground'];
+export const featured: string[] = ['nl2sql', 'rag-playground', 'jev-demo', 'ai-experiments', 'medalflow', 'logscribe'];
 
 /**
  * Removed from every view.
@@ -41,4 +41,6 @@ export const hidden: string[] = [
   'hesita_angular_app',
   'excel_to_sql',
   'boilerplate_code',
+  // Live link returns 503, and it is the only FastAPI project (not a claimed skill).
+  'aurora',
 ];
